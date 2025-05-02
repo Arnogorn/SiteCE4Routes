@@ -10,10 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['email'], message: 'Il existe déjà un compte associé à cette adresse email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -22,6 +23,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
+    #[Assert\NotBlank(message: 'L\'email ne peut pas être vide')]
+    #[Assert\Email(message: 'L\'email {{ value }} n\'est pas un email valide')]
+    #[Assert\Length(max: 180, maxMessage: 'L\'email ne peut pas dépasser {{ limit }} caractères')]
     private ?string $email = null;
 
     /**
@@ -37,18 +41,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom ne peut pas être vide')]
+    #[Assert\Length(
+        min: 2,
+        max: 255,
+        minMessage: 'Le nom doit comporter au moins {{ limit }} caractères',
+        maxMessage: 'Le nom ne peut pas dépasser {{ limit }} caractères'
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 150)]
+    #[Assert\NotBlank(message: 'Le prénom ne peut pas être vide')]
+    #[Assert\Length(
+        min: 2,
+        max: 150,
+        minMessage: 'Le prénom doit comporter au moins {{ limit }} caractères',
+        maxMessage: 'Le prénom ne peut pas dépasser {{ limit }} caractères'
+    )]
     private ?string $prenom = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
+
     private ?\DateTimeImmutable $dateNaissance = null;
 
     #[ORM\Column(length: 255)]
     private ?string $adresse = null;
 
     #[ORM\Column(length: 20)]
+    #[Assert\NotBlank(message: 'Le téléphone ne peut pas être vide')]
+    #[Assert\Regex(
+        pattern: '/^[0-9]{10}$/',
+        message: 'Le numéro de téléphone doit contenir 10 chiffres pour un numéro français ou commencer par 00(indicateur pays) pour un numéro étranger'
+    )]
     private ?string $telephone = null;
 
     #[ORM\Column(length: 255, nullable: true)]

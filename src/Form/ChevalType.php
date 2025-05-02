@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Cheval;
 use App\Entity\User;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,7 +15,9 @@ class ChevalType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom')
+            ->add('nom', TextType::class, [
+                'label' => 'Nom * :',
+            ])
             ->add('nomPere')
             ->add('nomMere')
             ->add('dateNaissance', null, [
@@ -28,7 +31,9 @@ class ChevalType extends AbstractType
             ->add('vendu')
             ->add('user', EntityType::class, [
                 'class' => User::class,
-                'choice_label' => 'id',
+                'choice_label' => 'nom',
+                'required' => false,
+                'placeholder' => 'Aucun propriétaire',
             ])
         ;
     }

@@ -9,6 +9,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,32 +23,31 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email')
+            ->add('email',  EmailType::class, [
+                'label' => 'Email * :'])
 
             ->add('nom', TextType::class, [
-                'label' => 'Nom :'
+                'label' => 'Nom * :'
             ])
             ->add('prenom', TextType::class, [
-                'label' => 'Prénom :'
+                'label' => 'Prénom * :'
             ])
             ->add('adresse', TextType::class, [
-                'label' => 'Adresse :'
+                'label' => 'Adresse * :'
             ])
             ->add('dateNaissance', DateType::class, [
-                'label' => 'Date de naissance :'
+                'label' => 'Date de naissance * :',
+                'widget' => 'single_text',
             ])
             ->add('telephone', TextType::class, [
-                'label' => 'Numéro de téléphone :'
+                'label' => 'Numéro de téléphone * :'
             ])
             ->add('droitImage', CheckboxType::class, [
-                'label' => 'Acceptez vous la prise de photo et l\'éventuelle diffusion de votre image?'
-
-            ])
-            ->add('actif', CheckboxType::class, [
+                'label' => 'Acceptez vous la prise de photo et l\'éventuelle diffusion de votre image? *'
 
             ])
             ->add('niveau', EntityType::class, [
-                'label' => 'Niveau :',
+                'label' => 'Niveau * :',
                 'class' => Niveau::class,
                 'choice_label' => 'libelle',
                 'placeholder' => 'Sélectionnez un niveau',
@@ -57,18 +57,27 @@ class RegistrationFormType extends AbstractType
                         ->addOrderBy('n.libelle');
                 }
             ])
+            ->add('telPersContact', TextType::class, [
+                'label' => 'numéro de téléphone de la personne à contacter en cas de besoin :',
+                'required' => false,
+            ])
+            ->add('allergies', TextType::class, [
+                'label' => 'Avez vous des allergies ? :',
+                'required' => false,
+            ])
             ->add('plainPassword', PasswordType::class, [
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
+                'label' => 'Mot de passe * :',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'Please enter a password',
+                        'message' => 'Veuillez entrer un mot de passe',
                     ]),
                     new Length([
                         'min' => 6,
-                        'minMessage' => 'Your password should be at least {{ limit }} characters',
+                        'minMessage' => 'Votre mot de passe doit comporter au minimum {{ limit }} caractères',
                         // max length allowed by Symfony for security reasons
                         'max' => 4096,
                     ]),
@@ -78,7 +87,7 @@ class RegistrationFormType extends AbstractType
 
                 'mapped' => false,
                 'attr' => ['autocomplete' => 'new-password'],
-                'label' => 'Confirmer le mot de passe :',
+                'label' => 'Confirmer le mot de passe * :',
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Veuillez confirmer le mot de passe',
@@ -86,10 +95,11 @@ class RegistrationFormType extends AbstractType
                 ],
             ])
             ->add('agreeTerms', CheckboxType::class, [
+                'label' => 'J\'accepte les termes et conditions d\'utilisation *',
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'You should agree to our terms.',
+                        'message' => 'Veuillez accepter les conditions d\'utilisation pour continuer',
                     ]),
                 ],
             ])
