@@ -26,7 +26,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/niveau/nouveau', name: 'app_niveau_new', methods: ['GET', 'POST'])]
+    #[Route('/niveau/ajouter', name: 'app_niveau_new', methods: ['GET', 'POST'])]
     public function newNiveau(Request $request, EntityManagerInterface $entityManager): Response
     {
         $niveau = new Niveau();
@@ -83,9 +83,14 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('app_niveau_index', [], Response::HTTP_SEE_OTHER);
     }
 
+
+
+
     //CUD Cheval
 
-    #[Route('/cheval/nouveau', name: 'app_cheval_new', methods: ['GET', 'POST'])]
+
+
+    #[Route('/cheval/ajouter', name: 'app_cheval_new', methods: ['GET', 'POST'])]
     public function newCheval(Request $request, EntityManagerInterface $entityManager): Response
     {
         $cheval = new Cheval();
