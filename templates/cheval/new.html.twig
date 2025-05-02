@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Cheval{% endblock %}
+
+{% block body %}
+    <h1>Ajouter un Cheval</h1>
+
+    {{ include('cheval/_form.html.twig') }}
+
+    <a href="{{ path('app_cheval_index') }}">Retour à la liste</a>
+{% endblock %}
