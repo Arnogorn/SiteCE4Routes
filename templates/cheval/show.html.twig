@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cheval{% endblock %}
+
+{% block body %}
+    <h1>Profil de {{ cheval.nom }}</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Nom</th>
+                <td>{{ cheval.nom }}</td>
+            </tr>
+            <tr>
+                <th>Nom du Pere</th>
+                <td>{{ cheval.nomPere }}</td>
+            </tr>
+            <tr>
+                <th>Nom de la Mere</th>
+                <td>{{ cheval.nomMere }}</td>
+            </tr>
+            <tr>
+                <th>Date de Naissance</th>
+                <td>{{ cheval.dateNaissance ? cheval.dateNaissance|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Lieu de Naissance</th>
+                <td>{{ cheval.lieuNaissance }}</td>
+            </tr>
+            <tr>
+                <th>Photo</th>
+                <td>{{ cheval.photo }}</td>
+            </tr>
+            <tr>
+                <th>Appartient à l'Ecurie</th>
+                <td>{{ cheval.appartientEcurie ? 'Oui' : 'Non' }}</td>
+            </tr>
+            <tr>
+                <th>Informations</th>
+                <td>{{ cheval.infos }}</td>
+            </tr>
+            <tr>
+                <th>À Vendre</th>
+                <td>{{ cheval.aVendre ? 'Oui' : 'Non' }}</td>
+            </tr>
+            <tr>
+                <th>Vendu</th>
+                <td>{{ cheval.vendu ? 'Oui' : 'Non' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_cheval_index') }}">Retour à la liste</a>
+
+    <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}">Modifier</a>
+
+    {{ include('cheval/_delete_form.html.twig') }}
+{% endblock %}

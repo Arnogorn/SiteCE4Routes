@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des chevaux{% endblock %}
+
+{% block body %}
+    <h1>Liste des chevaux</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Nom du Père</th>
+                <th>Nom de la Mère</th>
+                <th>Date de Naissance</th>
+                <th>Lieu de Naissance</th>
+                <th>Photo</th>
+                <th>Appartient à l'Écurie</th>
+                <th>Informations</th>
+                <th>À Vendre</th>
+                <th>Vendu</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for cheval in chevals %}
+            <tr>
+                <td>{{ cheval.id }}</td>
+                <td>{{ cheval.nom }}</td>
+                <td>{{ cheval.nomPere }}</td>
+                <td>{{ cheval.nomMere }}</td>
+                <td>{{ cheval.dateNaissance ? cheval.dateNaissance|date('Y-m-d') : '' }}</td>
+                <td>{{ cheval.lieuNaissance }}</td>
+                <td>{{ cheval.photo }}</td>
+                <td>{{ cheval.appartientEcurie ? 'Oui' : 'Non' }}</td>
+                <td>{{ cheval.infos }}</td>
+                <td>{{ cheval.aVendre ? 'Oui' : 'Non' }}</td>
+                <td>{{ cheval.vendu ? 'Oui' : 'Non' }}</td>
+                <td>
+                    <a href="{{ path('app_cheval_show', {'id': cheval.id}) }}">Voir</a>
+                    <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="12">Aucun cheval trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_cheval_new') }}">Ajouter un nouveau cheval</a>
+{% endblock %}

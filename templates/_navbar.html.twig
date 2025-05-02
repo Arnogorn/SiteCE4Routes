@@ -1,0 +1,56 @@
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+
+        <h1 class="header-logo">
+            <a href="#" title="ED4R">
+                <img src="#" alt="Logo" id="logo">
+            </a>
+        </h1>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                {#  btns menu  #}
+                <li>
+                    <a class="nav-link" href="#" title="Revenir à l'accueil">Accueil</a>
+                </li>
+                <li>
+                    <a class="nav-link" href="/cheval" title="Nos chevaux">Nos Chevaux</a>
+                </li>
+
+
+                <!-- Bouton Mon Profil visible uniquement si l'utilisateur est connecté  -->
+                {% if app.user %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"
+                           title="Mon Profil">Mon
+                            Profil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout" title="Se déconnecter">Déconnexion</a>
+                    </li>
+                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="#" title="Admin">Admin</a>
+                        </li>
+                    {% endif %}
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login" title="Se connecter">Connexion</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        {% if app.user %}
+            <div class="user-info">
+                <p>Bienvenue <span id="pseudo-info">{{ app.user.nom }}</span> !</p>
+                <p>Date du jour : <span class="bold">{{ "now"|date('d/m/Y') }}</span></p>
+            </div>
+        {% endif %}
+    </div>
+</nav>

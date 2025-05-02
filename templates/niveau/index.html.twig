@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Niveau index{% endblock %}
+
+{% block body %}
+    <h1>Niveau index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Libelle</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for niveau in niveaux %}
+            <tr>
+                <td>{{ niveau.libelle }}</td>
+                <td>
+                    <a href="{{ path('app_niveau_show', {'id': niveau.id}) }}">Voir</a>
+                    <a href="{{ path('app_niveau_edit', {'id': niveau.id}) }}">Modifier</a>
+                    <form method="post" action="{{ path('app_niveau_delete', {'id': niveau.id}) }}" onsubmit="return confirm('êtes vous sur de vouloir supprimer ce niveau?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ niveau.id) }}">
+                        <button class="btn">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">Pas de niveau disponible</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_niveau_new') }}">Rajouter un niveau</a>
+{% endblock %}
