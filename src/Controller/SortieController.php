@@ -90,6 +90,7 @@ final class SortieController extends AbstractController
 
         return $this->redirectToRoute('app_sortie_index', [], Response::HTTP_SEE_OTHER);
     }
+
     #[Route('/{id}/inscription', name: 'sortie_inscription')]
     public function inscription(Sortie $sortie, EntityManagerInterface $em, Security $security): Response
     {
