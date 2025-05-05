@@ -21,12 +21,10 @@
                 <li>
                     <a class="nav-link" href="/cheval" title="Nos chevaux">Nos Chevaux</a>
                 </li>
-
-
                 <!-- Bouton Mon Profil visible uniquement si l'utilisateur est connecté  -->
                 {% if app.user %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#"
+                        <a class="nav-link" href="{{ path('app_user_show', {'id': app.user.id}) }}"
                            title="Mon Profil">Mon
                             Profil</a>
                     </li>

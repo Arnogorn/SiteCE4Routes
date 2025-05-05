@@ -39,6 +39,8 @@ security:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
+    #TODO empécher un utilisateur d'accéder aux autres profils
+
 when@test:
     security:
         password_hashers:

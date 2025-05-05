@@ -1,0 +1,10 @@
+{{ form_start(form) }}
+    {% for field in form %}
+        {% if field.vars.name != 'isActif' or is_granted('ROLE_ADMIN') %}
+            {# Rajouter condition pour la famille et mettre ça dans le formtype #}
+            {{ form_row(field) }}
+        {% endif %}
+    {% endfor %}
+
+<button class="btn">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form, {render_rest: false}) }}
