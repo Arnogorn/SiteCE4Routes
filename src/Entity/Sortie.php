@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: SortieRepository::class)]
 class Sortie
@@ -55,9 +57,17 @@ class Sortie
     #[ORM\JoinColumn(nullable: false)]
     private ?Etat $etat = null;
 
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'sorties')]
+    #[ORM\JoinTable(name: 'sortie_user')]
+    private Collection $participants;
+
     public function __construct()
     {
         $this->niveauxAdmis = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -207,5 +217,43 @@ class Sortie
         $this->etat = $etat;
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function addParticipant(User $participant): static
+    {
+        if (!$this->participants->contains($participant)) {
+            $this->participants->add($participant);
+            $participant->addSortie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipant(User $participant): static
+    {
+        if ($this->participants->removeElement($participant)) {
+            $participant->removeSortie($this);
+        }
+
+        return $this;
+    }
+    #[Assert\Callback]
+    public function validateDates(ExecutionContextInterface $context): void
+    {
+        if ($this->dateLimiteInscription && $this->date) {
+            if ($this->dateLimiteInscription > $this->date) {
+                $context->buildViolation('La date limite d\'inscription doit être antérieure à la date de début de la sortie.')
+                    ->atPath('dateLimiteInscription')
+                    ->addViolation();
+            }
+        }
     }
 }

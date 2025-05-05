@@ -16,11 +16,17 @@
 
                 {#  btns menu  #}
                 <li>
-                    <a class="nav-link" href="#" title="Revenir à l'accueil">Accueil</a>
+                    <a class="nav-link" href="/" title="Revenir à l'accueil">Accueil</a>
                 </li>
                 <li>
                     <a class="nav-link" href="/cheval" title="Nos chevaux">Nos Chevaux</a>
                 </li>
+                <li>
+                    <a class="nav-link" href="/sortie" title="Sorties">Sorties</a>
+                </li>
+
+
+
                 <!-- Bouton Mon Profil visible uniquement si l'utilisateur est connecté  -->
                 {% if app.user %}
                     <li class="nav-item">
