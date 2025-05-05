@@ -26,15 +26,17 @@
                 <td>{{ sortie.id }}</td>
                 <td>{{ sortie.titre }}</td>
                 <td>{{ sortie.date ? sortie.date|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ sortie.duree }}</td>
+                <td>{{ sortie.duree }}min</td>
                 <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ sortie.nbInscriptionMax }}</td>
-                <td>{{ sortie.prix }}</td>
+                <td>{{ sortie.participants|length }}/{{ sortie.nbInscriptionMax }}</td>
+                <td>{{ sortie.prix }}€</td>
                 <td>{{ sortie.infos }}</td>
                 <td>{{ sortie.isPublished ? 'Yes' : 'No' }}</td>
                 <td>
                     <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}">show</a>
-                    <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">edit</a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">edit</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
@@ -45,5 +47,7 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_sortie_new') }}">Create new</a>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_sortie_new') }}">Create new</a>
+    {% endif %}
 {% endblock %}

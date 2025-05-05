@@ -118,7 +118,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Sortie>
      */
-    #[ORM\ManyToMany(targetEntity: Sortie::class, inversedBy: 'participants')]
+    #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participants')]
     private Collection $sorties;
 
     public function __construct()
@@ -432,18 +432,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->sorties;
     }
 
-    public function addSorty(Sortie $sorty): static
+    public function addSortie(Sortie $sortie): static
     {
-        if (!$this->sorties->contains($sorty)) {
-            $this->sorties->add($sorty);
+        if (!$this->sorties->contains($sortie)) {
+            $this->sorties->add($sortie);
         }
 
         return $this;
     }
 
-    public function removeSorty(Sortie $sorty): static
+    public function removeSortie(Sortie $sortie): static
     {
-        $this->sorties->removeElement($sorty);
+        if ($this->sorties->removeElement($sortie)) {
+            $sortie->removeParticipant($this);
+        }
 
         return $this;
     }

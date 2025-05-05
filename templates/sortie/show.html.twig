@@ -61,11 +61,19 @@
 
     <a href="{{ path('app_sortie_index') }}">back to list</a>
 
-    <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">edit</a>
-
-    {% if is_granted('ROLE_USER') %}
-        <a href="{{ path('sortie_inscription', { id: sortie.id }) }}" class="btn btn-primary">S'inscrire</a>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">edit</a>
     {% endif %}
 
-    {{ include('sortie/_delete_form.html.twig') }}
+    {% if is_granted('ROLE_USER') %}
+        {% if not sortie.participants.contains(app.user) %}
+            <a href="{{ path('sortie_inscription', { id: sortie.id }) }}" class="btn btn-primary">S'inscrire</a>
+        {% else %}
+            <a href="{{ path('sortie_desinscription', { id: sortie.id }) }}" class="btn btn-warning">Se désinscrire</a>
+        {% endif %}
+    {% endif %}
+
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ include('sortie/_delete_form.html.twig') }}
+    {% endif %}
 {% endblock %}

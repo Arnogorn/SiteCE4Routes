@@ -11,6 +11,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 
 class SortieType extends AbstractType
 {
@@ -22,7 +23,7 @@ class SortieType extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('duree')
-            ->add('dateLimiteInscription', null, [
+            ->add('dateLimiteInscription', DateTimeType::class, [
                 'widget' => 'single_text',
             ])
             ->add('nbInscriptionMax')
