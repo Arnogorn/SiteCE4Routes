@@ -48,6 +48,7 @@ class Sortie
     private ?string $infos = null;
 
     #[ORM\Column]
+    #[ORM\JoinColumn(nullable: false)]
     private ?bool $isPublished = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]

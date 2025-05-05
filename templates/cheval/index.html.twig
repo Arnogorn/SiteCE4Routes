@@ -8,12 +8,12 @@
     <table class="table">
         <thead>
             <tr>
+                <th>Photo</th>
                 <th>Nom</th>
                 <th>Nom du Père</th>
                 <th>Nom de la Mère</th>
                 <th>Date de Naissance</th>
                 <th>Lieu de Naissance</th>
-                <th>Photo</th>
                 <th>Appartient à l'Écurie</th>
                 <th>Informations</th>
                 <th>À Vendre</th>
@@ -24,20 +24,22 @@
         <tbody>
         {% for cheval in chevals %}
             <tr>
-                <td>{{ cheval.id }}</td>
+                <td>{{ cheval.photo }}</td>
+
                 <td>{{ cheval.nom }}</td>
                 <td>{{ cheval.nomPere }}</td>
                 <td>{{ cheval.nomMere }}</td>
                 <td>{{ cheval.dateNaissance ? cheval.dateNaissance|date('Y-m-d') : '' }}</td>
                 <td>{{ cheval.lieuNaissance }}</td>
-                <td>{{ cheval.photo }}</td>
                 <td>{{ cheval.appartientEcurie ? 'Oui' : 'Non' }}</td>
                 <td>{{ cheval.infos }}</td>
                 <td>{{ cheval.aVendre ? 'Oui' : 'Non' }}</td>
                 <td>{{ cheval.vendu ? 'Oui' : 'Non' }}</td>
                 <td>
                     <a href="{{ path('app_cheval_show', {'id': cheval.id}) }}">Voir</a>
+                    {% if 'ROLE_ADMIN' in app.user.roles %}
                     <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}">Modifier</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
