@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Sortie{% endblock %}
+
+{% block body %}
+    <h1>Sortie</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ sortie.id }}</td>
+            </tr>
+            <tr>
+                <th>Titre</th>
+                <td>{{ sortie.titre }}</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>{{ sortie.date ? sortie.date|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Duree</th>
+                <td>{{ sortie.duree }}</td>
+            </tr>
+            <tr>
+                <th>DateLimiteInscription</th>
+                <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>NbInscriptionMax</th>
+                <td>{{ sortie.nbInscriptionMax }}</td>
+            </tr>
+            <tr>
+                <th>Prix</th>
+                <td>{{ sortie.prix }}</td>
+            </tr>
+            <tr>
+                <th>Infos</th>
+                <td>{{ sortie.infos }}</td>
+            </tr>
+            <tr>
+                <th>IsPublished</th>
+                <td>{{ sortie.isPublished ? 'Yes' : 'No' }}</td>
+            </tr>
+            {% if 'ROLE_ADMIN' in app.user.roles %}
+                <tr>
+                    <th>Participants</th>
+                    <td>
+                        {% for participant in sortie.participants %}
+                            {{ participant.nom }}<br>
+                        {% else %}
+                            <em>Aucun participant</em>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endif %}
+
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_sortie_index') }}">back to list</a>
+
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">edit</a>
+    {% endif %}
+
+    {% if is_granted('ROLE_USER') %}
+        {% if not sortie.participants.contains(app.user) %}
+            <a href="{{ path('sortie_inscription', { id: sortie.id }) }}" class="btn btn-primary">S'inscrire</a>
+        {% else %}
+            <a href="{{ path('sortie_desinscription', { id: sortie.id }) }}" class="btn btn-warning">Se désinscrire</a>
+        {% endif %}
+    {% endif %}
+
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ include('sortie/_delete_form.html.twig') }}
+    {% endif %}
+{% endblock %}
