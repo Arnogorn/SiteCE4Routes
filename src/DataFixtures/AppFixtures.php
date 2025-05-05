@@ -8,10 +8,18 @@ use App\Entity\MembreFamille;
 use App\Entity\Niveau;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
-    public function load(ObjectManager $manager): void
+
+    private UserPasswordHasherInterface $passwordHasher;
+
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
+    public function load(ObjectManager $manager): Void
     {
         // NIVEAUX
 
@@ -41,9 +49,22 @@ class AppFixtures extends Fixture
         }
 
         // === USERS INDIVIDUELS ===
-        $user1 = (new User())
+        $plainPassword = 'password';
+
+
+
+        $user1 = (new User());
+
+
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user1,
+            $plainPassword
+        );
+
+                 $user1 ->setPassword($hashedPassword) // password
+
             ->setEmail("admin@admin.fr")
-            ->setPassword('$2y$13$VxFzxhEoVQb6V5VVYClGke6E8EBwBPKyDxMjkIJOVjE8UI1T4Z8Wm') // password
+
             ->setRoles(['ROLE_ADMIN'])
             ->setNom("Admin")
             ->setPrenom("Istrateur")
@@ -59,9 +80,14 @@ class AppFixtures extends Fixture
             ->setIsVerified(true)
             ->setNiveau($niveaux[0]);
 
-        $user2 = (new User())
-            ->setEmail("bob@bob.fr")
-            ->setPassword('$2y$13$VxFzxhEoVQb6V5VVYClGke6E8EBwBPKyDxMjkIJOVjE8UI1T4Z8Wm') // password
+        $user2 = (new User());
+
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user2,
+            $plainPassword
+        );
+          $user2  ->setEmail("bob@bob.fr")
+            ->setPassword($hashedPassword) // password
             ->setRoles(['ROLE_USER'])
             ->setNom("Martin")
             ->setPrenom("Bob")
@@ -77,9 +103,15 @@ class AppFixtures extends Fixture
             ->setIsVerified(true)
             ->setNiveau($niveaux[1]);
 
-        $user3 = (new User())
+        $user3 = (new User());
+
+        $hashedPassword = $this->passwordHasher->hashPassword(
+            $user3,
+            $plainPassword
+        );
+        $user3
             ->setEmail("carole@carole.fr")
-            ->setPassword('$2y$13$VxFzxhEoVQb6V5VVYClGke6E8EBwBPKyDxMjkIJOVjE8UI1T4Z8Wm') // password
+            ->setPassword($hashedPassword) // password
             ->setRoles(['ROLE_USER'])
             ->setNom("Lemoine")
             ->setPrenom("Carole")
