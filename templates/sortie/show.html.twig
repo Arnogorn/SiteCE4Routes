@@ -43,12 +43,29 @@
                 <th>IsPublished</th>
                 <td>{{ sortie.isPublished ? 'Yes' : 'No' }}</td>
             </tr>
+            {% if 'ROLE_ADMIN' in app.user.roles %}
+                <tr>
+                    <th>Participants</th>
+                    <td>
+                        {% for participant in sortie.participants %}
+                            {{ participant.nom }}<br>
+                        {% else %}
+                            <em>Aucun participant</em>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endif %}
+
         </tbody>
     </table>
 
     <a href="{{ path('app_sortie_index') }}">back to list</a>
 
     <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">edit</a>
+
+    {% if is_granted('ROLE_USER') %}
+        <a href="{{ path('sortie_inscription', { id: sortie.id }) }}" class="btn btn-primary">S'inscrire</a>
+    {% endif %}
 
     {{ include('sortie/_delete_form.html.twig') }}
 {% endblock %}

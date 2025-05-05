@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Sortie;
+use App\Entity\User;
 use App\Form\SortieType;
 use App\Repository\SortieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -77,5 +79,31 @@ final class SortieController extends AbstractController
         }
 
         return $this->redirectToRoute('app_sortie_index', [], Response::HTTP_SEE_OTHER);
+    }
+    #[Route('/{id}/inscription', name: 'sortie_inscription')]
+    public function inscription(Sortie $sortie, EntityManagerInterface $em, Security $security): Response
+    {
+        /** @var User $user */
+        $user = $security->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour vous inscrire.');
+        }
+
+        // Vérifie si déjà inscrit
+        if ($sortie->getParticipants()->contains($user)) {
+            $this->addFlash('warning', 'Vous êtes déjà inscrit à cette sortie.');
+        } else {
+            // Vérifie le nombre maximum
+            if ($sortie->getParticipants()->count() >= $sortie->getNbInscriptionMax()) {
+                $this->addFlash('danger', 'Cette sortie est complète.');
+            } else {
+                $sortie->addParticipant($user);
+                $em->flush();
+                $this->addFlash('success', 'Inscription réussie !');
+            }
+        }
+
+        return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
     }
 }

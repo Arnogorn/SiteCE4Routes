@@ -6,6 +6,7 @@ use App\Entity\Etat;
 use App\Entity\Moniteur;
 use App\Entity\Niveau;
 use App\Entity\Sortie;
+use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -41,6 +42,13 @@ class SortieType extends AbstractType
                 'class' => Etat::class,
                 'choice_label' => 'id',
             ])
+            ->add('participants', EntityType::class, [
+                'class' => User::class,
+                'multiple' => true,
+                'expanded' => true, // ou false pour une liste déroulante
+                'choice_label' => 'nom', // ou 'email', ou une méthode comme getFullName()
+            ])
+
         ;
     }
 
