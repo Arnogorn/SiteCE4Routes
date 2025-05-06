@@ -11,9 +11,10 @@
                 <th>Photo</th>
                     <td>
                     {% if user.photo != null %}
-                        <img src="{{ asset('img/pictures/personnes/' ~ user.photo) }}" alt="{{ user.prenom }}">
+                        <img src="{{ asset('uploads/utilisateurs/' ~ user.photo) }}" alt="{{ user.prenom }}">
                     {% else %}
-                        <img src="{{ asset('img/profile_icon.png') }}" alt="{{ user.prenom }}" width="100px">
+                        {# TODO rajouter une image de base et son chemin#}
+                        <img src="{{ asset('uploads/utilisateurs/') }}" alt="{{ user.prenom }}" width="100px">
                     {% endif %}
                     </td>
 

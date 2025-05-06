@@ -94,6 +94,8 @@ final class SortieController extends AbstractController
     #[Route('/{id}/inscription', name: 'sortie_inscription')]
     public function inscription(Sortie $sortie, EntityManagerInterface $em, Security $security): Response
     {
+
+        //TODO gérer les conditions d'inscription aux sorties (en fonction de l'état)
         /** @var User $user */
         $user = $security->getUser();
 

@@ -60,6 +60,9 @@ final class UserController extends AbstractController
                     $user->setPassword($hashedPassword); // Mettre à jour le mot de passe de l'utilisateur
                 }
             }
+            if(!in_array("ROLE_ADMIN", $user->getRoles())){
+                $user->setActif(true);
+            }
 
             // Sauvegarder l'entité participant (si nécessaire)
             $entityManager->persist($user);
@@ -67,7 +70,7 @@ final class UserController extends AbstractController
 
             $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
 
-            return $this->redirectToRoute('app_test', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_user_show', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
             //TODO modifier l'url de la page de redirection
         }
 
