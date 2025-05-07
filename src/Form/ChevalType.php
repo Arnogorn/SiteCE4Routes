@@ -3,7 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Cheval;
+use App\Entity\Sexe;
 use App\Entity\User;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -20,6 +22,11 @@ class ChevalType extends AbstractType
             ])
             ->add('nomPere')
             ->add('nomMere')
+            ->add('sexe', EntityType::class, [
+                'class' => Sexe::class,
+                'choice_label' => 'libelle',
+                'placeholder' => 'Choisir le sexe',
+            ])
             ->add('dateNaissance', null, [
                 'widget' => 'single_text',
             ])

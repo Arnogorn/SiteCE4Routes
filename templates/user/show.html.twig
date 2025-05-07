@@ -1,4 +1,8 @@
 {% extends 'base.html.twig' %}
+{% block head %}
+    {{ parent() }}
+    <meta name="turbo-visit-control" content="reload">
+{% endblock %}
 
 {% block title %}Profil de {{user.prenom }} {{ user.nom }}{% endblock %}
 
@@ -13,8 +17,8 @@
                     {% if user.photo != null %}
                         <img src="{{ asset('uploads/utilisateurs/' ~ user.photo) }}" alt="{{ user.prenom }}">
                     {% else %}
-                        {# TODO rajouter une image de base et son chemin#}
-                        <img src="{{ asset('uploads/utilisateurs/') }}" alt="{{ user.prenom }}" width="100px">
+                        <img src="{{ asset('uploads/utilisateurs/logo.avif') }}" alt="photo par défaut">
+
                     {% endif %}
                     </td>
 

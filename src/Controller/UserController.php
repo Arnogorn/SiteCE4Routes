@@ -22,8 +22,13 @@ final class UserController extends AbstractController
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function showUtilisateur(User $user): Response
     {
+        $hasPhoto = false;
+        if ($user->getPhoto() !== null && file_exists($this->getParameter('photos_directory') . '/' . $user->getPhoto())) {
+            $hasPhoto = true;
+        }
         return $this->render('user/show.html.twig', [
             'user' => $user,
+            'hasPhoto' => $hasPhoto
         ]);
     }
 

@@ -24,6 +24,10 @@
                 <td>{{ cheval.nomMere }}</td>
             </tr>
             <tr>
+                <th>Sexe</th>
+                <td>{{ cheval.sexe.libelle }}</td>
+            </tr>
+            <tr>
                 <th>Date de Naissance</th>
                 <td>{{ cheval.dateNaissance ? cheval.dateNaissance|date('Y-m-d') : '' }}</td>
             </tr>
@@ -52,7 +56,7 @@
     </table>
 
     <a href="{{ path('app_cheval_index') }}">Retour à la liste</a>
-    {% if 'ROLE_ADMIN' in app.user.roles %}
+    {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
     <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}">Modifier</a>
 
 
