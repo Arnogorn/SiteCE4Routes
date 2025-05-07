@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}nouvelle prestation{% endblock %}
+
+{% block body %}
+    <h1>Ajouter une nouvelle prestation</h1>
+
+    {{ include('ecurie_proprietaire/_form.html.twig') }}
+
+    <a href="{{ path('app_ecurie_proprietaire_index') }}">Retour à la liste</a>
+{% endblock %}

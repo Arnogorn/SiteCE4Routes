@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+{% block javascripts %}
+
+    <script>
+        document.addEventListener('turbo:load', function() {
+            // Désactiver Turbo pour cette page
+            Turbo.session.drive = false;
+        });
+    </script>
+{% endblock %}
+{% block title %}Liste des contacts{% endblock %}
+
+{% block body %}
+    <h1>Liste des contacts</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Numéro de téléphone</th>
+                <th>Description</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for contact in contacts %}
+            <tr>
+                <td>{{ contact.nom }}</td>
+                <td>{{ contact.prenom }}</td>
+                <td>{{ contact.tel }}</td>
+                <td>{{ contact.description }}</td>
+                <td>
+                    <a href="{{ path('app_contact_show', {'id': contact.id}) }}">Voir</a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_contact_edit', {'id': contact.id}) }}">Modifier</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">aucun contact trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if is_granted('ROLE_ADMIN') %}
+    <a href="{{ path('app_contact_new') }}">Créer un nouveau contact</a>
+    {% endif %}
+{% endblock %}

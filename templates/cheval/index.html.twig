@@ -12,6 +12,7 @@
                 <th>Nom</th>
                 <th>Nom du Père</th>
                 <th>Nom de la Mère</th>
+                <th>Sexe</th>
                 <th>Date de Naissance</th>
                 <th>Lieu de Naissance</th>
                 <th>Appartient à l'Écurie</th>
@@ -29,6 +30,7 @@
                 <td>{{ cheval.nom }}</td>
                 <td>{{ cheval.nomPere }}</td>
                 <td>{{ cheval.nomMere }}</td>
+                <td>{{ cheval.sexe.libelle }}</td>
                 <td>{{ cheval.dateNaissance ? cheval.dateNaissance|date('Y-m-d') : '' }}</td>
                 <td>{{ cheval.lieuNaissance }}</td>
                 <td>{{ cheval.appartientEcurie ? 'Oui' : 'Non' }}</td>
@@ -37,7 +39,7 @@
                 <td>{{ cheval.vendu ? 'Oui' : 'Non' }}</td>
                 <td>
                     <a href="{{ path('app_cheval_show', {'id': cheval.id}) }}">Voir</a>
-                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                    {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}">Modifier</a>
                     {% endif %}
                 </td>

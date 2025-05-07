@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+{% block javascripts %}
+
+    <script>
+        document.addEventListener('turbo:load', function() {
+            // Désactiver Turbo pour cette page
+            Turbo.session.drive = false;
+        });
+    </script>
+{% endblock %}
+{% block title %}Contact{% endblock %}
+
+{% block body %}
+    <h1>Contact  {{ contact.nom }} {{ contact.prenom }}</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Nom</th>
+                <td>{{ contact.nom }}</td>
+            </tr>
+            <tr>
+                <th>Prénom</th>
+                <td>{{ contact.prenom }}</td>
+            </tr>
+            <tr>
+                <th>Téléphone de contact</th>
+                <td>{{ contact.tel }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ contact.description }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_contact_index') }}">retour à la liste</a>
+    {% if is_granted('ROLE_ADMIN') %}
+    <a href="{{ path('app_contact_edit', {'id': contact.id}) }}">modifier</a>
+
+    {{ include('contact/_delete_form.html.twig') }}
+    {% endif %}
+{% endblock %}

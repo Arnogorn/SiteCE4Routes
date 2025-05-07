@@ -1,4 +1,12 @@
 {% extends 'base.html.twig' %}
+{% block javascripts %}
+    <script>
+        document.addEventListener('turbo:load', function() {
+            // Désactiver Turbo pour cette page
+            Turbo.session.drive = false;
+        });
+    </script>
+{% endblock %}
 
 {% block title %}Profil de {{user.prenom }} {{ user.nom }}{% endblock %}
 
@@ -13,8 +21,8 @@
                     {% if user.photo != null %}
                         <img src="{{ asset('uploads/utilisateurs/' ~ user.photo) }}" alt="{{ user.prenom }}">
                     {% else %}
-                        {# TODO rajouter une image de base et son chemin#}
-                        <img src="{{ asset('uploads/utilisateurs/') }}" alt="{{ user.prenom }}" width="100px">
+                        <img src="{{ asset('uploads/utilisateurs/logo.avif') }}" alt="photo par défaut">
+
                     {% endif %}
                     </td>
 

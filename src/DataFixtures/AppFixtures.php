@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Sexe;
 use App\Entity\User;
 use App\Entity\Famille;
 use App\Entity\MembreFamille;
@@ -202,6 +203,19 @@ class AppFixtures extends Fixture
             $manager->persist($entity);
         }
 
+        //SEXE
+
+        $sexe1 = new Sexe();
+        $sexe1->setLibelle("Hongre");
+        $sexe2 = new Sexe();
+        $sexe2->setLibelle("Jument");
+        $sexe3 = new Sexe();
+        $sexe3->setLibelle("Étalon");
+
+        $manager->persist($sexe1);
+        $manager->persist($sexe2);
+        $manager->persist($sexe3);
+        $manager->flush();
 
         // CHEVAUX
         $cheval1 = new \App\Entity\Cheval();
@@ -209,6 +223,7 @@ class AppFixtures extends Fixture
             ->setNomPere("Tonnerre")
             ->setNomMere("Brume")
             ->setDateNaissance(new \DateTimeImmutable('2017-04-01'))
+            ->setSexe($sexe3)
             ->setLieuNaissance("Élevage du Sud")
             ->setAppartientEcurie(false)
             ->setAVendre(false)

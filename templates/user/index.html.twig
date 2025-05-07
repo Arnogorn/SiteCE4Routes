@@ -1,4 +1,12 @@
 {% extends 'base.html.twig' %}
+{% block javascripts %}
+    <script>
+        document.addEventListener('turbo:load', function() {
+            // Désactiver Turbo pour cette page
+            Turbo.session.drive = false;
+        });
+    </script>
+{% endblock %}
 
 {% block title %}Liste des utilisateurs{% endblock %}
 

@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_ecurie_proprietaire_delete', {'id': ecurie_proprietaire.id}) }}" onsubmit="return confirm('êtes vous ur de vouloir supprimer ce type de pension?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ ecurie_proprietaire.id) }}">
+    <button class="btn">Supprimer</button>
+</form>

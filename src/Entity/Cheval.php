@@ -47,6 +47,10 @@ class Cheval
     #[ORM\ManyToOne(inversedBy: 'cheval')]
     private ?User $user = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Sexe $sexe = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -180,6 +184,18 @@ class Cheval
     public function setUser(?User $user): static
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getSexe(): ?Sexe
+    {
+        return $this->sexe;
+    }
+
+    public function setSexe(?Sexe $sexe): static
+    {
+        $this->sexe = $sexe;
 
         return $this;
     }

@@ -43,7 +43,7 @@
                 <th>IsPublished</th>
                 <td>{{ sortie.isPublished ? 'Yes' : 'No' }}</td>
             </tr>
-            {% if 'ROLE_ADMIN' in app.user.roles %}
+            {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
                 <tr>
                     <th>Participants</th>
                     <td>

@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier un contact{% endblock %}
+
+{% block body %}
+    <h1>Modifier le contact : {{ contact.nom }} {{ contact.prenom }}</h1>
+
+    {{ include('contact/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+
+    <a href="{{ path('app_contact_index') }}">retour à la liste</a>
+
+    {{ include('contact/_delete_form.html.twig') }}
+{% endblock %}

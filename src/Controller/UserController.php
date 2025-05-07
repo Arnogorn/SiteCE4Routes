@@ -22,8 +22,13 @@ final class UserController extends AbstractController
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function showUtilisateur(User $user): Response
     {
+        $hasPhoto = false;
+        if ($user->getPhoto() !== null && file_exists($this->getParameter('participant_picture_dir') . '/' . $user->getPhoto())) {
+            $hasPhoto = true;
+        }
         return $this->render('user/show.html.twig', [
             'user' => $user,
+            'hasPhoto' => $hasPhoto
         ]);
     }
 
@@ -71,7 +76,7 @@ final class UserController extends AbstractController
             $this->addFlash('success', 'Votre profil a été mis à jour avec succès.');
 
             return $this->redirectToRoute('app_user_show', ['id' => $user->getId()], Response::HTTP_SEE_OTHER);
-            //TODO modifier l'url de la page de redirection
+
         }
 
         return $this->render('user/edit.html.twig', [
