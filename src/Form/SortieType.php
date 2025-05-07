@@ -32,25 +32,25 @@ class SortieType extends AbstractType
             ->add('isPublished')
             ->add('moniteur', EntityType::class, [
                 'class' => Moniteur::class,
-                'choice_label' => 'id',
+                'choice_label' => function (Moniteur $moniteur) {
+                    return $moniteur->getUser()->getNom() . ' ' . $moniteur->getUser()->getPrenom();
+                }
             ])
             ->add('niveauxAdmis', EntityType::class, [
                 'class' => Niveau::class,
-                'choice_label' => 'id',
+                'choice_label' => 'libelle',
                 'multiple' => true,
             ])
             ->add('etat', EntityType::class, [
                 'class' => Etat::class,
-                'choice_label' => 'id',
+                'choice_label' => 'libelle',
             ])
             ->add('participants', EntityType::class, [
                 'class' => User::class,
                 'multiple' => true,
                 'expanded' => true, // ou false pour une liste déroulante
                 'choice_label' => 'nom', // ou 'email', ou une méthode comme getFullName()
-            ])
-
-        ;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
