@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier prestation écurie propriétaire{% endblock %}
+
+{% block body %}
+    <h1>Modifier la pension {{ ecurie_proprietaire.prestation }}</h1>
+
+    {{ include('ecurie_proprietaire/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+
+    <a href="{{ path('app_ecurie_proprietaire_index') }}">retour à la liste</a>
+
+    {{ include('ecurie_proprietaire/_delete_form.html.twig') }}
+{% endblock %}

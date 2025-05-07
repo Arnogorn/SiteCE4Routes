@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}liste des prestations{% endblock %}
+
+{% block body %}
+    <h1>Liste des prestations</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Prestation</th>
+                <th>Description</th>
+                <th>Prix</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ecurie_proprietaire in ecurie_proprietaires %}
+            <tr>
+                <td>{{ ecurie_proprietaire.prestation }}</td>
+                <td>{{ ecurie_proprietaire.description }}</td>
+                <td>{{ ecurie_proprietaire.prix }}</td>
+                <td>
+                    <a href="{{ path('app_ecurie_proprietaire_show', {'id': ecurie_proprietaire.id}) }}">Voir</a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_ecurie_proprietaire_edit', {'id': ecurie_proprietaire.id}) }}">Modifier</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucune prestation trouvée</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% if is_granted('ROLE_ADMIN') %}
+    <a href="{{ path('app_ecurie_proprietaire_new') }}">Créer une nouvelle prestation</a>
+    {% endif %}
+{% endblock %}

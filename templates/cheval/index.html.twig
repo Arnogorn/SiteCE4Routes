@@ -39,7 +39,7 @@
                 <td>{{ cheval.vendu ? 'Oui' : 'Non' }}</td>
                 <td>
                     <a href="{{ path('app_cheval_show', {'id': cheval.id}) }}">Voir</a>
-                    {%if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                    {% if is_granted('ROLE_ADMIN') %}
                     <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}">Modifier</a>
                     {% endif %}
                 </td>

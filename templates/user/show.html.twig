@@ -1,7 +1,11 @@
 {% extends 'base.html.twig' %}
-{% block head %}
-    {{ parent() }}
-    <meta name="turbo-visit-control" content="reload">
+{% block javascripts %}
+    <script>
+        document.addEventListener('turbo:load', function() {
+            // Désactiver Turbo pour cette page
+            Turbo.session.drive = false;
+        });
+    </script>
 {% endblock %}
 
 {% block title %}Profil de {{user.prenom }} {{ user.nom }}{% endblock %}

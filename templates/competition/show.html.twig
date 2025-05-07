@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+{% block javascripts %}
+
+    <script>
+        document.addEventListener('turbo:load', function() {
+            // Désactiver Turbo pour cette page
+            Turbo.session.drive = false;
+        });
+    </script>
+{% endblock %}
+
+{% block title %}Competition{% endblock %}
+
+{% block body %}
+    <h1>Competition : {{ competition.titre }}</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Titre</th>
+                <td>{{ competition.titre }}</td>
+            </tr>
+            <tr>
+                <th>Date de début de la compétition</th>
+                <td>{{ competition.dateDebut ? competition.dateDebut|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Date de fin de la compétition</th>
+                <td>{{ competition.dateFin ? competition.dateFin|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Prix du transport</th>
+                <td>{{ competition.prixTransport }}</td>
+            </tr>
+            <tr>
+                <th>Prix d'une épreuve</th>
+                <td>{{ competition.prixEpreuve }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ competition.description }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_competition_index') }}">retour à la liste</a>
+    {% if is_granted('ROLE_ADMIN') %}
+    <a href="{{ path('app_competition_edit', {'id': competition.id}) }}">modifier</a>
+
+    {{ include('competition/_delete_form.html.twig') }}
+    {% endif %}
+{% endblock %}
