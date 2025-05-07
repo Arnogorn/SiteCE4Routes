@@ -52,7 +52,7 @@ class UserType extends AbstractType
                 'class' => Niveau::class,
                 'choice_label' => 'libelle',
             ])
-            ->add('isActif', CheckboxType::class, [
+            ->add('actif', CheckboxType::class, [
                 'label' => 'Actif',
             ])
             ->add('new_password', PasswordType::class, [

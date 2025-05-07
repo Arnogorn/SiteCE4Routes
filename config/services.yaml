@@ -5,8 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
 
-    participant_picture_dir: '%kernel.project_dir%/assets/img/pictures/personnes'
-    photo_picture_dir: '%kernel.project_dir%/assets/img/pictures/chevaux'
+    participant_picture_dir: '%kernel.project_dir%/public/uploads/utilisateurs'
+    photo_picture_dir: '%kernel.project_dir%/public/uploads/chevaux'
 
 services:
     # default configuration for services in *this* file

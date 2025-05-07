@@ -17,11 +17,6 @@
 ###> symfony/phpunit-bridge ###
 
 ###< symfony/phpunit-bridge ###
-
-###> symfony/asset-mapper ###
-/public/assets/
-/assets/vendor/
-###< symfony/asset-mapper ###
 /.idea/modules.xml
 /.idea/dbnavigator.xml
 /.idea/commandlinetools/schemas/frameworkDescriptionVersion1.1.4.xsd
