@@ -3,11 +3,14 @@
 {% block title %}Modifier Cheval{% endblock %}
 
 {% block body %}
-    <h1>Modifier les informations du cheval</h1>
+    <h1>Modifier les informations de {{ cheval.nom }}</h1>
 
     {{ include('cheval/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
 
-    <a href="{{ path('app_cheval_index') }}">Retour à la liste</a>
+    <a href="{{ path('app_cheval_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
 
-    {{ include('cheval/_delete_form.html.twig') }}
+    {# Afficher le formulaire de suppression uniquement pour les administrateurs #}
+    {% if is_granted('ROLE_ADMIN') %}
+        {{ include('cheval/_delete_form.html.twig') }}
+    {% endif %}
 {% endblock %}

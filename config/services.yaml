@@ -6,7 +6,7 @@
 parameters:
 
     participant_picture_dir: '%kernel.project_dir%/public/uploads/utilisateurs'
-    photo_picture_dir: '%kernel.project_dir%/public/uploads/chevaux'
+    cheval_picture_dir: '%kernel.project_dir%/public/uploads/chevaux'
 
 services:
     # default configuration for services in *this* file
