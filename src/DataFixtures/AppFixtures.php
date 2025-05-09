@@ -25,7 +25,7 @@ class AppFixtures extends Fixture
         // NIVEAUX
 
         // ETATS
-        $etatLabels = ['Créée', 'Ouvert', 'Clôturé', 'En cours', 'Passé', 'Annulé'];
+        $etatLabels = ['Créée', 'Ouverte', 'Clôturée', 'En cours', 'Passée', 'Annulée'];
         $etats = [];
         foreach ($etatLabels as $label) {
             $etat = new \App\Entity\Etat();

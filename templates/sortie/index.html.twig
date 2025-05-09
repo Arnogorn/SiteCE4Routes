@@ -3,51 +3,76 @@
 {% block title %}Sortie index{% endblock %}
 
 {% block body %}
-    <h1>Sortie index</h1>
+    <h1>Liste des sorties</h1>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Titre</th>
                 <th>Date</th>
-                <th>Duree</th>
-                <th>DateLimiteInscription</th>
-                <th>NbInscriptionMax</th>
+                <th>Durée (en minutes)</th>
+                <th>Date limite d'inscription</th>
+                <th>Nombre maximum d'inscriptions</th>
                 <th>Prix</th>
-                <th>Infos</th>
-                <th>IsPublished</th>
+                <th>Informations</th>
+
+                <th>État de la sortie</th>
+                {% if 'ROLE_ADMIN' in app.user.roles %}
+                <th>Sortie publiée</th>
+                {% endif %}
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for sortie in sorties %}
             <tr>
-                <td>{{ sortie.id }}</td>
                 <td>{{ sortie.titre }}</td>
-                <td>{{ sortie.date ? sortie.date|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ sortie.date ? sortie.date|date('d-m-Y H:i:s') : '' }}</td>
                 <td>{{ sortie.duree }}min</td>
-                <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d-m-Y H:i:s') : '' }}</td>
                 <td>{{ sortie.participants|length }}/{{ sortie.nbInscriptionMax }}</td>
                 <td>{{ sortie.prix }}€</td>
                 <td>{{ sortie.infos }}</td>
-                <td>{{ sortie.isPublished ? 'Yes' : 'No' }}</td>
+                <td><p class="border rounded
+                        {% if sortie.etat.libelle == 'Créée' %}
+                            border-warning
+                        {% elseif sortie.etat.libelle == 'Ouverte' %}
+                            border-success
+                        {% elseif sortie.etat.libelle == 'Clôturée' %}
+                            border-info
+                        {% elseif sortie.etat.libelle == 'Activité en cours' %}
+                            border-primary
+                        {% elseif sortie.etat.libelle == 'Passée' %}
+                            border-secondary
+                        {% else %}
+                            border-danger
+                        {% endif %}">{{ sortie.etat.libelle }}</p></td>
+                {% if 'ROLE_ADMIN' in app.user.roles %}
+                <td>{{ sortie.isPublished ? 'Oui' : 'Non' }}</td>
+                {% endif %}
                 <td>
-                    <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}">show</a>
+                    <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}">Voir</a>
                     {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">edit</a>
+                        <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">Modifier</a>
+                            {% if sortie.etat.libelle == 'Créée' %}
+                        <a href="{{ path('sortie_publier', {'id': sortie.id}) }}"
+                           class="btn btn-outline-primary mt-2">
+                            <i class="bi bi-upload"></i> Publier
+                        </a>
+                            {% endif %}
                     {% endif %}
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="10">no records found</td>
+                <td colspan="10">Aucune sortie trouvée</td>
             </tr>
+
         {% endfor %}
         </tbody>
     </table>
 
     {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('app_sortie_new') }}">Create new</a>
+        <a href="{{ path('app_sortie_new') }}">Ajouter une nouvelle sortie</a>
     {% endif %}
 {% endblock %}

@@ -1,16 +1,12 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Sortie{% endblock %}
+{% block title %}Sortie {{ sortie.titre }}{% endblock %}
 
 {% block body %}
-    <h1>Sortie</h1>
+    <h1>Sortie {{ sortie.titre }}</h1>
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ sortie.id }}</td>
-            </tr>
             <tr>
                 <th>Titre</th>
                 <td>{{ sortie.titre }}</td>
@@ -20,15 +16,15 @@
                 <td>{{ sortie.date ? sortie.date|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
             <tr>
-                <th>Duree</th>
+                <th>Durée</th>
                 <td>{{ sortie.duree }}</td>
             </tr>
             <tr>
-                <th>DateLimiteInscription</th>
+                <th>Date limite d'inscription</th>
                 <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
             <tr>
-                <th>NbInscriptionMax</th>
+                <th>Nombre maximum d'inscriptions</th>
                 <td>{{ sortie.nbInscriptionMax }}</td>
             </tr>
             <tr>
@@ -36,14 +32,32 @@
                 <td>{{ sortie.prix }}</td>
             </tr>
             <tr>
-                <th>Infos</th>
+                <th>Informations</th>
                 <td>{{ sortie.infos }}</td>
             </tr>
             <tr>
-                <th>IsPublished</th>
-                <td>{{ sortie.isPublished ? 'Yes' : 'No' }}</td>
+                <th>État de la sortie</th>
+                <td><p class="border rounded
+                        {% if sortie.etat.libelle == 'Créée' %}
+                            border-warning
+                        {% elseif sortie.etat.libelle == 'Ouverte' %}
+                            border-success
+                        {% elseif sortie.etat.libelle == 'Clôturée' %}
+                            border-info
+                        {% elseif sortie.etat.libelle == 'En cours' %}
+                            border-primary
+                        {% elseif sortie.etat.libelle == 'Passée' %}
+                            border-secondary
+                        {% else %}
+                            border-danger
+                        {% endif %}">{{ sortie.etat.libelle }}</p></td>
             </tr>
             {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+            <tr>
+                <th>Sortie publié</th>
+                <td>{{ sortie.isPublished ? 'Oui' : 'Non' }}</td>
+            </tr>
+
                 <tr>
                     <th>Participants</th>
                     <td>
@@ -59,10 +73,10 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_sortie_index') }}">back to list</a>
+    <a href="{{ path('app_sortie_index') }}">Retour à la liste</a>
 
     {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">edit</a>
+        <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">Modifier</a>
     {% endif %}
 
     {% if is_granted('ROLE_USER') %}

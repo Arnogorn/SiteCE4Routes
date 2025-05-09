@@ -1,12 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block javascripts %}
-    <script>
-        document.addEventListener('turbo:load', function() {
-            // Désactiver Turbo pour cette page
-            Turbo.session.drive = false;
-        });
-    </script>
-{% endblock %}
+
 
 {% block title %}Profil de {{user.prenom }} {{ user.nom }}{% endblock %}
 
@@ -78,8 +71,11 @@
             </tr>
         </tbody>
     </table>
-
-    <a href="{{ path('app_user_index') }}">retour à la liste</a>
+    {% if 'ROLE_ADMIN' in app.user.roles %}
+    <a href="{{ path('app_user_index') }}">Retour à la liste</a>
+    {% else %}
+    <a href="{{ path('index') }}">Retour à l'acceuil</a>
+    {% endif %}
 
     {% if app.user and app.user.id == user.id or 'ROLE_ADMIN' in app.user.roles%}
         <a href="{{ path('app_user_edit', {'id': user.id}) }}">Modifier</a>

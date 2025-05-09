@@ -16,6 +16,16 @@ class SortieRepository extends ServiceEntityRepository
         parent::__construct($registry, Sortie::class);
     }
 
+
+    public function findByEtatDifferentDe(string $etatLibelle)
+    {
+        return $this->createQueryBuilder('s')
+            ->join('s.etat', 'e')
+            ->where('e.libelle != :etat')
+            ->setParameter('etat', $etatLibelle)
+            ->getQuery()
+            ->getResult();
+    }
     //    /**
     //     * @return Sortie[] Returns an array of Sortie objects
     //     */

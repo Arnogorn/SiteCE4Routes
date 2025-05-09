@@ -1,13 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block javascripts %}
 
-    <script>
-        document.addEventListener('turbo:load', function() {
-            // Désactiver Turbo pour cette page
-            Turbo.session.drive = false;
-        });
-    </script>
-{% endblock %}
 {% block title %}Liste des compétitions{% endblock %}
 
 {% block body %}
@@ -17,10 +9,12 @@
         <thead>
             <tr>
                 <th>Titre</th>
-                <th>DateDebut</th>
-                <th>DateFin</th>
-                <th>PrixTransport</th>
-                <th>PrixEpreuve</th>
+                <th>Date</th>
+
+                <th>Date de fin</th>
+
+                <th>Tarif du transport</th>
+                <th>Tarif de l'engagement</th>
                 <th>Description</th>
                 <th>actions</th>
             </tr>

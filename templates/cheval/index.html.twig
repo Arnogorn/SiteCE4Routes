@@ -8,38 +8,39 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Photo</th>
                 <th>Nom</th>
                 <th>Nom du Père</th>
                 <th>Nom de la Mère</th>
                 <th>Sexe</th>
                 <th>Date de Naissance</th>
                 <th>Lieu de Naissance</th>
-                <th>Appartient à l'Écurie</th>
                 <th>Informations</th>
+                <th>Cheval de club</th>
+                {% if 'ROLE_ADMIN' in app.user.roles %}
                 <th>À Vendre</th>
                 <th>Vendu</th>
+                {% endif %}
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for cheval in chevals %}
             <tr>
-                <td>{{ cheval.photo }}</td>
-
                 <td>{{ cheval.nom }}</td>
                 <td>{{ cheval.nomPere }}</td>
                 <td>{{ cheval.nomMere }}</td>
                 <td>{{ cheval.sexe.libelle }}</td>
                 <td>{{ cheval.dateNaissance ? cheval.dateNaissance|date('Y-m-d') : '' }}</td>
                 <td>{{ cheval.lieuNaissance }}</td>
-                <td>{{ cheval.appartientEcurie ? 'Oui' : 'Non' }}</td>
                 <td>{{ cheval.infos }}</td>
+                <td>{{ cheval.appartientEcurie ? 'Oui' : 'Non' }}</td>
+                {% if 'ROLE_ADMIN' in app.user.roles %}
                 <td>{{ cheval.aVendre ? 'Oui' : 'Non' }}</td>
                 <td>{{ cheval.vendu ? 'Oui' : 'Non' }}</td>
+                {% endif %}
                 <td>
                     <a href="{{ path('app_cheval_show', {'id': cheval.id}) }}">Voir</a>
-                    {% if is_granted('ROLE_ADMIN') %}
+                    {% if (app.user and cheval.user and app.user.id == cheval.user.id) or (app.user and 'ROLE_ADMIN' in app.user.roles) %}
                     <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}">Modifier</a>
                     {% endif %}
                 </td>
@@ -51,6 +52,7 @@
         {% endfor %}
         </tbody>
     </table>
-
+    {% if 'ROLE_ADMIN' in app.user.roles %}
     <a href="{{ path('app_cheval_new') }}">Ajouter un nouveau cheval</a>
+    {% endif %}
 {% endblock %}

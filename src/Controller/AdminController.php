@@ -14,7 +14,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_ADMIN')]
 #[Route('/admin')]
 class AdminController extends AbstractController
 {
@@ -112,23 +114,7 @@ class AdminController extends AbstractController
         ]);
     }
 
-    #[Route('/cheval/{id}/modifier', name: 'app_cheval_edit', methods: ['GET', 'POST'])]
-    public function editCheval(Request $request, Cheval $cheval, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(ChevalType::class, $cheval);
-        $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_cheval_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('cheval/edit.html.twig', [
-            'cheval' => $cheval,
-            'form' => $form,
-        ]);
-    }
 
     #[Route('/cheval/{id}', name: 'app_cheval_delete', methods: ['POST'])]
     public function deleteCheval(Request $request, Cheval $cheval, EntityManagerInterface $entityManager): Response
@@ -145,22 +131,5 @@ class AdminController extends AbstractController
 
     //CRUD utilisateur
 
-    #[Route('/utilisateur',name: 'app_user_index', methods: ['GET'])]
-    public function indexUtilisateur(UserRepository $userRepository): Response
-    {
-        return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
-        ]);
-    }
 
-    #[Route('/utilisateur/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function deleteUtilisateur(Request $request, User $user, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($user);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
-    }
 }

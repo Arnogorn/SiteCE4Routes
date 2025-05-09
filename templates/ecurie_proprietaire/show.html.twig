@@ -1,13 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        document.addEventListener('turbo:load', function() {
-            // Désactiver Turbo pour cette page
-            Turbo.session.drive = false;
-        });
-    </script>
-{% endblock %}
+
 
 {% block title %}Écurie de propriétaire{% endblock %}
 
