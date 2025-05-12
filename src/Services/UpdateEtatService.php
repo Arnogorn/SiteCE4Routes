@@ -29,7 +29,7 @@ class UpdateEtatService
             // On prépare les variables
             $now = new \DateTime('now');
             $cloture = $sortie->getDateLimiteInscription();
-            $debut = $sortie->getDate(); // Je suppose que c'est getDate() et non getDateHeureDebut()
+            $debut = $sortie->getDate();
             $duree = $sortie->getDuree();
 
             // Calculer la date de fin de la sortie

@@ -19,7 +19,7 @@
             <tr>
                 <td>{{ ecurie_proprietaire.prestation }}</td>
                 <td>{{ ecurie_proprietaire.description }}</td>
-                <td>{{ ecurie_proprietaire.prix }}</td>
+                <td>{{ ecurie_proprietaire.prix }} €</td>
                 <td>
                     <a href="{{ path('app_ecurie_proprietaire_show', {'id': ecurie_proprietaire.id}) }}">Voir</a>
                     {% if is_granted('ROLE_ADMIN') %}

@@ -72,7 +72,7 @@
         </tbody>
     </table>
     {% if 'ROLE_ADMIN' in app.user.roles %}
-    <a href="{{ path('app_user_index') }}">Retour à la liste</a>
+    <a href="{{ path('app_user_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
     {% else %}
     <a href="{{ path('index') }}">Retour à l'acceuil</a>
     {% endif %}

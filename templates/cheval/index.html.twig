@@ -8,11 +8,12 @@
     <table class="table">
         <thead>
             <tr>
+                <th>Photo</th>
                 <th>Nom</th>
                 <th>Nom du Père</th>
                 <th>Nom de la Mère</th>
                 <th>Sexe</th>
-                <th>Date de Naissance</th>
+                <th>Âge</th>
                 <th>Lieu de Naissance</th>
                 <th>Informations</th>
                 <th>Cheval de club</th>
@@ -24,13 +25,31 @@
             </tr>
         </thead>
         <tbody>
-        {% for cheval in chevals %}
+        {% for cheval in chevaux %}
             <tr>
+                <td>{% if cheval.photo != null %}
+                        <img src="{{ asset('uploads/chevaux/' ~ cheval.photo) }}" alt="{{ cheval.nom }}">
+                    {% else %}
+                        <img src="{{ asset('uploads/utilisateurs/logo.avif') }}" alt="photo par défaut">
+
+                    {% endif %}</td>
                 <td>{{ cheval.nom }}</td>
                 <td>{{ cheval.nomPere }}</td>
                 <td>{{ cheval.nomMere }}</td>
                 <td>{{ cheval.sexe.libelle }}</td>
-                <td>{{ cheval.dateNaissance ? cheval.dateNaissance|date('Y-m-d') : '' }}</td>
+                <td>
+                {% if cheval.dateNaissance %}
+                    {% set age_years = date('now').diff(date(cheval.dateNaissance)).y %}
+                    {% if age_years >= 1 %}
+                        {{ age_years }} an{% if age_years > 1 %}s{% endif %}
+                    {% else %}
+                        {% set age_months = date('now').diff(date(cheval.dateNaissance)).m %}
+                        {{ age_months }} mois
+                    {% endif %}
+                {% else %}
+                    Âge inconnu
+                {% endif %}
+                </td>
                 <td>{{ cheval.lieuNaissance }}</td>
                 <td>{{ cheval.infos }}</td>
                 <td>{{ cheval.appartientEcurie ? 'Oui' : 'Non' }}</td>

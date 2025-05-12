@@ -1,0 +1,174 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Planning Hebdomadaire{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background-color: #a8dadc;
+            padding: 20px;
+        }
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .calendrier {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+        .calendrier th, .calendrier td {
+            border: 1px solid #bbdefb;
+            text-align: center;
+            padding: 10px;
+            height: 80px;
+            position: relative;
+            vertical-align: top;
+        }
+        .calendrier th {
+            background-color: #1e88e5;
+            color: white;
+            font-weight: bold;
+            height: auto;
+        }
+        .calendrier th:first-child {
+            width: 150px;
+            background-color: #1565c0;
+        }
+        .event {
+            background-color: #bbdefb;
+            padding: 10px;
+            cursor: pointer;
+            height: 100%;
+            border-left: 4px solid #1565c0;
+            text-align: left;
+            font-size: 0.9em;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .event-content {
+            margin-bottom: 5px;
+            word-break: break-word;
+            font-weight: bold;
+        }
+
+        .event-time-label {
+            font-size: 0.75em;
+            color: #1565c0;
+            display: block;
+            border-top: 1px dashed #1e88e5;
+            padding-top: 3px;
+            margin-top: 4px;
+        }
+        .event:hover {
+            background-color: #90caf9;
+            transform: scale(1.02);
+        }
+        .empty-cell {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-size: 1.2em;
+            color: #aaa;
+        }
+        .empty-cell:hover {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        .time-label {
+            font-weight: bold;
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        .btn-primary {
+            background-color: #1565c0;
+            border-color: #1565c0;
+        }
+        .btn-secondary {
+            background-color: #78909c;
+            border-color: #78909c;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1 class="mb-4">Planning Hebdomadaire</h1>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="table-responsive">
+            <table class="calendrier">
+                <thead>
+                <tr>
+                    <th>Heure</th>
+                    {% for jour in jours %}
+                        <th>{{ jour }}</th>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for heure in heures %}
+                    <tr>
+                        {% set heureEntiere = heure|split(':')[0] %}
+                        {% set heureFinEntiere = heureEntiere|number_format + 1 %}
+                        <td class="time-label">{{ heureEntiere }}h30 - {{ heureFinEntiere }}h30</td>
+
+                        {% for jour in jours %}
+                            {% if not grille[jour][heure].skip %}
+                                {% if grille[jour][heure].type == 'debut' %}
+                                    <td {% if grille[jour][heure].rowspan > 1 %}rowspan="{{ grille[jour][heure].rowspan }}"{% endif %}>
+                                        {% if 'ROLE_ADMIN' in app.user.roles %}
+                                        <div class="event" onclick="window.location='{{ path('app_calendrier_edit', {'id': grille[jour][heure].evenement.id}) }}'">
+                                        {% else %}
+                                            <div class="event event-readonly">
+                                        {% endif %}
+                                            <div class="event-content">
+                                                {{ grille[jour][heure].evenement.contenu|nl2br }}
+                                            </div>
+                                            <div>
+                                                <small class="event-time">
+                                                {{ grille[jour][heure].evenement.heureDebut }} - {{ grille[jour][heure].evenement.heureFin }}
+                                                </small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                {% else %}
+                                    <td>
+                                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                                        <div class="empty-cell" onclick="window.location='{{ path('app_calendrier_new') }}?jour={{ jour }}&heure={{ heure }}'">
+                                            +
+                                        </div>
+                                    {% else %}
+                                        <div class="empty-cell-readonly"></div>
+                                    {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
