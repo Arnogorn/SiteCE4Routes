@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CalendrierRepository;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Integer;
 
 #[ORM\Entity(repositoryClass: CalendrierRepository::class)]
 class Calendrier
@@ -19,11 +20,11 @@ class Calendrier
     #[ORM\Column(length: 15)]
     private ?string $jour = null;
 
-    #[ORM\Column]
-    private ?int $heureDebut = null;
+    #[ORM\Column(length:5)]
+    private ?string $heureDebut = null;
 
-    #[ORM\Column]
-    private ?int $heureFin = null;
+    #[ORM\Column(length:5)]
+    private ?string $heureFin = null;
 
     public function getId(): ?int
     {
@@ -54,24 +55,24 @@ class Calendrier
         return $this;
     }
 
-    public function getHeureDebut(): ?int
+    public function getHeureDebut(): ?string
     {
         return $this->heureDebut;
     }
 
-    public function setHeureDebut(int $heureDebut): static
+    public function setHeureDebut(string $heureDebut): static
     {
         $this->heureDebut = $heureDebut;
 
         return $this;
     }
 
-    public function getHeureFin(): ?int
+    public function getHeureFin(): ?string
     {
         return $this->heureFin;
     }
 
-    public function setHeureFin(int $heureFin): static
+    public function setHeureFin(string $heureFin): static
     {
         $this->heureFin = $heureFin;
 

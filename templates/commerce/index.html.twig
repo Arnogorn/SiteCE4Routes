@@ -1,0 +1,126 @@
+{% extends 'base.html.twig' %}
+{% block title %}Commerce{% endblock %}
+
+{% block body %}
+    <h1>Vente de chevaux</h1>
+
+    <h2>Chevaux à vendre</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Photo</th>
+                <th>Nom</th>
+                <th>Nom du Père</th>
+                <th>Nom de la Mère</th>
+                <th>Sexe</th>
+                <th>Âge</th>
+                <th>Lieu de Naissance</th>
+                <th>Informations</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for chevalAVendre in chevauxAVendre %}
+                <tr>
+                    <td>{% if chevalAVendre.photo != null %}
+                            <img src="{{ asset('uploads/chevaux/' ~ chevalAVendre.photo) }}" alt="{{ chevalAVendre.nom }}">
+                        {% else %}
+                            <img src="{{ asset('uploads/utilisateurs/logo.avif') }}" alt="photo par défaut">
+
+                        {% endif %}
+                    </td>
+                    <td>
+                         {{ chevalAVendre.nom }}
+                    </td>
+                    <td>
+                        {{ chevalAVendre.nomPere }}
+                    </td>
+                    <td>
+                        {{ chevalAVendre.nomMere }}
+                    </td>
+                    <td>
+                        {{ chevalAVendre.sexe.libelle }}
+                    </td>
+                    <td>
+                        {% if chevalAVendre.dateNaissance %}
+                            {% set age_years = date('now').diff(date(chevalAVendre.dateNaissance)).y %}
+                            {% if age_years >= 1 %}
+                                {{ age_years }} an{% if age_years > 1 %}s{% endif %}
+                            {% else %}
+                                {% set age_months = date('now').diff(date(chevalAVendre.dateNaissance)).m %}
+                                {{ age_months }} mois
+                            {% endif %}
+                        {% else %}
+                            Âge inconnu
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ chevalAVendre.lieuNaissance }}
+                    </td>
+                    <td>
+                        {{ chevalAVendre.infos }}
+                    </td>
+                </tr>
+        {% endfor %}
+            </tbody>
+        </table>
+
+    <h2>Chevaux vendus</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Photo</th>
+                <th>Nom</th>
+                <th>Nom du Père</th>
+                <th>Nom de la Mère</th>
+                <th>Sexe</th>
+                <th>Âge</th>
+                <th>Lieu de Naissance</th>
+                <th>Informations</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for chevalVendu in chevauxVendu %}
+            <tr>
+                <td>{% if chevalVendu.photo != null %}
+                        <img src="{{ asset('uploads/chevaux/' ~ chevalVendu.photo) }}" alt="{{ chevalVendu.nom }}">
+                    {% else %}
+                        <img src="{{ asset('uploads/utilisateurs/logo.avif') }}" alt="photo par défaut">
+
+                    {% endif %}
+                </td>
+                <td>
+                    {{ chevalVendu.nom }}
+                </td>
+                <td>
+                    {{ chevalVendu.nomPere }}
+                </td>
+                <td>
+                    {{ chevalVendu.nomMere }}
+                </td>
+                <td>
+                    {{ chevalVendu.sexe.libelle }}
+                </td>
+                <td>
+                    {% if chevalVendu.dateNaissance %}
+                        {% set age_years = date('now').diff(date(chevalVendu.dateNaissance)).y %}
+                        {% if age_years >= 1 %}
+                            {{ age_years }} an{% if age_years > 1 %}s{% endif %}
+                        {% else %}
+                            {% set age_months = date('now').diff(date(chevalVendu.dateNaissance)).m %}
+                            {{ age_months }} mois
+                        {% endif %}
+                    {% else %}
+                        Âge inconnu
+                    {% endif %}
+                </td>
+                <td>
+                    {{ chevalVendu.lieuNaissance }}
+                </td>
+                <td>
+                    {{ chevalVendu.infos }}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

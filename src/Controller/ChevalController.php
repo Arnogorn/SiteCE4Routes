@@ -21,7 +21,7 @@ final class ChevalController extends AbstractController
     public function index(ChevalRepository $chevalRepository): Response
     {
         return $this->render('cheval/index.html.twig', [
-            'chevals' => $chevalRepository->findAll(),
+            'chevaux' => $chevalRepository->findAll(),
         ]);
     }
 

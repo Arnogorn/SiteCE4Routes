@@ -29,7 +29,7 @@
             </tr>
             <tr>
                 <th>Prix</th>
-                <td>{{ sortie.prix }}</td>
+                <td>{{ sortie.prix }} €</td>
             </tr>
             <tr>
                 <th>Informations</th>
@@ -73,7 +73,7 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_sortie_index') }}">Retour à la liste</a>
+    <a href="{{ path('app_sortie_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
 
     {% if is_granted('ROLE_ADMIN') %}
         <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">Modifier</a>
