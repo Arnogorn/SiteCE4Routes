@@ -99,11 +99,17 @@ final class FamilleController extends AbstractController
     #[Route('/{id}/membres', name: 'app_famille_membres', methods: ['GET'])]
     public function membres(Famille $famille): Response
     {
-        // Le User doit être propriétaire de la Famille pour y avoir accès
-        if ($this->getUser() !== $famille->getUser()) {
+        // Autorisé uniquement si l'utilisateur est ADMIN ou propriétaire de la famille
+        $user = $this->getUser();
+
+        // Le User n'a accès qu'à sa propre famille. l'Admin à accès à toutes les familles
+        if (
+            !in_array('ROLE_ADMIN', $user->getRoles()) &&
+            $user !== $famille->getUser()
+        ) {
             throw $this->createAccessDeniedException();
         }
-        // Retourne ensuite les Membres de la Famille
+
         return $this->render('famille/membres.html.twig', [
             'famille' => $famille,
             'membres' => $famille->getMembre(),

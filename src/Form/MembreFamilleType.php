@@ -28,10 +28,10 @@ class MembreFamilleType extends AbstractType
                 'choice_label' => 'libelle',
                 'placeholder' => 'Sélectionnez un niveau',
             ])
-            ->add('famille', EntityType::class, [
-                'class' => Famille::class,
-                'choice_label' => 'id',
-            ])
+//            ->add('famille', EntityType::class, [
+//                'class' => Famille::class,
+//                'choice_label' => 'id',
+//            ])
         ;
     }
 

@@ -89,7 +89,7 @@
             <th>Bouton famille</th>
             <td>
                 {% if app.user and app.user.famille %}
-                    <a href="{{ path('app_famille_membres', { id: app.user.famille.id }) }}" class="btn btn-primary">
+                    <a href="{{ path('app_membre_famille_index') }}" class="btn btn-primary">
                         Voir les membres de ma famille
                     </a>
                 {% endif %}
