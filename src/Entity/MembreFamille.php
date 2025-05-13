@@ -35,14 +35,16 @@ class MembreFamille
     #[ORM\Column]
     private ?bool $droitImage = null;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Niveau $niveau = null;
+
     #[ORM\ManyToOne(inversedBy: 'membre')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Famille $famille = null;
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Niveau $niveau = null;
-
     public function getId(): ?int
     {
         return $this->id;

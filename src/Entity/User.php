@@ -125,6 +125,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->cheval = new ArrayCollection();
         $this->sorties = new ArrayCollection();
+
+        // Création automatique d'une famille vide
+        $famille = new Famille();
+        $famille->setUser($this);
+        $this->setFamille($famille);
     }
 
     public function getId(): ?int
@@ -377,7 +382,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setFamille(?Famille $famille): static
     {
+        if ($this->famille === $famille) {
+            return $this;
+        }
+
         $this->famille = $famille;
+
+        if ($famille !== null && $famille->getUser() !== $this) {
+            $famille->setUser($this);
+        }
 
         return $this;
     }

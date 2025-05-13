@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MembreFamille{% endblock %}
+
+{% block body %}
+    <h1>MembreFamille</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ membre_famille.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ membre_famille.nom }}</td>
+            </tr>
+            <tr>
+                <th>Prenom</th>
+                <td>{{ membre_famille.prenom }}</td>
+            </tr>
+            <tr>
+                <th>DateNaissance</th>
+                <td>{{ membre_famille.dateNaissance ? membre_famille.dateNaissance|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Allergies</th>
+                <td>{{ membre_famille.allergies }}</td>
+            </tr>
+            <tr>
+                <th>MedecinTraitant</th>
+                <td>{{ membre_famille.medecinTraitant }}</td>
+            </tr>
+            <tr>
+                <th>TelMedecin</th>
+                <td>{{ membre_famille.telMedecin }}</td>
+            </tr>
+            <tr>
+                <th>DroitImage</th>
+                <td>{{ membre_famille.droitImage ? 'Yes' : 'No' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_membre_famille_index') }}">back to list</a>
+
+    <a href="{{ path('app_membre_famille_edit', {'id': membre_famille.id}) }}">edit</a>
+
+    {{ include('membre_famille/_delete_form.html.twig') }}
+{% endblock %}

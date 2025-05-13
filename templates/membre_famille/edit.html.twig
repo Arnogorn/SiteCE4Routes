@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit MembreFamille{% endblock %}
+
+{% block body %}
+    <h1>Edit MembreFamille</h1>
+
+    {{ include('membre_famille/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_membre_famille_index') }}">back to list</a>
+
+    {{ include('membre_famille/_delete_form.html.twig') }}
+{% endblock %}

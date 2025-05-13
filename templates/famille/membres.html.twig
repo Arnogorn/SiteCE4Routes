@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Membres de la famille{% endblock %}
+
+{% block body %}
+    <h1>Membres de la famille {{ famille.user.prenom }} {{ famille.user.nom }}</h1>
+
+    <ul>
+        {% for membre in membres %}
+            <li>{{ membre.prenom }} {{ membre.nom }} – {{ membre.niveau.libelle }}</li>
+        {% else %}
+            <li>Aucun membre</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ path('app_membre_famille_new') }}" class="btn btn-primary">Ajouter un membre</a>
+{% endblock %}
