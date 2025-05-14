@@ -62,10 +62,8 @@ class AppFixtures extends Fixture
             $plainPassword
         );
 
-                 $user1 ->setPassword($hashedPassword) // password
-
+        $user1 ->setPassword($hashedPassword) // password
             ->setEmail("admin@admin.fr")
-
             ->setRoles(['ROLE_ADMIN'])
             ->setNom("Admin")
             ->setPrenom("Istrateur")

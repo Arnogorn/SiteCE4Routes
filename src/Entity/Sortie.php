@@ -64,11 +64,44 @@ class Sortie
     #[ORM\JoinTable(name: 'sortie_user')]
     private Collection $participants;
 
+    #[ORM\ManyToMany(targetEntity: MembreFamille::class, inversedBy: 'sorties')]
+    private Collection $membresFamilleInscrits;
+
     public function __construct()
     {
         $this->niveauxAdmis = new ArrayCollection();
         $this->participants = new ArrayCollection();
+        $this->membresFamilleInscrits = new ArrayCollection();
     }
+
+    /// Relation Membre Sortie ///
+
+    public function getMembresFamilleInscrits(): Collection
+    {
+        return $this->membresFamilleInscrits;
+    }
+
+    public function addMembresFamilleInscrit(MembreFamille $membre): static
+    {
+        if (!$this->membresFamilleInscrits->contains($membre)) {
+            $this->membresFamilleInscrits->add($membre);
+            $membre->addSortie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMembresFamilleInscrit(MembreFamille $membre): static
+    {
+        if ($this->membresFamilleInscrits->removeElement($membre)) {
+            $membre->removeSortie($this);
+        }
+
+        return $this;
+    }
+
+    /// Fin de la relation Membre Sortie ///
+
 
     public function getId(): ?int
     {

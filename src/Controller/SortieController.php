@@ -215,4 +215,40 @@ final class SortieController extends AbstractController
         // Redirect to sortie details page
         return $this->redirectToRoute('app_sortie_index', ['id' => $sortie->getId()]);
     }
+
+    /// Inscription de MembreFamille ///
+    #[Route('/{id}/inscription-famille', name: 'sortie_inscription_famille', methods: ['GET', 'POST'])]
+    public function inscriptionFamille(Sortie $sortie, Request $request, EntityManagerInterface $em, Security $security): Response
+    {
+        /** @var User $user */
+        $user = $security->getUser();
+        if (!$user || !$user->getFamille()) {
+            throw $this->createAccessDeniedException('Aucune famille trouvée.');
+        }
+
+        $membres = $user->getFamille()->getMembre();
+
+        if ($request->isMethod('POST')) {
+            $ids = $request->request->all('membres'); // tableau d’IDs cochés
+            foreach ($membres as $membre) {
+                if (in_array($membre->getId(), $ids)) {
+                    $sortie->addMembresFamilleInscrit($membre);
+                    $membre->addSortie($sortie);
+                } else {
+                    $sortie->removeMembresFamilleInscrit($membre);
+                    $membre->removeSortie($sortie);
+                }
+            }
+            $em->flush();
+            $this->addFlash('success', 'Membres inscrits avec succès.');
+            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+        }
+
+        return $this->render('sortie/inscription_famille.html.twig', [
+            'sortie' => $sortie,
+            'membres' => $membres,
+            'membresDejaInscrits' => $sortie->getMembresFamilleInscrits(),
+        ]);
+    }
+
 }

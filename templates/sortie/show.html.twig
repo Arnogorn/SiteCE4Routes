@@ -61,11 +61,17 @@
                 <tr>
                     <th>Participants</th>
                     <td>
-                        {% for participant in sortie.participants %}
-                            {{ participant.nom }}<br>
+                        {% if sortie.participants is empty and sortie.membresFamilleInscrits is empty %}
+                            Aucun participant inscrit pour le moment.
                         {% else %}
-                            <em>Aucun participant</em>
-                        {% endfor %}
+                            {% for participant in sortie.participants %}
+                                {{ participant.prenom }} {{ participant.nom }} (Utilisateur)<br>
+                            {% endfor %}
+
+                            {% for membre in sortie.membresFamilleInscrits %}
+                                {{ membre.prenom }} {{ membre.nom }} (Membre de famille)<br>
+                            {% endfor %}
+                        {% endif %}
                     </td>
                 </tr>
             {% endif %}
@@ -85,6 +91,12 @@
         {% else %}
             <a href="{{ path('sortie_desinscription', { id: sortie.id }) }}" class="btn btn-warning">Se désinscrire</a>
         {% endif %}
+    {% endif %}
+
+    {% if app.user.famille.membre|length > 0 %}
+        <a href="{{ path('sortie_inscription_famille', { id: sortie.id }) }}" class="btn btn-outline-primary mt-2">
+            Inscrire un membre de ma famille
+        </a>
     {% endif %}
 
     {% if is_granted('ROLE_ADMIN') %}

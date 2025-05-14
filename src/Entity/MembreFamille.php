@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\MembreFamilleRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -43,8 +45,44 @@ class MembreFamille
     #[ORM\JoinColumn(nullable: false)]
     private ?Famille $famille = null;
 
-    #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToMany(mappedBy: 'membresFamilleInscrits', targetEntity: Sortie::class)]
+    private Collection $sorties;
+
+    public function __construct()
+    {
+        $this->sorties = new ArrayCollection();
+    }
+
+    /// Relation Membre Sortie ///
+    /**
+     * @return Collection<int, Sortie>
+     */
+    public function getSorties(): Collection
+    {
+        return $this->sorties;
+    }
+
+    public function addSortie(Sortie $sortie): static
+    {
+        if (!$this->sorties->contains($sortie)) {
+            $this->sorties->add($sortie);
+            $sortie->addMembresFamilleInscrit($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSortie(Sortie $sortie): static
+    {
+        if ($this->sorties->removeElement($sortie)) {
+            $sortie->removeMembresFamilleInscrit($this);
+        }
+
+        return $this;
+    }
+
+    /// Fin de la relation Membre Sortie ///
+
     public function getId(): ?int
     {
         return $this->id;
