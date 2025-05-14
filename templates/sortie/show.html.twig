@@ -13,7 +13,7 @@
             </tr>
             <tr>
                 <th>Date</th>
-                <td>{{ sortie.date ? sortie.date|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ sortie.date ? sortie.date|date('d-m-Y H:i:s') : ''  }}</td>
             </tr>
             <tr>
                 <th>Durée</th>
@@ -21,7 +21,7 @@
             </tr>
             <tr>
                 <th>Date limite d'inscription</th>
-                <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d-m-Y H:i:s') : ''  }}</td>
             </tr>
             <tr>
                 <th>Nombre maximum d'inscriptions</th>

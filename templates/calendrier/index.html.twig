@@ -52,15 +52,21 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            width: 100%; /* Assure que l'élément prend toute la largeur disponible */
         }
 
-        .event-content {
-            margin-bottom: 5px;
-            word-break: break-word;
-            font-weight: bold;
+        /* Styles pour les cellules vides en mode lecture seule */
+        .empty-cell-readonly {
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            font-size: 1.2em;
+            color: #eee; /* Couleur très légère pour indiquer qu'elle est inactive */
         }
-
-        .event-time-label {
+        .event-time {
             font-size: 0.75em;
             color: #1565c0;
             display: block;
@@ -92,14 +98,6 @@
             font-weight: bold;
             background-color: #e3f2fd;
             color: #1565c0;
-        }
-        .btn-primary {
-            background-color: #1565c0;
-            border-color: #1565c0;
-        }
-        .btn-secondary {
-            background-color: #78909c;
-            border-color: #78909c;
         }
     </style>
 {% endblock %}
@@ -137,30 +135,26 @@
                             {% if not grille[jour][heure].skip %}
                                 {% if grille[jour][heure].type == 'debut' %}
                                     <td {% if grille[jour][heure].rowspan > 1 %}rowspan="{{ grille[jour][heure].rowspan }}"{% endif %}>
-                                        {% if 'ROLE_ADMIN' in app.user.roles %}
-                                        <div class="event" onclick="window.location='{{ path('app_calendrier_edit', {'id': grille[jour][heure].evenement.id}) }}'">
-                                        {% else %}
-                                            <div class="event event-readonly">
-                                        {% endif %}
+                                        <div class="event" {% if 'ROLE_ADMIN' in app.user.roles %}onclick="window.location='{{ path('app_calendrier_edit', {'id': grille[jour][heure].evenement.id}) }}'"{% endif %}>
                                             <div class="event-content">
                                                 {{ grille[jour][heure].evenement.contenu|nl2br }}
                                             </div>
                                             <div>
                                                 <small class="event-time">
-                                                {{ grille[jour][heure].evenement.heureDebut }} - {{ grille[jour][heure].evenement.heureFin }}
+                                                    {{ grille[jour][heure].evenement.heureDebut }} - {{ grille[jour][heure].evenement.heureFin }}
                                                 </small>
                                             </div>
                                         </div>
                                     </td>
                                 {% else %}
                                     <td>
-                                    {% if 'ROLE_ADMIN' in app.user.roles %}
-                                        <div class="empty-cell" onclick="window.location='{{ path('app_calendrier_new') }}?jour={{ jour }}&heure={{ heure }}'">
-                                            +
-                                        </div>
-                                    {% else %}
-                                        <div class="empty-cell-readonly"></div>
-                                    {% endif %}
+                                        {% if 'ROLE_ADMIN' in app.user.roles %}
+                                            <div class="empty-cell" onclick="window.location='{{ path('app_calendrier_new') }}?jour={{ jour }}&heure={{ heure }}'">
+                                                +
+                                            </div>
+                                        {% else %}
+                                            <div class="empty-cell-readonly"></div>
+                                        {% endif %}
                                     </td>
                                 {% endif %}
                             {% endif %}

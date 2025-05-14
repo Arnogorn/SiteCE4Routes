@@ -4,53 +4,53 @@
 {%  block javascript %}
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Fonction pour calculer et afficher la durée
-        function updateDuration() {
-            const heureDebutSelect = document.querySelector('select[name="calendrier[heureDebut]"]');
-            const heureFinSelect = document.querySelector('select[name="calendrier[heureFin]"]');
-
-            if (heureDebutSelect && heureFinSelect) {
-                const heureDebut = heureDebutSelect.value;
-                const heureFin = heureFinSelect.value;
-
-                if (heureDebut && heureFin) {
-                    // Convertir les heures en minutes pour le calcul
-                    const [heureDebutH, heureDebutM] = heureDebut.split(':');
-                    const [heureFinH, heureFinM] = heureFin.split(':');
-
-                    const debutMinutes = parseInt(heureDebutH) * 60 + parseInt(heureDebutM);
-                    const finMinutes = parseInt(heureFinH) * 60 + parseInt(heureFinM);
-
-                    // Calculer la durée en heures
-                    const duree = (finMinutes - debutMinutes) / 60;
-                    let durationText = '';
-
-                    if (duree === 1) {
-                        durationText = 'Durée : 1 heure';
-                    } else {
-                        durationText = `Durée : ${duree} heures`;
-                    }
-
-                    document.getElementById('time-duration').textContent = durationText;
-                }
-            }
-        }
-
-        // Attacher des écouteurs d'événements
+    // Fonction pour calculer et afficher la durée
+    function updateDuration() {
         const heureDebutSelect = document.querySelector('select[name="calendrier[heureDebut]"]');
         const heureFinSelect = document.querySelector('select[name="calendrier[heureFin]"]');
 
-        if (heureDebutSelect) {
-            heureDebutSelect.addEventListener('change', updateDuration);
-        }
+        if (heureDebutSelect && heureFinSelect) {
+            const heureDebut = heureDebutSelect.value;
+            const heureFin = heureFinSelect.value;
 
-        if (heureFinSelect) {
-            heureFinSelect.addEventListener('change', updateDuration);
-        }
+            if (heureDebut && heureFin) {
+                // Convertir les heures en minutes pour le calcul
+                const [heureDebutH, heureDebutM] = heureDebut.split(':');
+                const [heureFinH, heureFinM] = heureFin.split(':');
 
-        // Calculer la durée au chargement
-        updateDuration();
-    });
+                const debutMinutes = parseInt(heureDebutH) * 60 + parseInt(heureDebutM);
+                const finMinutes = parseInt(heureFinH) * 60 + parseInt(heureFinM);
+
+                // Calculer la durée en heures
+                const duree = (finMinutes - debutMinutes) / 60;
+                let durationText = '';
+
+                if (duree === 1) {
+                    durationText = 'Durée : 1 heure';
+                } else {
+                    durationText = `Durée : ${duree} heures`;
+                }
+
+                document.getElementById('time-duration').textContent = durationText;
+            }
+        }
+    }
+
+    // Attacher des écouteurs d'événements
+    const heureDebutSelect = document.querySelector('select[name="calendrier[heureDebut]"]');
+    const heureFinSelect = document.querySelector('select[name="calendrier[heureFin]"]');
+
+    if (heureDebutSelect) {
+    heureDebutSelect.addEventListener('change', updateDuration);
+}
+
+    if (heureFinSelect) {
+    heureFinSelect.addEventListener('change', updateDuration);
+}
+
+    // Calculer la durée au chargement
+    updateDuration();
+});
 </script>
 {% endblock %}
 {% block body %}
