@@ -7,6 +7,7 @@ parameters:
 
     participant_picture_dir: '%kernel.project_dir%/public/uploads/utilisateurs'
     cheval_picture_dir: '%kernel.project_dir%/public/uploads/chevaux'
+    app.timezone: '%env(APP_TIMEZONE)%'
 
 services:
     # default configuration for services in *this* file
@@ -20,8 +21,11 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
+
+
+    App\Kernel:
+        calls:
+            - [ setTimezone, [ '%app.timezone%' ] ]
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
