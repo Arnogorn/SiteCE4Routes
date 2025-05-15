@@ -2,8 +2,8 @@
     <div class="container-fluid">
 
         <h1 class="header-logo">
-            <a href="#" title="ED4R">
-                <img src="#" alt="Logo" id="logo">
+            <a href="{{ path('index') }}" title="ED4R">
+                <img src="{{ asset('uploads/utilisateurs/logoED4R_redimension.png') }}" alt="Logo" id="logo">
             </a>
         </h1>
 
@@ -54,7 +54,7 @@
                     </li>
                     {% if 'ROLE_ADMIN' in app.user.roles %}
                         <li class="nav-item">
-                            <a class="nav-link" href="#" title="Admin">Admin</a>
+                            <a class="nav-link" href="{{ path('app_admin_index') }}" title="Admin">Admin</a>
                         </li>
                     {% endif %}
                 {% else %}

@@ -21,72 +21,10 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AdminController extends AbstractController
 {
 
-    // CRUD Niveau
-    #[Route('/niveau',name: 'app_niveau_index', methods: ['GET'])]
-    public function indexNiveau(NiveauRepository $niveauRepository): Response
-    {
-        return $this->render('niveau/index.html.twig', [
-            'niveaux' => $niveauRepository->findAll(),
-        ]);
+    #[Route('/', name: 'app_admin_index', methods: ['GET'])]
+    public function index(){
+        return $this->render('admin/index.html.twig', []);
     }
-
-    #[Route('/niveau/ajouter', name: 'app_niveau_new', methods: ['GET', 'POST'])]
-    public function newNiveau(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $niveau = new Niveau();
-        $form = $this->createForm(NiveauType::class, $niveau);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($niveau);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_niveau_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('niveau/new.html.twig', [
-            'niveau' => $niveau,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/niveau/{id}', name: 'app_niveau_show', methods: ['GET'])]
-    public function showNiveau(Niveau $niveau): Response
-    {
-        return $this->render('niveau/show.html.twig', [
-            'niveau' => $niveau,
-        ]);
-    }
-
-    #[Route('/niveau/{id}/modifier', name: 'app_niveau_edit', methods: ['GET', 'POST'])]
-    public function editNiveau(Request $request, Niveau $niveau, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(NiveauType::class, $niveau);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_niveau_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('niveau/edit.html.twig', [
-            'niveau' => $niveau,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/niveau/{id}', name: 'app_niveau_delete', methods: ['POST'])]
-    public function deleteNiveau(Request $request, Niveau $niveau, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$niveau->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($niveau);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_niveau_index', [], Response::HTTP_SEE_OTHER);
-    }
-
 
 
 

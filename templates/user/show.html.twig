@@ -8,13 +8,13 @@
 
     <table class="table">
         <tbody>
-        <tr>
-            <th>Photo</th>
-            <td>
-                {% if user.photo != null %}
-                    <img src="{{ asset('uploads/utilisateurs/' ~ user.photo) }}" alt="{{ user.prenom }}">
-                {% else %}
-                    <img src="{{ asset('uploads/utilisateurs/logo.avif') }}" alt="photo par défaut">
+            <tr>
+                <th>Photo</th>
+                    <td>
+                    {% if user.photo != null %}
+                        <img src="{{ asset('uploads/utilisateurs/' ~ user.photo) }}" alt="{{ user.prenom }}">
+                    {% else %}
+                        <img src="{{ asset('uploads/utilisateurs/logoED4R_redimension.png') }}" alt="photo par défaut">
 
                 {% endif %}
             </td>
