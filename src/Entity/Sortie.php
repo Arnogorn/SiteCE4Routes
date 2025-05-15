@@ -289,4 +289,9 @@ class Sortie
             }
         }
     }
+
+    public function getNombreInscritsTotal(): int
+    {
+        return $this->participants->count() + $this->membresFamilleInscrits->count();
+    }
 }

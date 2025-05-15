@@ -141,6 +141,11 @@ final class SortieController extends AbstractController
         /** @var User $user */
         $user = $security->getUser();
 
+        if (!in_array($sortie->getEtat()->getLibelle(), ['Ouverte'])) {
+            $this->addFlash('danger', 'Vous ne pouvez pas vous inscrire à une sortie non ouverte.');
+            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+        }
+
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour vous inscrire.');
         }
@@ -153,10 +158,10 @@ final class SortieController extends AbstractController
         // Vérifie si déjà inscrit
         if ($sortie->getParticipants()->contains($user)) {
             $this->addFlash('warning', 'Vous êtes déjà inscrit à cette sortie.');
+        } elseif ($sortie->getNombreInscritsTotal() >= $sortie->getNbInscriptionMax()) {
+            $this->addFlash('danger', 'Cette sortie est complète, vous ne pouvez pas vous inscrire.');
         } elseif ($sortie->getDateLimiteInscription() < new \DateTime()) {
             $this->addFlash('danger', 'La date limite d\'inscription est dépassée.');
-        } elseif ($sortie->getParticipants()->count() >= $sortie->getNbInscriptionMax()) {
-            $this->addFlash('danger', 'Cette sortie est complète.');
         } else {
             $sortie->addParticipant($user);
             $em->flush();
@@ -226,19 +231,71 @@ final class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Aucune famille trouvée.');
         }
 
+        if (!in_array($sortie->getEtat()->getLibelle(), ['Ouverte'])) {
+            $this->addFlash('danger', 'Vous ne pouvez pas inscrire un membre à une sortie non ouverte.');
+            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+        }
+        if ($sortie->getDateLimiteInscription() < new \DateTime()) {
+            $this->addFlash('danger', 'La date limite d\'inscription est dépassée pour cette sortie.');
+            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+        }
+
         $membres = $user->getFamille()->getMembre();
 
         if ($request->isMethod('POST')) {
             $ids = $request->request->all('membres'); // tableau d’IDs cochés
+
+            $membresACocher = [];
+            foreach ($ids as $id) {
+                foreach ($membres as $membre) {
+                    if ($membre->getId() == $id && $membre->getFamille() === $user->getFamille()) {
+                        $membresACocher[] = $membre;
+                        break;
+                    }
+                }
+            }
+
+            $dejaInscrits = array_filter($membresACocher, function ($m) use ($sortie) {
+                return $sortie->getMembresFamilleInscrits()->contains($m);
+            });
+
+            $aInscrire = count($membresACocher) - count($dejaInscrits);
+            $placesDispo = $sortie->getNbInscriptionMax() - (
+                count($sortie->getParticipants()) + count($sortie->getMembresFamilleInscrits())
+            );
+
+            if ($aInscrire > $placesDispo) {
+                $this->addFlash('danger', 'Il ne reste que '.$placesDispo.' place(s) disponible(s). Veuillez ajuster votre sélection.');
+                return $this->redirectToRoute('sortie_inscription_famille', ['id' => $sortie->getId()]);
+            }
+
+            $placesRestantes = $placesDispo;
+
             foreach ($membres as $membre) {
-                if (in_array($membre->getId(), $ids)) {
-                    $sortie->addMembresFamilleInscrit($membre);
-                    $membre->addSortie($sortie);
-                } else {
+                if ($membre->getFamille() !== $user->getFamille()) {
+                    continue;
+                }
+                $estInscrit = $sortie->getMembresFamilleInscrits()->contains($membre);
+                $seraInscrit = in_array($membre->getId(), $ids);
+
+                if ($seraInscrit) {
+                    if (!$estInscrit && $placesRestantes > 0) {
+                        $sortie->addMembresFamilleInscrit($membre);
+                        $membre->addSortie($sortie);
+                        $placesRestantes--;
+                    }
+                } elseif ($estInscrit) {
                     $sortie->removeMembresFamilleInscrit($membre);
                     $membre->removeSortie($sortie);
                 }
             }
+
+            // Nouvelle vérification après désinscriptions et inscriptions tentées
+            if ($placesRestantes < 0) {
+                $this->addFlash('danger', 'La sortie est complète, impossible d\'inscrire tous les membres sélectionnés.');
+                return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+            }
+
             $em->flush();
             $this->addFlash('success', 'Membres inscrits avec succès.');
             return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);

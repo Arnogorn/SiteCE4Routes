@@ -25,8 +25,18 @@
             </tr>
             <tr>
                 <th>Nombre maximum d'inscriptions</th>
-                <td>{{ sortie.nbInscriptionMax }}</td>
+                <td>{{ sortie.participants|length + sortie.membresFamilleInscrits|length }}/{{ sortie.nbInscriptionMax }}</td>
             </tr>
+            <th>Niveaux admis</th>
+            <td>
+                {% for niveau in sortie.niveauxAdmis %}
+                    {{ niveau.libelle }}{% if not loop.last %}, {% endif %}
+                {% else %}
+                    Aucun niveau spécifié.
+                {% endfor %}
+            </td>
+            </tr>
+            <tr>
             <tr>
                 <th>Prix</th>
                 <td>{{ sortie.prix }} €</td>
@@ -95,7 +105,7 @@
 
     {% if app.user.famille.membre|length > 0 %}
         <a href="{{ path('sortie_inscription_famille', { id: sortie.id }) }}" class="btn btn-outline-primary mt-2">
-            Inscrire un membre de ma famille
+            Inscrire/Désinscrire un membre de ma famille
         </a>
     {% endif %}
 
