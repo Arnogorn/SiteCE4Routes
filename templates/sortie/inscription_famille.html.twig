@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscrire des membres{% endblock %}
+
+{% block body %}
+    <h1>Inscrire un ou plusieurs membres de votre famille à la sortie : {{ sortie.titre }}</h1>
+
+    <form method="post">
+        {% for membre in membres %}
+            <div class="form-check">
+                <input
+                    class="form-check-input"
+                    type="checkbox"
+                    name="membres[]"
+                    value="{{ membre.id }}"
+                    id="membre_{{ membre.id }}"
+                    {% if membresDejaInscrits.contains(membre) %}checked{% endif %}
+                >
+                <label class="form-check-label" for="membre_{{ membre.id }}">
+                    {{ membre.prenom }} {{ membre.nom }} — Niveau : {{ membre.niveau.libelle }}
+                </label>
+            </div>
+        {% else %}
+            <p><em>Aucun membre disponible.</em></p>
+        {% endfor %}
+
+        <button class="btn btn-primary mt-3" type="submit">Valider l’inscription</button>
+        <a href="{{ path('app_sortie_show', { id: sortie.id }) }}" class="btn btn-secondary mt-3">Retour</a>
+    </form>
+{% endblock %}

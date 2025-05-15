@@ -62,10 +62,8 @@ class AppFixtures extends Fixture
             $plainPassword
         );
 
-                 $user1 ->setPassword($hashedPassword) // password
-
+        $user1 ->setPassword($hashedPassword) // password
             ->setEmail("admin@admin.fr")
-
             ->setRoles(['ROLE_ADMIN'])
             ->setNom("Admin")
             ->setPrenom("Istrateur")
@@ -156,7 +154,6 @@ class AppFixtures extends Fixture
 
 
         // === FAMILLE ET MEMBRES ===
-        $famille = new Famille();
 
         $userFamille = (new User())
             ->setEmail("famille.durand@example.com")
@@ -174,8 +171,10 @@ class AppFixtures extends Fixture
             ->setDroitImage(true)
             ->setActif(true)
             ->setIsVerified(true)
-            ->setNiveau($niveaux[0])
-            ->setFamille($famille);
+            ->setNiveau($niveaux[0]);
+//            ->setFamille($famille); Il n'y en a plus besoin pusque le constructeur créer automatiquement une famille lors de la création du User
+
+        $famille = $userFamille->getFamille(); // récupère la famille créée automatiquement dans le constructeur
 
         $membre1 = (new MembreFamille())
             ->setNom("Durand")

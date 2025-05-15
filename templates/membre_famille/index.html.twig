@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MembreFamille index{% endblock %}
+
+{% block body %}
+    <h1>MembreFamille index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Prenom</th>
+                <th>DateNaissance</th>
+                <th>Allergies</th>
+                <th>MedecinTraitant</th>
+                <th>TelMedecin</th>
+                <th>DroitImage</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for membre_famille in membre_familles %}
+            <tr>
+                <td>{{ membre_famille.id }}</td>
+                <td>{{ membre_famille.nom }}</td>
+                <td>{{ membre_famille.prenom }}</td>
+                <td>{{ membre_famille.dateNaissance ? membre_famille.dateNaissance|date('Y-m-d') : '' }}</td>
+                <td>{{ membre_famille.allergies }}</td>
+                <td>{{ membre_famille.medecinTraitant }}</td>
+                <td>{{ membre_famille.telMedecin }}</td>
+                <td>{{ membre_famille.droitImage ? 'Yes' : 'No' }}</td>
+                <td>
+                    <a href="{{ path('app_membre_famille_show', {'id': membre_famille.id}) }}">show</a>
+                    <a href="{{ path('app_membre_famille_edit', {'id': membre_famille.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_membre_famille_new') }}">Create new</a>
+{% endblock %}
