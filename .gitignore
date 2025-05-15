@@ -221,3 +221,29 @@ fabric.properties
 /public/assets/
 /assets/vendor/
 ###< symfony/asset-mapper ###
+# Ignorer les fichiers de lock
+composer.lock
+symfony.lock
+
+# Ignorer les fichiers de build
+/public/build/
+
+# Ignorer les uploads
+/public/uploads/
+
+# Ignorer les fichiers IDE
+/.idea/
+
+# Ignorer les dépendances
+
+/node_modules/
+
+# Fichiers spécifiques
+entrypoints.json
+importmap.php
+manifest.json
+*.js
+*.woff
+*.woff2
+*.jpg
+*.jpeg
