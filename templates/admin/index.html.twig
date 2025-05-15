@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Index Admin{% endblock %}
+
+{% block body %}
+    <h1>Espace Administrateur</h1>
+    <div>
+        <ul>
+            <li>
+                <a href="{{ path('app_cheval_index') }}" title="nos chevaux">Gérer les Chevaux</a>
+            </li>
+            <li>
+                <a href="{{ path('app_sortie_index') }}" title="sorties">Gérer les Sorties</a>
+            </li>
+            <li>
+                <a href="{{ path('app_contact_index') }}" title="contact">Gérer les Contacts</a>
+            </li>
+            <li>
+                <a href="{{ path('app_user_index') }}">Gérer les Utilisateurs</a>
+            </li>
+            <li>
+                <a href="{{ path('app_competition_index') }}">Gérer les Compétitions</a>
+            </li>
+            <li>
+                <a href="{{ path('app_calendrier_index') }}">Gérer le Planning</a>
+            </li>
+            <li>
+                <a href="{{ path('app_ecurie_proprietaire_index') }}">Gérer l'écurie de propriétaire</a>
+            </li>
+        </ul>
+    </div>
+{% endblock %}
