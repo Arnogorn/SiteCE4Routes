@@ -71,17 +71,16 @@ class Famille
 
     public function setUser(?User $user): static
     {
-        // unset the owning side of the relation if necessary
-        if ($user === null && $this->user !== null) {
-            $this->user->setFamille(null);
-        }
-
-        // set the owning side of the relation if necessary
-        if ($user !== null && $user->getFamille() !== $this) {
-            $user->setFamille($this);
+        // éviter boucle infinie
+        if ($this->user === $user) {
+            return $this;
         }
 
         $this->user = $user;
+
+        if ($user !== null && $user->getFamille() !== $this) {
+            $user->setFamille($this);
+        }
 
         return $this;
     }

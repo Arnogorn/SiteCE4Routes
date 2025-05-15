@@ -295,16 +295,20 @@
             "./config/routes/web_profiler.yaml"
         ]
     },
-    "symfonycasts/reset-password-bundle": {
-        "version": "1.23",
+    "symfony/webpack-encore-bundle": {
+        "version": "2.2",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "1.0",
-            "ref": "97c1627c0384534997ae1047b93be517ca16de43"
+            "version": "2.0",
+            "ref": "9ef5412a4a2a8415aca3a3f2b4edd3866aab9a19"
         },
         "files": [
-            "./config/packages/reset_password.yaml"
+            "./assets/app.js",
+            "./assets/styles/app.css",
+            "./config/packages/webpack_encore.yaml",
+            "./package.json",
+            "./webpack.config.js"
         ]
     },
     "symfonycasts/verify-email-bundle": {
