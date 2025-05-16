@@ -24,7 +24,7 @@
                     <td>{% if chevalAVendre.photo != null %}
                             <img src="{{ asset('uploads/chevaux/' ~ chevalAVendre.photo) }}" alt="{{ chevalAVendre.nom }}">
                         {% else %}
-                            <img src="{{ asset('uploads/utilisateurs/') }}" alt="photo par défaut">
+                            <img src="{{ asset('uploads/utilisateurs/logoED4R_redimension.png') }}" alt="photo par défaut">
 
                         {% endif %}
                     </td>
@@ -60,6 +60,10 @@
                         {{ chevalAVendre.infos }}
                     </td>
                 </tr>
+        {% else %}
+            <tr>
+                <td colspan="10">Aucun Cheval à vendre </td>
+            </tr>
         {% endfor %}
             </tbody>
         </table>

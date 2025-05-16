@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Moniteur{% endblock %}
+
+{% block body %}
+    <h1>Moniteur {{ moniteur.user.prenom }} {{ moniteur.user.nom }}</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+
+                <td>{{ moniteur.user.nom }}</td>
+                <td>{{ moniteur.user.prenom }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_moniteur_index') }}">Retour à la liste</a>
+
+
+
+    {{ include('moniteur/_delete_form.html.twig') }}
+{% endblock %}

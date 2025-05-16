@@ -17,7 +17,7 @@
                 <th>Lieu de Naissance</th>
                 <th>Informations</th>
                 <th>Cheval de club</th>
-                {% if 'ROLE_ADMIN' in app.user.roles %}
+                {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
                 <th>À Vendre</th>
                 <th>Vendu</th>
                 {% endif %}
@@ -53,7 +53,7 @@
                 <td>{{ cheval.lieuNaissance }}</td>
                 <td>{{ cheval.infos }}</td>
                 <td>{{ cheval.appartientEcurie ? 'Oui' : 'Non' }}</td>
-                {% if 'ROLE_ADMIN' in app.user.roles %}
+                {% if  app.user and 'ROLE_ADMIN' in app.user.roles %}
                 <td>{{ cheval.aVendre ? 'Oui' : 'Non' }}</td>
                 <td>{{ cheval.vendu ? 'Oui' : 'Non' }}</td>
                 {% endif %}
@@ -71,7 +71,7 @@
         {% endfor %}
         </tbody>
     </table>
-    {% if 'ROLE_ADMIN' in app.user.roles %}
+    {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
     <a href="{{ path('app_cheval_new') }}">Ajouter un nouveau cheval</a>
     {% endif %}
 {% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste moniteurs{% endblock %}
+
+{% block body %}
+    <h1>Liste des moniteurs</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for moniteur in moniteurs %}
+            <tr>
+                <td>{{ moniteur.user.nom }}</td>
+                <td>{{ moniteur.user.prenom }}</td>
+                <td>
+                    <a href="{{ path('app_moniteur_show', {'id': moniteur.id}) }}">Voir</a>
+
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">Aucun moniteur trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_moniteur_new') }}">Ajouter un moniteur</a>
+{% endblock %}

@@ -135,7 +135,7 @@
                             {% if not grille[jour][heure].skip %}
                                 {% if grille[jour][heure].type == 'debut' %}
                                     <td {% if grille[jour][heure].rowspan > 1 %}rowspan="{{ grille[jour][heure].rowspan }}"{% endif %}>
-                                        <div class="event" {% if 'ROLE_ADMIN' in app.user.roles %}onclick="window.location='{{ path('app_calendrier_edit', {'id': grille[jour][heure].evenement.id}) }}'"{% endif %}>
+                                        <div class="event" {% if app.user and 'ROLE_ADMIN' in app.user.roles %}onclick="window.location='{{ path('app_calendrier_edit', {'id': grille[jour][heure].evenement.id}) }}'"{% endif %}>
                                             <div class="event-content">
                                                 {{ grille[jour][heure].evenement.contenu|nl2br }}
                                             </div>
@@ -148,7 +148,7 @@
                                     </td>
                                 {% else %}
                                     <td>
-                                        {% if 'ROLE_ADMIN' in app.user.roles %}
+                                        {% if app.user and  'ROLE_ADMIN' in app.user.roles %}
                                             <div class="empty-cell" onclick="window.location='{{ path('app_calendrier_new') }}?jour={{ jour }}&heure={{ heure }}'">
                                                 +
                                             </div>
