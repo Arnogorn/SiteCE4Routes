@@ -6,6 +6,7 @@ use App\Entity\Etat;
 use App\Entity\Moniteur;
 use App\Entity\Niveau;
 use App\Entity\Sortie;
+use App\Entity\TypeSortie;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -23,6 +24,11 @@ class SortieType extends AbstractType
         $builder
             ->add('titre', TextType::class, [
                 'label' => 'Titre',
+            ])
+            ->add('typeSortie', EntityType::class, [
+                'class' => TypeSortie::class,
+                'choice_label' => 'libelle',
+                'label' => 'Type de sortie : ',
             ])
             ->add('date', null, [
                 'widget' => 'single_text',

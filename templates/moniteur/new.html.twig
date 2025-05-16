@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau moniteur{% endblock %}
+
+{% block body %}
+    <h1>Ajouter un nouveau moniteur</h1>
+
+    {{ include('moniteur/_form.html.twig') }}
+
+    <a href="{{ path('app_moniteur_index') }}">Retour à la liste</a>
+{% endblock %}

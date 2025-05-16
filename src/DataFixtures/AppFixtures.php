@@ -144,7 +144,7 @@ class AppFixtures extends Fixture
             ->setDroitImage(true)
             ->setActif(true)
             ->setIsVerified(true)
-            ->setNiveau($niveaux[10]);
+            ->setNiveau($niveaux[1]);
 
         $moniteur1 = new \App\Entity\Moniteur();
         $moniteur1->setUser($userM1);
@@ -233,20 +233,7 @@ class AppFixtures extends Fixture
         $manager->persist($cheval1);
 
         // SORTIE
-        $sortie1 = new \App\Entity\Sortie();
-        $sortie1->setTitre("Balade en forêt")
-            ->setDate(new \DateTimeImmutable('2025-06-15'))
-            ->setDuree(120)
-            ->setDateLimiteInscription(new \DateTimeImmutable('2025-06-01'))
-            ->setNbInscriptionMax(10)
-            ->setPrix(25)
-            ->setInfos("Sortie encadrée par un moniteur diplômé. Casque obligatoire.")
-            ->setIsPublished(true)
-            ->setMoniteur($moniteur1)
-            ->setEtat($etats[1]); // Ouvert
-        $sortie1->addNiveauxAdmi($niveaux[0]); // Débutant
 
-        $manager->persist($sortie1);
 
         // COMPÉTITION
         $competition1 = new \App\Entity\Competition();

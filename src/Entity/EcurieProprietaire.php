@@ -20,7 +20,7 @@ class EcurieProprietaire
     private ?string $description = null;
 
     #[ORM\Column]
-    private ?int $prix = null;
+    private ?string $prix = null;
 
     public function getId(): ?int
     {
@@ -51,12 +51,12 @@ class EcurieProprietaire
         return $this;
     }
 
-    public function getPrix(): ?int
+    public function getPrix(): ?string
     {
         return $this->prix;
     }
 
-    public function setPrix(int $prix): static
+    public function setPrix(string $prix): static
     {
         $this->prix = $prix;
 

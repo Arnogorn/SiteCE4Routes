@@ -22,7 +22,7 @@ class Sortie
     private ?string $titre = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Moniteur $moniteur = null;
 
     #[ORM\Column]
@@ -66,6 +66,10 @@ class Sortie
 
     #[ORM\ManyToMany(targetEntity: MembreFamille::class, inversedBy: 'sorties')]
     private Collection $membresFamilleInscrits;
+
+    #[ORM\ManyToOne(inversedBy: 'sorties')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?TypeSortie $typeSortie = null;
 
     public function __construct()
     {
@@ -278,20 +282,32 @@ class Sortie
 
         return $this;
     }
-    #[Assert\Callback]
-    public function validateDates(ExecutionContextInterface $context): void
-    {
-        if ($this->dateLimiteInscription && $this->date) {
-            if ($this->dateLimiteInscription > $this->date) {
-                $context->buildViolation('La date limite d\'inscription doit être antérieure à la date de début de la sortie.')
-                    ->atPath('dateLimiteInscription')
-                    ->addViolation();
-            }
-        }
-    }
+//    #[Assert\Callback]
+//    public function validateDates(ExecutionContextInterface $context): void
+//    {
+//        if ($this->dateLimiteInscription && $this->date) {
+//            if ($this->dateLimiteInscription > $this->date) {
+//                $context->buildViolation('La date limite d\'inscription doit être antérieure à la date de début de la sortie.')
+//                    ->atPath('dateLimiteInscription')
+//                    ->addViolation();
+//            }
+//        }
+//    }
 
     public function getNombreInscritsTotal(): int
     {
         return $this->participants->count() + $this->membresFamilleInscrits->count();
+    }
+
+    public function getTypeSortie(): ?TypeSortie
+    {
+        return $this->typeSortie;
+    }
+
+    public function setTypeSortie(?TypeSortie $typeSortie): static
+    {
+        $this->typeSortie = $typeSortie;
+
+        return $this;
     }
 }

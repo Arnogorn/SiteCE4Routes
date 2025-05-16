@@ -100,7 +100,7 @@ final class SortieController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/{id}/edit', name: 'app_sortie_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Sortie $sortie, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Sortie $sortie, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
     {
 //        $this->denyAccessUnlessGranted('ROLE_ADMIN');
 
@@ -108,6 +108,29 @@ final class SortieController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($sortie->getDate() !== null) {
+                $dateLimite = $sortie->getDate()->sub(new DateInterval('P2D'));
+                $sortie->setDateLimiteInscription($dateLimite);
+            }
+            if ($sortie->isPublished() === true) {
+                // Récupérer l'état "Ouvert" depuis la base de données
+                $etatOuvert = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
+
+                if ($etatOuvert) {
+                $sortie->setEtat($etatOuvert);
+            } else {
+                // Gestion d'erreur si l'état n'existe pas
+                $this->addFlash('danger', 'Impossible de trouver l\'état "Ouvert". Veuillez vérifier votre configuration.');
+
+            }
+        } else {
+            // Si non publiée, définir un état par défaut, par exemple "Créée"
+            $etatCree = $etatRepository->findOneBy(['libelle' => 'Créée']);
+            if ($etatCree) {
+                $sortie->setEtat($etatCree);
+            }
+        }
+            $entityManager->persist($sortie);
             $entityManager->flush();
 
             return $this->redirectToRoute('app_sortie_index', [], Response::HTTP_SEE_OTHER);
@@ -183,7 +206,10 @@ final class SortieController extends AbstractController
 
         if (!$sortie->getParticipants()->contains($user)) {
             $this->addFlash('info', 'Vous n\'êtes pas inscrit à cette sortie.');
-        } else {
+        }else if($sortie->getDateLimiteInscription()<new \DateTime()) {
+            $this->addFlash('danger','Vous ne pouvez plus vous désinscrire de la sortie.');
+        }
+        else {
             $sortie->removeParticipant($user);            $em->flush();
             $this->addFlash('success', 'Vous vous êtes désinscrit de la sortie.');
         }
@@ -209,7 +235,8 @@ final class SortieController extends AbstractController
         }
 
         // Changer l'état de la sortie en Ouverte
-        $sortie->setEtat($etatOuverte);
+        $sortie->setIsPublished(true);
+
 
         // Save changes
         $entityManager->persist($sortie);
@@ -231,10 +258,6 @@ final class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Aucune famille trouvée.');
         }
 
-        if (!in_array($sortie->getEtat()->getLibelle(), ['Ouverte'])) {
-            $this->addFlash('danger', 'Vous ne pouvez pas inscrire un membre à une sortie non ouverte.');
-            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
-        }
         if ($sortie->getDateLimiteInscription() < new \DateTime()) {
             $this->addFlash('danger', 'La date limite d\'inscription est dépassée pour cette sortie.');
             return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
@@ -280,11 +303,16 @@ final class SortieController extends AbstractController
 
                 if ($seraInscrit) {
                     if (!$estInscrit && $placesRestantes > 0) {
+                        $this->addFlash('success', 'Membres inscrits avec succès.');
                         $sortie->addMembresFamilleInscrit($membre);
                         $membre->addSortie($sortie);
                         $placesRestantes--;
                     }
-                } elseif ($estInscrit) {
+                }else if($sortie->getDateLimiteInscription()<new \DateTime()) {
+                    $this->addFlash('danger','Vous ne pouvez plus vous désinscrire de la sortie.');
+                }
+                else if ($estInscrit) {
+                    $this->addFlash('success', 'Le membre de famille a bien été désinscrit de la sortie.');
                     $sortie->removeMembresFamilleInscrit($membre);
                     $membre->removeSortie($sortie);
                 }
@@ -297,7 +325,7 @@ final class SortieController extends AbstractController
             }
 
             $em->flush();
-            $this->addFlash('success', 'Membres inscrits avec succès.');
+
             return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
         }
 

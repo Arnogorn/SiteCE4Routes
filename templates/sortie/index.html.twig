@@ -17,7 +17,7 @@
                 <th>Informations</th>
 
                 <th>État de la sortie</th>
-                {% if 'ROLE_ADMIN' in app.user.roles %}
+                {% if is_granted('ROLE_ADMIN') %}
                 <th>Sortie publiée</th>
                 {% endif %}
                 <th>actions</th>
@@ -47,7 +47,7 @@
                         {% else %}
                             border-danger
                         {% endif %}">{{ sortie.etat.libelle }}</p></td>
-                {% if 'ROLE_ADMIN' in app.user.roles %}
+                {% if is_granted('ROLE_ADMIN') %}
                 <td>{{ sortie.isPublished ? 'Oui' : 'Non' }}</td>
                 {% endif %}
                 <td>

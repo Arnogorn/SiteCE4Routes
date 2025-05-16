@@ -54,6 +54,8 @@ class RegistrationFormType extends AbstractType
                 // Remove 'mapped' => false to allow automatic mapping
                 'query_builder' => function (NiveauRepository $niveauRepository) {
                     return $niveauRepository->createQueryBuilder('n')
+                        ->where('n.libelle != :libelleAExclure')
+                        ->setParameter('libelleAExclure', 'Tous niveaux')
                         ->addOrderBy('n.libelle');
                 }
             ])
@@ -62,7 +64,7 @@ class RegistrationFormType extends AbstractType
                 'required' => false,
             ])
             ->add('allergies', TextType::class, [
-                'label' => 'Avez vous des allergies ? :',
+                'label' => 'Avez vous des allergies, si oui lesquelles? :',
                 'required' => false,
             ])
             ->add('plainPassword', PasswordType::class, [

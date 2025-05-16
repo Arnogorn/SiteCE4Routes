@@ -11,6 +11,12 @@
                 <th>Titre</th>
                 <td>{{ sortie.titre }}</td>
             </tr>
+            {% if sortie.moniteur is not null %}
+            <tr>
+                <th>Moniteur</th>
+                <td>{{ sortie.moniteur.user.prenom }} {{ sortie.moniteur.user.nom }}</td>
+            </tr>
+            {% endif %}
             <tr>
                 <th>Date</th>
                 <td>{{ sortie.date ? sortie.date|date('d-m-Y H:i:s') : ''  }}</td>
@@ -62,7 +68,7 @@
                             border-danger
                         {% endif %}">{{ sortie.etat.libelle }}</p></td>
             </tr>
-            {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+            {% if is_granted('ROLE_ADMIN') %}
             <tr>
                 <th>Sortie publié</th>
                 <td>{{ sortie.isPublished ? 'Oui' : 'Non' }}</td>

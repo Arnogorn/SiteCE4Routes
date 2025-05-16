@@ -50,6 +50,7 @@ class UserType extends AbstractType
             ])
             ->add('niveau', EntityType::class, [
                 'class' => Niveau::class,
+                'label' => 'Veuillez sélectionner votre niveau',
                 'choice_label' => 'libelle',
             ])
             ->add('actif', CheckboxType::class, [
