@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\SortieType;
+use App\Form\SortieFiltreType;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use App\Services\UpdateEtatService;
@@ -22,22 +23,33 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class SortieController extends AbstractController
 {
     #[Route(name: 'app_sortie_index', methods: ['GET'])]
-    public function index(SortieRepository $sortieRepository, Security $security,UpdateEtatService $updateEtatService,): Response
+    public function index(Request $request, SortieRepository $sortieRepository, Security $security, UpdateEtatService $updateEtatService): Response
     {
         $user = $security->getUser();
         $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
 
-        if ($isAdmin) {
-            // Les admins voient toutes les sorties
-            $sorties = $sortieRepository->findAll();
-        } else {
-            // Les autres utilisateurs ne voient pas les sorties à l'état "Créée"
-            $sorties = $sortieRepository->findByEtatDifferentDe('Créée');
+        $form = $this->createForm(SortieFiltreType::class);
+        $form->handleRequest($request);
+
+        // Petite ternaire pour le style
+        $criteria = $form->isSubmitted() && $form->isValid() ? $form->getData() : [];
+
+        // Récupération du tri via query string (ex: tri=asc ou tri=desc)
+        $tri = $request->query->get('tri');
+        if ($tri && in_array($tri, ['asc', 'desc'])) {
+            $criteria['tri'] = $tri;
         }
+
+        // Et hop encore une autre pour le combo
+        $sorties = $isAdmin
+            ? $sortieRepository->findBySearchCriteria($criteria)
+            : $sortieRepository->findBySearchCriteria($criteria, 'Créée');
+
         $updateEtatService->updateEtat($sorties);
 
         return $this->render('sortie/index.html.twig', [
             'sorties' => $sorties,
+            'form' => $form->createView(),
         ]);
     }
 
