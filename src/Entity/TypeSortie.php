@@ -21,7 +21,7 @@ class TypeSortie
     /**
      * @var Collection<int, Sortie>
      */
-    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'TypeSortie')]
+    #[ORM\OneToMany(targetEntity: Sortie::class, mappedBy: 'typeSortie')]
     private Collection $sorties;
 
     public function __construct()

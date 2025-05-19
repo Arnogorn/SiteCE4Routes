@@ -3,6 +3,7 @@
 {% block title %}Sortie index{% endblock %}
 
 {% block body %}
+
     <h1>Liste des sorties</h1>
 
     <div class="mb-4">
@@ -20,9 +21,11 @@
                 <div class="col-md-3">
                     {{ form_row(form.niveau) }}
                 </div>
+                {% if is_granted('ROLE_ADMIN') %}
                 <div class="col-md-3">
                     {{ form_row(form.etat) }}
                 </div>
+                {% endif %}
                 <div class="col-md-3">
                     {{ form_row(form.tri) }}
                 </div>
@@ -47,6 +50,7 @@
                 <th>Durée (en minutes)</th>
                 <th>Date limite d'inscription</th>
                 <th>Nombre maximum d'inscriptions</th>
+                <th>Niveaux Admis</th>
                 <th>Prix</th>
                 <th>Informations</th>
 
@@ -59,14 +63,27 @@
         </thead>
         <tbody>
         {% for sortie in sorties %}
+            {% if is_granted('ROLE_ADMIN') or sortie.etat.libelle != "Archivée" %}
             <tr>
                 <td>{{ sortie.titre }}</td>
                 <td>{{ sortie.date ? sortie.date|date('d-m-Y H:i:s') : '' }}</td>
                 <td>{{ sortie.duree }}min</td>
                 <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d-m-Y H:i:s') : '' }}</td>
                 <td>{{ sortie.participants|length + sortie.membresFamilleInscrits|length }}/{{ sortie.nbInscriptionMax }}</td>
+                <td>
+                    {% if sortie.niveauxAdmis|length > 0 %}
+                        <ul class="list-unstyled mb-0">
+                            {% for niveau in sortie.niveauxAdmis %}
+                                <li>{{ niveau.libelle }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <span class="text-muted">Aucun niveau spécifié</span>
+                    {% endif %}
+                </td>
                 <td>{{ sortie.prix }} €</td>
                 <td>{{ sortie.infos }}</td>
+
                 <td><p class="border rounded
                         {% if sortie.etat.libelle == 'Créée' %}
                             border-warning
@@ -81,6 +98,7 @@
                         {% else %}
                             border-danger
                         {% endif %}">{{ sortie.etat.libelle }}</p></td>
+
                 {% if is_granted('ROLE_ADMIN') %}
                 <td>{{ sortie.isPublished ? 'Oui' : 'Non' }}</td>
                 {% endif %}
@@ -97,6 +115,7 @@
                     {% endif %}
                 </td>
             </tr>
+            {% endif %}
         {% else %}
             <tr>
                 <td colspan="10">Aucune sortie trouvée</td>
@@ -116,4 +135,5 @@
     {% if is_granted('ROLE_ADMIN') %}
         <a href="{{ path('app_sortie_new') }}">Ajouter une nouvelle sortie</a>
     {% endif %}
+
 {% endblock %}
