@@ -50,26 +50,33 @@ class SortieRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-
     /**
-     * Recherche des sorties selon différents critères.
-     *
-     * @param array $criteria
-     *      - titre: string|null
-     *      - dateMin: \DateTimeInterface|null
-     *      - dateMax: \DateTimeInterface|null
-     *      - niveau: Niveau|null
-     *      - etat: Etat|null
-     * @param string|null $etatExclu
-     * @return Sortie[]
+     * Trouve les sorties par états et critères avec une seule requête optimisée
      */
-    public function findBySearchCriteria(array $criteria, ?string $etatExclu = null): array
+    /**
+     * Trouve les sorties par états et critères avec une seule requête optimisée
+     */
+    public function findSortiesByEtatsAndCriteria(array $etatsLibelles, array $criteria = [])
     {
         $qb = $this->createQueryBuilder('s')
-            ->leftJoin('s.etat', 'e')
-            ->leftJoin('s.niveauxAdmis', 'n')
-            ->addSelect('e', 'n');
+            ->select('s, e, ts, m') // Relations immédiates
+            ->join('s.etat', 'e')
+            ->leftJoin('s.typeSortie', 'ts')
+            ->leftJoin('s.moniteur', 'm');
 
+        // Jointures pour les collections avec fetch EAGER
+        $qb->leftJoin('s.participants', 'p')
+            ->addSelect('p')
+            ->leftJoin('s.membresFamilleInscrits', 'mf')
+            ->addSelect('mf')
+            ->leftJoin('s.niveauxAdmis', 'na')
+            ->addSelect('na');
+
+        // Filtrage par états
+        $qb->where('e.libelle IN (:etats)')
+            ->setParameter('etats', $etatsLibelles);
+
+        // Autres filtres
         if (!empty($criteria['titre'])) {
             $qb->andWhere('s.titre LIKE :titre')
                 ->setParameter('titre', '%' . $criteria['titre'] . '%');
@@ -90,22 +97,15 @@ class SortieRepository extends ServiceEntityRepository
                 ->setParameter('niveau', $criteria['niveau']);
         }
 
-        if (!empty($criteria['etat'])) {
-            $qb->andWhere('s.etat = :etat')
-                ->setParameter('etat', $criteria['etat']);
-        }
-
-        if ($etatExclu) {
-            $qb->andWhere('e.libelle != :etatExclu')
-                ->setParameter('etatExclu', $etatExclu);
-        }
-
-        if (!empty($criteria['tri']) && in_array(strtolower($criteria['tri']), ['asc', 'desc'])) {
-            $qb->orderBy('s.date', strtoupper($criteria['tri']));
+        // Tri
+        if (!empty($criteria['tri']) && in_array($criteria['tri'], ['asc', 'desc'])) {
+            $qb->orderBy('s.date', $criteria['tri']);
         } else {
-            $qb->orderBy('s.date', 'ASC');
+            $qb->orderBy('s.date', 'desc');
         }
 
-        return $qb->getQuery()->getResult();
+        return $qb->getQuery()
+            ->enableResultCache(60)
+            ->getResult();
     }
 }

@@ -23,7 +23,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class SortieController extends AbstractController
 {
     #[Route(name: 'app_sortie_index', methods: ['GET'])]
-    public function index(Request $request, SortieRepository $sortieRepository, Security $security, UpdateEtatService $updateEtatService): Response
+    public function index(Request $request, SortieRepository $sortieRepository, EtatRepository $etatRepository, Security $security, UpdateEtatService $updateEtatService): Response
     {
         $user = $security->getUser();
         $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
@@ -31,20 +31,36 @@ final class SortieController extends AbstractController
         $form = $this->createForm(SortieFiltreType::class);
         $form->handleRequest($request);
 
-        // Petite ternaire pour le style
+        // Récupération des critères
         $criteria = $form->isSubmitted() && $form->isValid() ? $form->getData() : [];
 
-        // Récupération du tri via query string (ex: tri=asc ou tri=desc)
+        // Récupération du tri via query string
         $tri = $request->query->get('tri');
         if ($tri && in_array($tri, ['asc', 'desc'])) {
             $criteria['tri'] = $tri;
         }
 
-        // Et hop encore une autre pour le combo
-        $sorties = $isAdmin
-            ? $sortieRepository->findBySearchCriteria($criteria)
-            : $sortieRepository->findBySearchCriteria($criteria, 'Créée');
+        // Définition des états à afficher
+        if ($isAdmin) {
+            $etatsLibelles = ['Créée', 'Ouverte', 'Clôturée', 'En cours', 'Passée', 'Annulée', 'Archivée'];
+        } else {
+            $etatsLibelles = ['Créée', 'Ouverte', 'Clôturée', 'En cours', 'Passée', 'Annulée'];
+        }
 
+        // Si un état spécifique est sélectionné dans le filtre
+        if (!empty($criteria['etat'])) {
+            $etatLibelle = $criteria['etat']->getLibelle();
+            if ($isAdmin || $etatLibelle !== 'Archivée') {
+                $etatsLibelles = [$etatLibelle];
+            }
+            unset($criteria['etat']); // Retirer de criteria car déjà géré
+        }
+
+        // Récupération des sorties avec une seule requête
+        // et une méthode qui utilise des jointures et sélectionne toutes les relations
+        $sorties = $sortieRepository->findSortiesByEtatsAndCriteria($etatsLibelles, $criteria);
+
+        // Mise à jour des états
         $updateEtatService->updateEtat($sorties);
 
         return $this->render('sortie/index.html.twig', [
@@ -52,7 +68,6 @@ final class SortieController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/ajouter', name: 'app_sortie_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager,EtatRepository $etatRepository): Response
