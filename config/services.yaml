@@ -22,6 +22,9 @@ services:
         exclude:
             - '../src/DependencyInjection/'
 
+    App\Service\StripeService:
+        arguments:
+            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
 
     App\Kernel:
         calls:

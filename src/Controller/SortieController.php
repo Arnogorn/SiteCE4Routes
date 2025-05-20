@@ -8,7 +8,8 @@ use App\Form\SortieType;
 use App\Form\SortieFiltreType;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
-use App\Services\UpdateEtatService;
+use App\Repository\PaiementRepository;
+use App\Service\UpdateEtatService;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,7 +24,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class SortieController extends AbstractController
 {
     #[Route(name: 'app_sortie_index', methods: ['GET'])]
-    public function index(Request $request, SortieRepository $sortieRepository, Security $security, UpdateEtatService $updateEtatService): Response
+    public function index(Request $request, SortieRepository $sortieRepository, EtatRepository $etatRepository, Security $security, UpdateEtatService $updateEtatService): Response
     {
         $user = $security->getUser();
         $isAdmin = $user && in_array('ROLE_ADMIN', $user->getRoles());
@@ -31,20 +32,36 @@ final class SortieController extends AbstractController
         $form = $this->createForm(SortieFiltreType::class);
         $form->handleRequest($request);
 
-        // Petite ternaire pour le style
+        // Récupération des critères
         $criteria = $form->isSubmitted() && $form->isValid() ? $form->getData() : [];
 
-        // Récupération du tri via query string (ex: tri=asc ou tri=desc)
+        // Récupération du tri via query string
         $tri = $request->query->get('tri');
         if ($tri && in_array($tri, ['asc', 'desc'])) {
             $criteria['tri'] = $tri;
         }
 
-        // Et hop encore une autre pour le combo
-        $sorties = $isAdmin
-            ? $sortieRepository->findBySearchCriteria($criteria)
-            : $sortieRepository->findBySearchCriteria($criteria, 'Créée');
+        // Définition des états à afficher
+        if ($isAdmin) {
+            $etatsLibelles = ['Créée', 'Ouverte', 'Clôturée', 'En cours', 'Passée', 'Annulée', 'Archivée'];
+        } else {
+            $etatsLibelles = ['Créée', 'Ouverte', 'Clôturée', 'En cours', 'Passée', 'Annulée'];
+        }
 
+        // Si un état spécifique est sélectionné dans le filtre
+        if (!empty($criteria['etat'])) {
+            $etatLibelle = $criteria['etat']->getLibelle();
+            if ($isAdmin || $etatLibelle !== 'Archivée') {
+                $etatsLibelles = [$etatLibelle];
+            }
+            unset($criteria['etat']); // Retirer de criteria car déjà géré
+        }
+
+        // Récupération des sorties avec une seule requête
+        // et une méthode qui utilise des jointures et sélectionne toutes les relations
+        $sorties = $sortieRepository->findSortiesByEtatsAndCriteria($etatsLibelles, $criteria);
+
+        // Mise à jour des états
         $updateEtatService->updateEtat($sorties);
 
         return $this->render('sortie/index.html.twig', [
@@ -55,16 +72,13 @@ final class SortieController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/ajouter', name: 'app_sortie_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager,EtatRepository $etatRepository): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
     {
-//        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
         $sortie = new Sortie();
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             if ($sortie->getDate() !== null) {
                 $dateLimite = $sortie->getDate()->sub(new DateInterval('P2D'));
                 $sortie->setDateLimiteInscription($dateLimite);
@@ -73,13 +87,11 @@ final class SortieController extends AbstractController
                 // Récupérer l'état "Ouvert" depuis la base de données
                 $etatOuvert = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
 
-
                 if ($etatOuvert) {
                     $sortie->setEtat($etatOuvert);
                 } else {
                     // Gestion d'erreur si l'état n'existe pas
                     $this->addFlash('danger', 'Impossible de trouver l\'état "Ouvert". Veuillez vérifier votre configuration.');
-
                 }
             } else {
                 // Si non publiée, définir un état par défaut, par exemple "Créée"
@@ -101,12 +113,25 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_sortie_show', methods: ['GET'])]
-    public function show(Sortie $sortie): Response
+    public function show(Sortie $sortie, Security $security, PaiementRepository $paiementRepository): Response
     {
+        $user = $security->getUser();
+        $userHasPaid = false;
+        $paiement = null;
 
+        if ($user) {
+            $paiement = $paiementRepository->findPaidPaymentForUserAndSortie(
+                $user->getId(),
+                $sortie->getId()
+            );
+            $userHasPaid = $paiement !== null;
+        }
 
         return $this->render('sortie/show.html.twig', [
             'sortie' => $sortie,
+            'user_has_paid' => $userHasPaid,
+            'paiement' => $paiement,
+            'stripe_public_key' => $_ENV['STRIPE_PUBLIC_KEY'] ?? '',
         ]);
     }
 
@@ -114,8 +139,6 @@ final class SortieController extends AbstractController
     #[Route('/{id}/edit', name: 'app_sortie_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Sortie $sortie, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
     {
-//        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
 
@@ -129,19 +152,18 @@ final class SortieController extends AbstractController
                 $etatOuvert = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
 
                 if ($etatOuvert) {
-                $sortie->setEtat($etatOuvert);
+                    $sortie->setEtat($etatOuvert);
+                } else {
+                    // Gestion d'erreur si l'état n'existe pas
+                    $this->addFlash('danger', 'Impossible de trouver l\'état "Ouvert". Veuillez vérifier votre configuration.');
+                }
             } else {
-                // Gestion d'erreur si l'état n'existe pas
-                $this->addFlash('danger', 'Impossible de trouver l\'état "Ouvert". Veuillez vérifier votre configuration.');
-
+                // Si non publiée, définir un état par défaut, par exemple "Créée"
+                $etatCree = $etatRepository->findOneBy(['libelle' => 'Créée']);
+                if ($etatCree) {
+                    $sortie->setEtat($etatCree);
+                }
             }
-        } else {
-            // Si non publiée, définir un état par défaut, par exemple "Créée"
-            $etatCree = $etatRepository->findOneBy(['libelle' => 'Créée']);
-            if ($etatCree) {
-                $sortie->setEtat($etatCree);
-            }
-        }
             $entityManager->persist($sortie);
             $entityManager->flush();
 
@@ -158,8 +180,6 @@ final class SortieController extends AbstractController
     #[Route('/{id}', name: 'app_sortie_delete', methods: ['POST'])]
     public function delete(Request $request, Sortie $sortie, EntityManagerInterface $entityManager): Response
     {
-//        $this->denyAccessUnlessGranted('ROLE_ADMIN');
-
         if ($this->isCsrfTokenValid('delete'.$sortie->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($sortie);
             $entityManager->flush();
@@ -171,8 +191,6 @@ final class SortieController extends AbstractController
     #[Route('/{id}/inscription', name: 'sortie_inscription')]
     public function inscription(Sortie $sortie, EntityManagerInterface $em, Security $security): Response
     {
-
-        //TODO gérer les conditions d'inscription aux sorties (en fonction de l'état)
         /** @var User $user */
         $user = $security->getUser();
 
@@ -218,11 +236,11 @@ final class SortieController extends AbstractController
 
         if (!$sortie->getParticipants()->contains($user)) {
             $this->addFlash('info', 'Vous n\'êtes pas inscrit à cette sortie.');
-        }else if($sortie->getDateLimiteInscription()<new \DateTime()) {
+        } elseif($sortie->getDateLimiteInscription() < new \DateTime()) {
             $this->addFlash('danger','Vous ne pouvez plus vous désinscrire de la sortie.');
-        }
-        else {
-            $sortie->removeParticipant($user);            $em->flush();
+        } else {
+            $sortie->removeParticipant($user);
+            $em->flush();
             $this->addFlash('success', 'Vous vous êtes désinscrit de la sortie.');
         }
 
@@ -235,11 +253,7 @@ final class SortieController extends AbstractController
         EntityManagerInterface $entityManager,
         EtatRepository $etatRepository,
     ){
-
-
-
         $etatOuverte = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
-
 
         if (!$etatOuverte) {
             $this->addFlash('error', 'État "Ouverte" introuvable.');
@@ -248,7 +262,6 @@ final class SortieController extends AbstractController
 
         // Changer l'état de la sortie en Ouverte
         $sortie->setIsPublished(true);
-
 
         // Save changes
         $entityManager->persist($sortie);
@@ -260,7 +273,6 @@ final class SortieController extends AbstractController
         return $this->redirectToRoute('app_sortie_index', ['id' => $sortie->getId()]);
     }
 
-    /// Inscription de MembreFamille ///
     #[Route('/{id}/inscription-famille', name: 'sortie_inscription_famille', methods: ['GET', 'POST'])]
     public function inscriptionFamille(Sortie $sortie, Request $request, EntityManagerInterface $em, Security $security): Response
     {
@@ -278,7 +290,7 @@ final class SortieController extends AbstractController
         $membres = $user->getFamille()->getMembre();
 
         if ($request->isMethod('POST')) {
-            $ids = $request->request->all('membres'); // tableau d’IDs cochés
+            $ids = $request->request->all('membres'); // tableau d'IDs cochés
 
             $membresACocher = [];
             foreach ($ids as $id) {
@@ -296,8 +308,8 @@ final class SortieController extends AbstractController
 
             $aInscrire = count($membresACocher) - count($dejaInscrits);
             $placesDispo = $sortie->getNbInscriptionMax() - (
-                count($sortie->getParticipants()) + count($sortie->getMembresFamilleInscrits())
-            );
+                    count($sortie->getParticipants()) + count($sortie->getMembresFamilleInscrits())
+                );
 
             if ($aInscrire > $placesDispo) {
                 $this->addFlash('danger', 'Il ne reste que '.$placesDispo.' place(s) disponible(s). Veuillez ajuster votre sélection.');
@@ -320,10 +332,9 @@ final class SortieController extends AbstractController
                         $membre->addSortie($sortie);
                         $placesRestantes--;
                     }
-                }else if($sortie->getDateLimiteInscription()<new \DateTime()) {
+                } elseif($sortie->getDateLimiteInscription() < new \DateTime()) {
                     $this->addFlash('danger','Vous ne pouvez plus vous désinscrire de la sortie.');
-                }
-                else if ($estInscrit) {
+                } else if ($estInscrit) {
                     $this->addFlash('success', 'Le membre de famille a bien été désinscrit de la sortie.');
                     $sortie->removeMembresFamilleInscrit($membre);
                     $membre->removeSortie($sortie);
@@ -347,5 +358,4 @@ final class SortieController extends AbstractController
             'membresDejaInscrits' => $sortie->getMembresFamilleInscrits(),
         ]);
     }
-
 }

@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paiement annulé{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <div class="cancel-animation mb-3">
+                            <i class="fas fa-times-circle text-warning" style="font-size: 4rem;"></i>
+                        </div>
+
+                        <h2 class="text-warning mb-3">Paiement annulé</h2>
+
+                        <div class="alert alert-warning">
+                            <strong>Aucun montant n'a été débité.</strong><br>
+                            Votre paiement a été annulé et aucune transaction n'a eu lieu.
+                        </div>
+
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <h5 class="card-title">Que faire maintenant ?</h5>
+                                <ul class="list-unstyled text-start">
+                                    <li class="mb-2">
+                                        <i class="fas fa-arrow-right text-primary"></i>
+                                        Vous pouvez retourner à la sortie et réessayer le paiement
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-arrow-right text-primary"></i>
+                                        Vérifiez vos informations bancaires si vous rencontrez des problèmes
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="fas fa-arrow-right text-primary"></i>
+                                        Contactez-nous si vous avez besoin d'aide
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-4">
+                            <a href="{{ path('app_sortie_index') }}"
+                               class="btn btn-primary">
+                                <i class="fas fa-list"></i>
+                                Retour à la liste des sorties
+                            </a>
+                            <a href="{{ path('index') }}"
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-home"></i>
+                                Retour à l'accueil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .cancel-animation {
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+
+    </style>
+{% endblock %}
