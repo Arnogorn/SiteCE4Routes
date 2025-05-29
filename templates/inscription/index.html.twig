@@ -1,0 +1,61 @@
+{#{% extends 'base.html.twig' %}#}
+
+{#{% block title %}Hello InscriptionController!{% endblock %}#}
+
+{#{% block body %}#}
+{#<style>#}
+{#    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }#}
+{#    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }#}
+{#</style>#}
+
+{#<div class="example-wrapper">#}
+{#    <h1>Hello {{ controller_name }}! ✅</h1>#}
+
+{#    This friendly message is coming from:#}
+{#    <ul>#}
+{#        <li>Your controller at <code>/Applications/MAMP/htdocs/SiteCE4Routes/src/Controller/InscriptionController.php</code></li>#}
+{#        <li>Your template at <code>/Applications/MAMP/htdocs/SiteCE4Routes/templates/inscription/index.html.twig</code></li>#}
+{#    </ul>#}
+{#</div>#}
+{#{% endblock %}#}
+
+
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Toutes les inscriptions</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nom du participant</th>
+            <th>Sortie</th>
+            <th>Inscrit par</th>
+            <th>Date</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for inscription in inscriptions %}
+            <tr>
+                <td>{{ inscription.id }}</td>
+                <td>{{ inscription.nom }}</td>
+                <td>{{ inscription.sortie.nom }}</td>
+                <td>{{ inscription.inscritPar.email }}</td>
+                <td>{{ inscription.dateInscription|date('d/m/Y H:i') }}</td>
+                <td>
+                    <a href="{{ path('inscription_show', {id: inscription.id}) }}">Voir</a> |
+                    <a href="{{ path('inscription_edit', {id: inscription.id}) }}">Modifier</a>
+                    <form method="post" action="{{ path('inscription_delete', {id: inscription.id}) }}" style="display:inline-block;" onsubmit="return confirm('Supprimer cette inscription ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ inscription.id) }}">
+                        <button type="submit">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('inscription_new') }}">➕ Ajouter une inscription</a>
+{% endblock %}

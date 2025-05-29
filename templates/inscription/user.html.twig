@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Mes inscriptions</h1>
+
+    <ul>
+        {% for inscription in inscriptions %}
+            <li>
+                {{ inscription.nom }} – {{ inscription.sortie.nom }}
+                ({{ inscription.dateInscription|date('d/m/Y') }})
+            </li>
+        {% else %}
+            <li>Aucune inscription trouvée.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

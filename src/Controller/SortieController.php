@@ -6,9 +6,15 @@ use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\SortieType;
 use App\Form\SortieFiltreType;
+use Stripe\StripeClient;
+use Stripe\Exception\ApiErrorException;
+use App\Entity\Paiement;
+use App\Entity\HistoriquePaiement;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use App\Services\UpdateEtatService;
+use App\Services\InscriptionService;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -222,23 +228,23 @@ final class SortieController extends AbstractController
     }
 
     #[Route('/{id}/desinscription', name: 'sortie_desinscription')]
-    public function desinscription(Sortie $sortie, EntityManagerInterface $em, Security $security): Response
+    public function desinscription(
+        Sortie $sortie,
+        Security $security,
+        InscriptionService $inscriptionService
+    ): Response
     {
         /** @var User $user */
         $user = $security->getUser();
-
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour vous désinscrire.');
         }
 
-        if (!$sortie->getParticipants()->contains($user)) {
-            $this->addFlash('info', 'Vous n\'êtes pas inscrit à cette sortie.');
-        }else if($sortie->getDateLimiteInscription()<new \DateTime()) {
-            $this->addFlash('danger','Vous ne pouvez plus vous désinscrire de la sortie.');
-        }
-        else {
-            $sortie->removeParticipant($user);            $em->flush();
+        try {
+            $inscriptionService->unregisterParticipant($sortie, $user);
             $this->addFlash('success', 'Vous vous êtes désinscrit de la sortie.');
+        } catch (\Exception $e) {
+            $this->addFlash('danger', $e->getMessage());
         }
 
         return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
@@ -250,7 +256,6 @@ final class SortieController extends AbstractController
         EntityManagerInterface $entityManager,
         EtatRepository $etatRepository,
     ){
-
 
 
         $etatOuverte = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
@@ -277,7 +282,7 @@ final class SortieController extends AbstractController
 
     /// Inscription de MembreFamille ///
     #[Route('/{id}/inscription-famille', name: 'sortie_inscription_famille', methods: ['GET', 'POST'])]
-    public function inscriptionFamille(Sortie $sortie, Request $request, EntityManagerInterface $em, Security $security): Response
+    public function inscriptionFamille(Sortie $sortie, Request $request, EntityManagerInterface $em, Security $security, StripeClient $stripe): Response
     {
         /** @var User $user */
         $user = $security->getUser();
@@ -338,7 +343,64 @@ final class SortieController extends AbstractController
                 }else if($sortie->getDateLimiteInscription()<new \DateTime()) {
                     $this->addFlash('danger','Vous ne pouvez plus vous désinscrire de la sortie.');
                 }
-                else if ($estInscrit) {
+                elseif ($estInscrit) {
+                    // Remboursement partiel d’une place pour ce membre
+                    /** @var Paiement|null $paiement */
+                    $paiement = $em->getRepository(Paiement::class)
+                        ->findOneBy([
+                            'sortie'     => $sortie,
+                            'utilisateur'=> $user,
+                            'statut'     => Paiement::STATUT_PAYE,
+                        ]);
+                    if ($paiement) {
+                        $totalSeats  = $paiement->getParticipants();
+                        $totalAmount = $paiement->getMontant(); // en centimes
+
+                        // Si aucun ID de charge Stripe, on désinscrit sans remboursement
+                        if (empty($paiement->getStripeChargeId())) {
+                            $sortie->removeMembresFamilleInscrit($membre);
+                            $membre->removeSortie($sortie);
+                            $em->flush();
+                            $this->addFlash('success', 'Le membre de famille a bien été désinscrit (aucun remboursement possible).');
+                            continue;
+                        }
+
+                        $amountPerSeat = intdiv($totalAmount, $totalSeats);
+
+                        try {
+                            $refundParams = ['amount' => $amountPerSeat];
+                            if ($paiement->getStripeChargeId()) {
+                                $refundParams['charge'] = $paiement->getStripeChargeId();
+                            } elseif ($paiement->getStripePaymentIntentId()) {
+                                $refundParams['payment_intent'] = $paiement->getStripePaymentIntentId();
+                            }
+                            $stripe->refunds->create($refundParams);
+
+                            $paiement
+                                ->setParticipants($totalSeats - 1)
+                                ->setMontant($totalAmount - $amountPerSeat);
+                            $em->persist($paiement);
+
+                            $log = new HistoriquePaiement();
+                            $log->setType('remboursement_partiel')
+                                ->setDate(new \DateTimeImmutable())
+                                ->setMessage(sprintf(
+                                    "Remboursement partiel de %.2f € pour 1 place sur « %s ».",
+                                    $amountPerSeat / 100,
+                                    $sortie->getTitre()
+                                ))
+                                ->setUtilisateur($user)
+                                ->setSortie($sortie);
+                            $em->persist($log);
+                            $em->flush();
+
+                            $this->addFlash('success', 'Une place a bien été remboursée.');
+                        } catch (ApiErrorException $e) {
+                            $this->addFlash('danger', 'Le remboursement a échoué : ' . $e->getMessage());
+                            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+                        }
+                    }
+                    // Désinscription du membre
                     $this->addFlash('success', 'Le membre de famille a bien été désinscrit de la sortie.');
                     $sortie->removeMembresFamilleInscrit($membre);
                     $membre->removeSortie($sortie);
@@ -363,4 +425,79 @@ final class SortieController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}/gestion-inscriptions', name: 'sortie_gestion_inscriptions', methods: ['GET', 'POST'])]
+    public function gestionInscriptions(
+        Sortie $sortie,
+        Request $request,
+        Security $security,
+        InscriptionService $inscriptionService
+    ): Response {
+        /** @var User $user */
+        $user = $security->getUser();
+        $famille = $user->getFamille()?->getMembre()->toArray() ?? [];
+
+        // Build choices: user + members
+        $choices = [
+            $user->getId() => $user->getPrenom() . ' ' . $user->getNom()
+        ];
+        foreach ($famille as $membre) {
+            $choices[$membre->getId()] = $membre->getPrenom() . ' ' . $membre->getNom();
+        }
+
+        // Initial selected IDs
+        $initial = [];
+        if ($sortie->getParticipants()->contains($user)) {
+            $initial[] = $user->getId();
+        }
+        foreach ($sortie->getMembresFamilleInscrits() as $membre) {
+            $initial[] = $membre->getId();
+        }
+
+        // Create form
+        $form = $this->createFormBuilder(['participants' => $initial])
+            ->add('participants', ChoiceType::class, [
+                'choices'  => $choices,
+                'expanded' => true,
+                'multiple' => true,
+                'data'     => $initial,
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $selected = $form->getData()['participants'];
+
+            // Handle user registration/unregistration
+            $isUserSelected = in_array($user->getId(), $selected, true);
+            $isUserEnrolled = $sortie->getParticipants()->contains($user);
+            if ($isUserSelected && !$isUserEnrolled) {
+                return $this->redirect($inscriptionService->startCheckout($sortie, $user, [], true));
+            } elseif (!$isUserSelected && $isUserEnrolled) {
+                $inscriptionService->unregisterParticipant($sortie, $user);
+            }
+
+            // Handle family members
+            $toRegister = [];
+            foreach ($famille as $membre) {
+                $selectedMember = in_array($membre->getId(), $selected, true);
+                $isMemberEnrolled = $sortie->getMembresFamilleInscrits()->contains($membre);
+                if ($selectedMember && !$isMemberEnrolled) {
+                    $toRegister[] = $membre;
+                } elseif (!$selectedMember && $isMemberEnrolled) {
+                    $inscriptionService->unregisterParticipant($sortie, $user, $membre);
+                }
+            }
+            if (!empty($toRegister)) {
+                return $this->redirect($inscriptionService->startCheckout($sortie, $user, $toRegister, false));
+            }
+
+            $this->addFlash('success', 'Mise à jour des inscriptions effectuée.');
+            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+        }
+
+        return $this->render('sortie/gestion_inscriptions.html.twig', [
+            'form'   => $form->createView(),
+            'sortie' => $sortie,
+        ]);
+    }
 }

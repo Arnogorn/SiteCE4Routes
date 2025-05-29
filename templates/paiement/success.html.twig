@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="alert alert-success">
+            <h1 class="h3">✅ Paiement réussi</h1>
+            <p>Merci pour votre inscription à l'activité. Votre paiement a bien été enregistré.</p>
+            {% if paiement.confirmedAt %}
+                <p class="text-muted">Confirmé le {{ paiement.confirmedAt|date('d/m/Y à H:i') }}</p>
+            {% endif %}
+        </div>
+
+        <p>Vous recevrez une confirmation par e-mail si nécessaire.</p>
+
+        <a href="{{ path('app_sortie_index') }}" class="btn btn-primary mt-3">
+            Retour aux sorties
+        </a>
+    </div>
+{% endblock %}

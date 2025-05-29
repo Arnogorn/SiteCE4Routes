@@ -31,7 +31,8 @@
             </tr>
             <tr>
                 <th>Nombre maximum d'inscriptions</th>
-                <td>{{ sortie.participants|length + sortie.membresFamilleInscrits|length }}/{{ sortie.nbInscriptionMax }}</td>
+{#                <td>{{ sortie.participants|length + sortie.membresFamilleInscrits|length }}/{{ sortie.nbInscriptionMax }}</td>#}
+                <td>{{ sortie.inscriptions|length }}/{{ sortie.nbInscriptionMax }}</td>
             </tr>
             <th>Niveaux admis</th>
             <td>
@@ -41,7 +42,6 @@
                     Aucun niveau spécifié.
                 {% endfor %}
             </td>
-            </tr>
             <tr>
             <tr>
                 <th>Prix</th>
@@ -90,10 +90,25 @@
                         {% endif %}
                     </td>
                 </tr>
+                <tr>
+                    <th>Inscrits</th>
+                    <td>
+                        <ul>
+                            {% for inscrit in sortie.inscriptions %}
+                                <li>{{ inscrit.nom }} {{ inscrit.prenom }}</li>
+                            {% endfor %}
+                        </ul>
+
+                    </td>
+                </tr>
             {% endif %}
 
         </tbody>
     </table>
+
+    <a href="{{ path('paiement_choisir_membres', {'id': sortie.id}) }}">Inscrire ma famille</a>
+    <a href="{{ path('sortie_gestion_inscriptions', { id: sortie.id }) }}" class="btn btn-primary">Gérer les inscriptions</a>
+
 
     <a href="{{ path('app_sortie_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
 
@@ -109,7 +124,7 @@
         {% endif %}
     {% endif %}
 
-    {% if app.user.famille.membre|length > 0 %}
+    {% if app.user and app.user.famille is not null and app.user.famille.membre|length > 0 %}
         <a href="{{ path('sortie_inscription_famille', { id: sortie.id }) }}" class="btn btn-outline-primary mt-2">
             Inscrire/Désinscrire un membre de ma famille
         </a>

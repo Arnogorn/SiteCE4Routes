@@ -1,0 +1,96 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Inscription à la sortie : {{ sortie.titre }}</h1>
+
+    <form action="{{ path('paiement_checkout', {id: sortie.id}) }}" method="post" data-turbo="false">
+        <fieldset class="mb-3">
+            <legend>Qui souhaitez-vous inscrire ?</legend>
+
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="membres[]" value="me" id="user_self">
+                <label class="form-check-label" for="user_self">
+                    Moi-même ({{ app.user.prenom }} {{ app.user.nom }})
+                </label>
+            </div>
+
+            {% for membre in app.user.famille.membre %}
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="membres[]" value="{{ membre.id }}" id="membre_{{ membre.id }}">
+                    <label class="form-check-label" for="membre_{{ membre.id }}">
+                        {{ membre.prenom }} {{ membre.nom }}
+                    </label>
+                </div>
+            {% else %}
+                <p class="mt-2">Aucun membre de famille enregistré.</p>
+            {% endfor %}
+        </fieldset>
+
+        <div class="mt-4">
+            <p>Tarif unitaire : <strong>{{ sortie.prix }} €</strong></p>
+            <p class="text-muted">Le montant total sera calculé automatiquement avant le paiement.</p>
+        </div>
+
+        <div class="mt-4">
+            <p>Participants sélectionnés : <span id="compteur">0</span></p>
+            <p>Montant total : <strong><span id="total">0.00</span> €</strong></p>
+            <p class="text-muted small">Sélectionnez au moins une personne pour activer le bouton de paiement.</p>
+        </div>
+
+        <ul id="recapitulatif" class="mt-3"></ul>
+        <button type="submit" id="btn-payer" class="btn btn-primary mt-3" disabled>Payer et inscrire</button>
+    </form>
+
+    {% if app.flashes('success') %}
+        <div class="alert alert-success mt-3">
+            {% for message in app.flashes('success') %}
+                {{ message }}
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener("turbo:load", function () {
+            const checkboxes = document.querySelectorAll('.form-check-input');
+            const compteur = document.getElementById('compteur');
+            const total = document.getElementById('total');
+            const bouton = document.getElementById('btn-payer');
+            const prixUnitaire = parseFloat("{{ sortie.prix|number_format(2, '.', '') }}");
+
+            function updateTotal() {
+                const recap = document.getElementById("recapitulatif");
+                recap.innerHTML = '';
+
+                const count = Array.from(checkboxes).filter(cb => cb.checked).length;
+                compteur.textContent = count;
+                total.textContent = (count * prixUnitaire).toFixed(2);
+                bouton.disabled = count === 0;
+
+                checkboxes.forEach(cb => {
+                    if (cb.checked) {
+                        const label = cb.closest('label') ?? document.querySelector(`label[for="${cb.id}"]`);
+                        if (label) {
+                            const li = document.createElement('li');
+                            li.textContent = label.textContent.trim();
+                            recap.appendChild(li);
+                        }
+                    }
+                });
+            }
+
+            checkboxes.forEach(cb => cb.addEventListener('change', updateTotal));
+            updateTotal();
+
+            document.querySelector("form").addEventListener("submit", function (e) {
+                const count = Array.from(checkboxes).filter(cb => cb.checked).length;
+                if (count === 0) {
+                    e.preventDefault();
+                    alert("Veuillez sélectionner au moins une personne à inscrire.");
+                }
+            });
+        });
+    </script>
+{% endblock %}

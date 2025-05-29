@@ -282,6 +282,14 @@ class Sortie
 
         return $this;
     }
+
+    public function getInscriptions(): Collection
+    {
+        return new ArrayCollection(array_merge(
+            $this->participants->toArray(),
+            $this->membresFamilleInscrits->toArray()
+        ));
+    }
 //    #[Assert\Callback]
 //    public function validateDates(ExecutionContextInterface $context): void
 //    {

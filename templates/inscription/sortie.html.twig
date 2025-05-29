@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Inscriptions pour la sortie : {{ sortie.nom }}</h1>
+
+    <ul>
+        {% for inscription in inscriptions %}
+            <li>
+                {{ inscription.nom }} (inscrit par : {{ inscription.inscritPar.email }})
+            </li>
+        {% else %}
+            <li>Aucune inscription pour cette sortie.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,3 +1,6 @@
+import { startStimulusApp } from '@symfony/stimulus-bundle';
+
+const app = startStimulusApp();
 // assets/bootstrap.js
 import { Application } from '@hotwired/stimulus';
 
