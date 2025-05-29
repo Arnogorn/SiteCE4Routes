@@ -1,121 +1,310 @@
+{# templates/sortie/show.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Sortie {{ sortie.titre }}{% endblock %}
+{% block title %}{{ sortie.titre }}{% endblock %}
 
 {% block body %}
-    <h1>Sortie {{ sortie.titre }}</h1>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h1>{{ sortie.titre }}</h1>
+                        <span class="badge badge-{{ sortie.etat.libelle == 'Ouverte' ? 'success' : 'secondary' }}">
+                        {{ sortie.etat.libelle }}
+                    </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p><strong><i class="fas fa-calendar"></i> Date :</strong>
+                                    {{ sortie.date|date('d/m/Y à H:i') }}
+                                </p>
+                                <p><strong><i class="fas fa-clock"></i> Durée :</strong>
+                                    {{ sortie.duree }} heures
+                                </p>
+                                <p><strong><i class="fas fa-users"></i> Participants :</strong>
+                                    {{ sortie.nombreInscritsTotal }}/{{ sortie.nbInscriptionMax }}
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                {% if sortie.prix > 0 %}
+                                    <p><strong><i class="fas fa-euro-sign"></i> Prix :</strong>
+                                        <span class="h4 text-primary">{{ sortie.prix }}€</span>
+                                    </p>
+                                {% else %}
+                                    <p><strong><i class="fas fa-gift"></i> Prix :</strong>
+                                        <span class="h4 text-success">Gratuit</span>
+                                    </p>
+                                {% endif %}
+                                <p><strong><i class="fas fa-clock"></i> Limite inscription :</strong>
+                                    {{ sortie.dateLimiteInscription|date('d/m/Y à H:i') }}
+                                </p>
+                            </div>
+                        </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Titre</th>
-                <td>{{ sortie.titre }}</td>
-            </tr>
-            {% if sortie.moniteur is not null %}
-            <tr>
-                <th>Moniteur</th>
-                <td>{{ sortie.moniteur.user.prenom }} {{ sortie.moniteur.user.nom }}</td>
-            </tr>
-            {% endif %}
-            <tr>
-                <th>Date</th>
-                <td>{{ sortie.date ? sortie.date|date('d-m-Y H:i:s') : ''  }}</td>
-            </tr>
-            <tr>
-                <th>Durée</th>
-                <td>{{ sortie.duree }}</td>
-            </tr>
-            <tr>
-                <th>Date limite d'inscription</th>
-                <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d-m-Y H:i:s') : ''  }}</td>
-            </tr>
-            <tr>
-                <th>Nombre maximum d'inscriptions</th>
-                <td>{{ sortie.participants|length + sortie.membresFamilleInscrits|length }}/{{ sortie.nbInscriptionMax }}</td>
-            </tr>
-            <th>Niveaux admis</th>
-            <td>
-                {% for niveau in sortie.niveauxAdmis %}
-                    {{ niveau.libelle }}{% if not loop.last %}, {% endif %}
-                {% else %}
-                    Aucun niveau spécifié.
-                {% endfor %}
-            </td>
-            </tr>
-            <tr>
-            <tr>
-                <th>Prix</th>
-                <td>{{ sortie.prix }} €</td>
-            </tr>
-            <tr>
-                <th>Informations</th>
-                <td>{{ sortie.infos }}</td>
-            </tr>
-            <tr>
-                <th>État de la sortie</th>
-                <td><p class="border rounded
-                        {% if sortie.etat.libelle == 'Créée' %}
-                            border-warning
-                        {% elseif sortie.etat.libelle == 'Ouverte' %}
-                            border-success
-                        {% elseif sortie.etat.libelle == 'Clôturée' %}
-                            border-info
-                        {% elseif sortie.etat.libelle == 'En cours' %}
-                            border-primary
-                        {% elseif sortie.etat.libelle == 'Passée' %}
-                            border-secondary
-                        {% else %}
-                            border-danger
-                        {% endif %}">{{ sortie.etat.libelle }}</p></td>
-            </tr>
-            {% if is_granted('ROLE_ADMIN') %}
-            <tr>
-                <th>Sortie publié</th>
-                <td>{{ sortie.isPublished ? 'Oui' : 'Non' }}</td>
-            </tr>
-
-                <tr>
-                    <th>Participants</th>
-                    <td>
-                        {% if sortie.participants is empty and sortie.membresFamilleInscrits is empty %}
-                            Aucun participant inscrit pour le moment.
-                        {% else %}
-                            {% for participant in sortie.participants %}
-                                {{ participant.prenom }} {{ participant.nom }} (Utilisateur)<br>
-                            {% endfor %}
-
-                            {% for membre in sortie.membresFamilleInscrits %}
-                                {{ membre.prenom }} {{ membre.nom }} (Membre de famille)<br>
-                            {% endfor %}
+                        {% if sortie.infos %}
+                            <div class="alert alert-info">
+                                <h5><i class="fas fa-info-circle"></i> Informations</h5>
+                                {{ sortie.infos|nl2br }}
+                            </div>
                         {% endif %}
-                    </td>
-                </tr>
-            {% endif %}
 
-        </tbody>
-    </table>
+                        {# DEBUG INFO (à supprimer en production) #}
+                        {% if app.environment == 'dev' %}
+                            <div class="alert alert-warning">
+                                <strong>DEBUG INFO:</strong><br>
+                                User ID: {{ app.user ? app.user.id : 'null' }}<br>
+                                Sortie ID: {{ sortie.id }}<br>
+                                User has paid: {{ user_has_paid ? 'Yes' : 'No' }}<br>
+                                Sortie State: {{ sortie.etat.libelle }}<br>
+                                {% if paiement %}
+                                    Payment Status: {{ paiement.status }}<br>
+                                    Payment ID: {{ paiement.id }}
+                                {% endif %}
+                            </div>
+                        {% endif %}
 
-    <a href="{{ path('app_sortie_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+                        {# Messages flash #}
+                        {% for type, messages in app.flashes %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ type == 'danger' ? 'danger' : (type == 'success' ? 'success' : (type == 'warning' ? 'warning' : 'info')) }} alert-dismissible fade show">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
 
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">Modifier</a>
-    {% endif %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-ticket-alt"></i> Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if app.user %}
+                            {% if sortie.etat.libelle == 'Ouverte' %}
+                                {% if user_has_paid %}
+                                    {# Utilisateur déjà payé #}
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle"></i>
+                                        <strong>Paiement effectué !</strong><br>
+                                        Vous êtes inscrit à cette sortie.
+                                        {% if paiement %}
+                                            <br><small>Payé le {{ paiement.paidAt|date('d/m/Y à H:i') }}</small>
+                                        {% endif %}
+                                    </div>
 
-    {% if is_granted('ROLE_USER') %}
-        {% if not sortie.participants.contains(app.user) %}
-            <a href="{{ path('sortie_inscription', { id: sortie.id }) }}" class="btn btn-primary">S'inscrire</a>
-        {% else %}
-            <a href="{{ path('sortie_desinscription', { id: sortie.id }) }}" class="btn btn-warning">Se désinscrire</a>
-        {% endif %}
-    {% endif %}
+                                    {# Bouton de désinscription si autorisé #}
+                                    {% if sortie.dateLimiteInscription > date() %}
+                                        <form method="post" action="{{ path('sortie_desinscription', {id: sortie.id}) }}"
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir vous désinscrire ?');">
+                                            <button type="submit" class="btn btn-outline-warning btn-sm">
+                                                <i class="fas fa-user-minus"></i> Se désinscrire
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                {% else %}
+                                    {# Utilisateur pas encore payé #}
+                                    {% if sortie.nombreInscritsTotal >= sortie.nbInscriptionMax %}
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-users"></i>
+                                            Cette sortie est complète
+                                        </div>
+                                    {% elseif sortie.dateLimiteInscription < date() %}
+                                        <div class="alert alert-danger">
+                                            <i class="fas fa-calendar-times"></i>
+                                            Date limite dépassée
+                                        </div>
+                                    {% else %}
+                                        {# Boutons d'action selon le prix #}
+                                        {% if sortie.prix > 0 %}
+                                            <div class="d-grid gap-2">
+                                                <form id="stripe-payment-form" method="post" action="{{ path('create_checkout_session', {id: sortie.id}) }}" data-turbo="false">
+                                                    <button type="submit" class="btn btn-primary btn-lg" id="stripe-payment-button">
+                                                        <i class="fas fa-credit-card"></i>
+                                                        Payer {{ sortie.prix }}€ et s'inscrire
+                                                    </button>
+                                                </form>
 
-    {% if app.user.famille.membre|length > 0 %}
-        <a href="{{ path('sortie_inscription_famille', { id: sortie.id }) }}" class="btn btn-outline-primary mt-2">
-            Inscrire/Désinscrire un membre de ma famille
-        </a>
-    {% endif %}
+                                                <div id="stripe-loading" style="display: none;" class="text-center">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">Redirection vers Stripe...</span>
+                                                    </div>
+                                                    <p class="mt-2">Redirection vers le paiement...</p>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="d-grid gap-2">
+                                                <form method="post" action="{{ path('sortie_inscription', {id: sortie.id}) }}">
+                                                    <button type="submit" class="btn btn-success btn-lg">
+                                                        <i class="fas fa-user-plus"></i>
+                                                        S'inscrire gratuitement
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        {% endif %}
 
-    {% if is_granted('ROLE_ADMIN') %}
-        {{ include('sortie/_delete_form.html.twig') }}
-    {% endif %}
+                                        {# Inscription famille si applicable #}
+                                        {% if app.user.famille and app.user.famille.membre|length > 1 %}
+                                            <hr>
+                                            <div class="d-grid">
+                                                <a href="{{ path('sortie_inscription_famille', {id: sortie.id}) }}"
+                                                   class="btn btn-outline-primary">
+                                                    <i class="fas fa-users"></i>
+                                                    Inscription famille
+                                                </a>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
+                            {% else %}
+                                <div class="alert alert-secondary">
+                                    <i class="fas fa-lock"></i>
+                                    Cette sortie n'est pas ouverte aux inscriptions
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <a href="{{ path('app_login') }}">Connectez-vous</a> pour vous inscrire
+                            </div>
+                        {% endif %}
+
+                        {# Informations supplémentaires #}
+                        <hr>
+
+                    </div>
+                </div>
+
+                {# Participants #}
+                {% if sortie.participants|length > 0 or sortie.membresFamilleInscrits|length > 0 %}
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6><i class="fas fa-users"></i> Participants inscrits</h6>
+                        </div>
+                        <div class="card-body">
+                            {% if sortie.participants|length > 0 %}
+                                <h6>Membres individuels:</h6>
+                                <ul class="list-unstyled">
+                                    {% for participant in sortie.participants %}
+                                        <li><i class="fas fa-user"></i> {{ participant.prenom }} {{ participant.nom }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+
+                            {% if sortie.membresFamilleInscrits|length > 0 %}
+                                <h6>Membres de famille:</h6>
+                                <ul class="list-unstyled">
+                                    {% for membre in sortie.membresFamilleInscrits %}
+                                        <li><i class="fas fa-users"></i> {{ membre.prenom }} {{ membre.nom }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('stripe-payment-form');
+            const button = document.getElementById('stripe-payment-button');
+            const loading = document.getElementById('stripe-loading');
+
+            if (form && button) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault(); // Empêcher la soumission classique
+
+                    // Désactiver le bouton et afficher le loading
+                    button.disabled = true;
+                    button.style.display = 'none';
+                    loading.style.display = 'block';
+
+
+
+                    // Envoi AJAX au lieu de soumission classique
+                    fetch('{{ path('create_checkout_session', {id: sortie.id}) }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        credentials: 'same-origin'
+                    }).then(response => {
+                        console.log('📡 Response received:', {
+                            status: response.status,
+                            statusText: response.statusText,
+                            redirected: response.redirected,
+                            url: response.url
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        }
+
+                        return response.json();
+                    }).then(data => {
+                        console.log('📦 Response data:', data);
+
+                        if (data.success && data.redirect_url) {
+                            console.log('✅ Success! Redirecting to Stripe:', data.redirect_url);
+                            // Redirection vers Stripe
+                            window.location.href = data.redirect_url;
+                        } else {
+                            console.error('❌ Payment creation failed:', data.error);
+                            alert('Erreur: ' + (data.error || 'Erreur inconnue'));
+
+                            // Remettre le bouton en état
+                            button.disabled = false;
+                            button.style.display = 'block';
+                            loading.style.display = 'none';
+                        }
+                    }).catch(error => {
+                        console.error('💥 Network or parsing error:', error);
+                        alert('Erreur de connexion: ' + error.message);
+
+                        // Remettre le bouton en état
+                        button.disabled = false;
+                        button.style.display = 'block';
+                        loading.style.display = 'none';
+                    });
+                });
+            }
+        });
+
+
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Vérifier si on revient d'une annulation de paiement
+            const urlParams = new URLSearchParams(window.location.search);
+            const cancelled = urlParams.get('cancelled');
+
+            if (cancelled === '1') {
+                console.log('Détection de retour après annulation de paiement');
+
+                // Réinitialiser le bouton de paiement s'il existe
+                const paymentButton = document.getElementById('stripe-payment-button');
+                const loadingElement = document.getElementById('stripe-loading');
+
+                if (paymentButton && loadingElement) {
+                    paymentButton.disabled = false;
+                    paymentButton.style.display = 'block';
+                    loadingElement.style.display = 'none';
+                }
+
+                // Afficher un message pour informer l'utilisateur
+                alert('Votre paiement a été annulé. Vous pouvez réessayer quand vous le souhaitez.');
+
+                // Nettoyer l'URL pour éviter de réafficher le message au rafraîchissement
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        });
+    </script>
 {% endblock %}

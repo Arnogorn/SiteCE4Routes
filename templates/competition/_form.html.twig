@@ -1,4 +1,71 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Enregistrer') }}</button>
+{{ form_start(form, {'attr': {'class': 'form-modern', 'novalidate': 'novalidate'}}) }}
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="form-group-modern">
+            {{ form_label(form.titre, null, {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.titre, {'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Championnat de Bretagne, Concours départemental...'}}) }}
+            {{ form_errors(form.titre) }}
+        </div>
+
+        <div class="form-group-modern">
+            {{ form_label(form.dateDebut, null, {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.dateDebut, {'attr': {'class': 'form-control-modern'}}) }}
+            {{ form_errors(form.dateDebut) }}
+            <div class="form-text-modern">
+                <i class="bi bi-calendar-event me-1"></i>
+                Date et heure de début de la compétition
+            </div>
+        </div>
+
+        <div class="form-group-modern">
+            {{ form_label(form.dateFin, null, {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.dateFin, {'attr': {'class': 'form-control-modern'}}) }}
+            {{ form_errors(form.dateFin) }}
+            <div class="form-text-modern">
+                <i class="bi bi-calendar-check me-1"></i>
+                Date et heure de fin de la compétition
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="form-group-modern">
+            {{ form_label(form.prixTransport, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.prixTransport, {'attr': {'class': 'form-control-modern', 'placeholder': '0', 'min': '0', 'step': '0.01'}}) }}
+            {{ form_errors(form.prixTransport) }}
+            <div class="form-text-modern">
+                <i class="bi bi-truck me-1"></i>
+                Coût du transport en euros (optionnel)
+            </div>
+        </div>
+
+        <div class="form-group-modern">
+            {{ form_label(form.prixEpreuve, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.prixEpreuve, {'attr': {'class': 'form-control-modern', 'placeholder': '0', 'min': '0', 'step': '0.01'}}) }}
+            {{ form_errors(form.prixEpreuve) }}
+            <div class="form-text-modern">
+                <i class="bi bi-currency-euro me-1"></i>
+                Prix d'engagement par épreuve en euros
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-group-modern">
+    {{ form_label(form.description, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+    {{ form_widget(form.description, {'attr': {'class': 'form-control-modern', 'rows': '4', 'placeholder': 'Décrivez la compétition, les épreuves, le lieu, les modalités d\'inscription...'}}) }}
+    {{ form_errors(form.description) }}
+    <div class="form-text-modern">
+        <i class="bi bi-chat-text me-1"></i>
+        Informations détaillées sur la compétition
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <button type="submit" class="btn btn-modern-primary" style="min-width: 200px;">
+        <i class="bi bi-check-circle me-2"></i>{{ button_label|default('Enregistrer') }}
+    </button>
+</div>
+
 {{ form_end(form) }}

@@ -1,1 +1,7 @@
 
+<form method="post" action="{{ path('app_niveau_delete', {'id': niveau.id}) }}" class="d-inline">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ niveau.id) }}">
+    <button type="submit" class="btn btn-danger" style="background: linear-gradient(135deg, var(--error-color) 0%, #c82333 100%); border: none;">
+        <i class="bi bi-trash me-2"></i>Confirmer la suppression
+    </button>
+</form>

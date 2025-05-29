@@ -15,69 +15,72 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 
-
 class SortieFiltreType extends AbstractType
 {
-
-    private $security;
-
-    public function __construct(Security $security)
-    {
-        $this->security = $security;
+    public function __construct(
+        private Security $security
+    ) {
     }
-
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+
         $builder
             ->add('titre', TextType::class, [
                 'required' => false,
-                'label' => 'Titre',
-                'attr' => ['placeholder' => 'Rechercher par titre']
+                'label' => 'Titre contient',
+                'attr' => [
+                    'class' => 'form-control-modern form-select-modern'
+                ],
             ])
             ->add('dateMin', DateType::class, [
-                'required' => false,
                 'widget' => 'single_text',
-                'label' => 'Date minimum',
+                'required' => false,
+                'label' => 'Date à partir de',
+                'attr' => [
+                    'class' => 'form-control-modern form-select-modern'
+                ],
             ])
             ->add('dateMax', DateType::class, [
-                'required' => false,
                 'widget' => 'single_text',
-                'label' => 'Date maximum',
+                'required' => false,
+                'label' => 'Date jusqu\'à',
+                'attr' => [
+        'class' => 'form-control-modern form-select-modern'
+    ],
             ])
             ->add('niveau', EntityType::class, [
                 'class' => Niveau::class,
+                'required' => false,
+                'label' => 'Niveau requis',
                 'choice_label' => 'libelle',
-                'required' => false,
                 'placeholder' => 'Tous les niveaux',
-                'label' => 'Niveau'
-            ])
-            ->add('tri', ChoiceType::class, [
-                'choices' => [
-                    'Date (plus récentes)' => 'desc',
-                    'Date (plus anciennes)' => 'asc',
+                'attr' => [
+                    'class' => 'form-control-modern form-select-modern'
                 ],
-                'required' => false,
-                'placeholder' => 'Trier par',
-                'label' => 'Tri'
             ])
+
+
+
             ->add('rechercher', SubmitType::class, [
-                'attr' => ['class' => 'btn btn-primary']
+                'label' => 'Rechercher'
+
             ])
         ;
-
-        // Ajouter le champ état seulement pour les administrateurs
         if ($this->security->isGranted('ROLE_ADMIN')) {
             $builder->add('etat', EntityType::class, [
                 'class' => Etat::class,
-                'choice_label' => 'libelle',
                 'required' => false,
+                'label' => 'État',
+                'choice_label' => 'libelle',
                 'placeholder' => 'Tous les états',
-                'label' => 'État'
-            ]);
-        }
-    }
+                'attr' => [
+                    'class' => 'form-control-modern form-select-modern'
+                ],
 
-    public function configureOptions(OptionsResolver $resolver)
+            ]);
+    }}
+
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'method' => 'GET',

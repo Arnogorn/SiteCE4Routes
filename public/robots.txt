@@ -1,0 +1,8 @@
+# En développement - bloquer tout
+User-agent: *
+Disallow: /
+
+# En production (à modifier plus tard)
+# User-agent: *
+# Allow: /
+# Sitemap: https://votresite.com/sitemap.xml

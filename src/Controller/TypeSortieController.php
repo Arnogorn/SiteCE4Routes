@@ -44,6 +44,13 @@ final class TypeSortieController extends AbstractController
         ]);
     }
 
+    #[Route('/{id}', name: 'app_type_sortie_show', methods: ['GET'])]
+    public function show(TypeSortie $typeSortie): Response
+    {
+        return $this->render('type_sortie/show.html.twig', [
+            'type_sortie' => $typeSortie,
+        ]);
+    }
 
     #[Route('/{id}/modifier', name: 'app_type_sortie_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, TypeSortie $typeSortie, EntityManagerInterface $entityManager): Response

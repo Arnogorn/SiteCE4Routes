@@ -1,80 +1,230 @@
-<nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
+<nav class="navbar navbar-expand-lg navbar-modern sticky-top">
+    <div class="container-fluid px-2">
+        {# Logo et titre - Ultra compact #}
+        <a class="navbar-brand d-flex align-items-center me-2" href="{{ path('index') }}" title="Écuries des 4 Routes - Équitation en Bretagne">
+            <div style="position: relative;">
+                <img src="{{ asset('images/logoED4R_redimension.png') }}"
+                     alt="Logo Écuries des 4 Routes"
+                     class="logo-modern"
+                     style="height: 35px;">
+                <div style="position: absolute; top: -2px; right: -3px; color: var(--accent-color); font-size: 0.6rem; opacity: 0.7;">
+                    <i class="bi bi-droplet"></i>
+                </div>
+            </div>
+            <div class="ms-2 d-none d-xl-block">
+                <span class="brand-text" style="font-size: 0.95rem;">Écuries des 4 Routes</span>
+                <div style="font-size: 0.55rem; color: var(--text-secondary); font-style: italic; letter-spacing: 0.2px;">
+                    ÉQUITATION • PASSION
+                </div>
+            </div>
+        </a>
 
-        <h1 class="header-logo">
-            <a href="{{ path('index') }}" title="ED4R">
-                <img src="{{ asset('uploads/utilisateurs/logoED4R_redimension.png') }}" alt="Logo" id="logo">
-            </a>
-        </h1>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-
-                {#  btns menu  #}
-                <li>
-                    <a class="nav-link" href="/" title="Revenir à l'accueil">Accueil</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ path('app_cheval_index') }}" title="nos chevaux">Nos Chevaux</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ path('app_sortie_index') }}" title="sorties">Sorties</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ path('app_contact_index') }}" title="contact">Contact</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ path('app_competition_index') }}" title="compétition">Compétitions</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ path('app_ecurie_proprietaire_index') }}" title="contact">Écurie de propriétaire</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ path('commerce') }}" title="commerce">Commerce</a>
-                </li>
-                <li>
-                    <a class="nav-link" href="{{ path('app_calendrier_index') }}" title="calendrier">Calendrier</a>
-                </li>
-                {% if not app.user %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_register') }}"
-                       title="Mon Profil">S'inscrire</a>
-                </li>
-                {% endif %}
-
-
-                <!-- Bouton Mon Profil visible uniquement si l'utilisateur est connecté  -->
-                {% if app.user %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ path('app_user_show', {'id': app.user.id}) }}"
-                           title="Mon Profil">Mon
-                            Profil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout" title="Se déconnecter">Déconnexion</a>
-                    </li>
-                    {% if 'ROLE_ADMIN' in app.user.roles %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ path('app_admin_index') }}" title="Admin">Admin</a>
-                        </li>
-                    {% endif %}
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login" title="Se connecter">Connexion</a>
-                    </li>
-                {% endif %}
-            </ul>
+        {# Section mobile ultra compact #}
+        <div class="d-flex align-items-center d-lg-none">
+            {% if app.user %}
+                <div class="user-info-mobile me-1">
+                    <i class="bi bi-person-circle" style="font-size: 1.1rem;"></i>
+                </div>
+            {% endif %}
+            <button class="navbar-toggler border-0 p-1" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarContent" aria-controls="navbarContent"
+                    aria-expanded="false" aria-label="Toggle navigation"
+                    style="font-size: 0.9rem;">
+                <span class="navbar-toggler-icon"></span>
+            </button>
         </div>
 
-        {% if app.user %}
-            <div class="user-info">
-                <p>Bienvenue <span id="pseudo-info">{{ app.user.nom }}</span> !</p>
-                <p>Date du jour : <span class="bold">{{ "now"|date('d/m/Y') }}</span></p>
+        {# Contenu principal - Ultra optimisé #}
+        <div class="collapse navbar-collapse" id="navbarContent">
+            {# Menu principal - Iconique prioritaire #}
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0" style="gap: 0;">
+                <li class="nav-item">
+                    <a class="nav-link nav-link-modern {{ app.request.get('_route') == 'index' ? 'active' : '' }}"
+                       href="{{ path('index') }}" title="Accueil"
+                       style="padding: 0.3rem 0.4rem; font-size: 0.85rem;">
+                        <i class="bi bi-house-heart"></i>
+                        <span class="d-none d-xxl-inline ms-1">Accueil</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-modern {{ 'sortie' in app.request.get('_route') ? 'active' : '' }}"
+                       href="{{ path('app_sortie_index') }}" title="Sorties"
+                       style="padding: 0.3rem 0.4rem; font-size: 0.85rem;">
+                        <i class="bi bi-compass"></i>
+                        <span class="d-none d-xxl-inline ms-1">Sorties</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-modern {{ 'calendrier' in app.request.get('_route') ? 'active' : '' }}"
+                       href="{{ path('app_calendrier_index') }}" title="Calendrier"
+                       style="padding: 0.3rem 0.4rem; font-size: 0.85rem;">
+                        <i class="bi bi-calendar-event"></i>
+                        <span class="d-none d-xxl-inline ms-1">Calendrier</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-modern {{ 'ecurie_proprietaire' in app.request.get('_route') ? 'active' : '' }}"
+                       href="{{ path('app_ecurie_proprietaire_index') }}" title="Écurie"
+                       style="padding: 0.3rem 0.4rem; font-size: 0.85rem;">
+                        <i class="bi bi-building"></i>
+                        <span class="d-none d-xxl-inline ms-1">Écurie</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-modern {{ 'commerce' in app.request.get('_route') ? 'active' : '' }}"
+                       href="{{ path('commerce') }}" title="Commerce"
+                       style="padding: 0.3rem 0.4rem; font-size: 0.85rem;">
+                        <i class="bi bi-shop"></i>
+                        <span class="d-none d-xxl-inline ms-1">Commerce</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-link-modern {{ 'tarifs' in app.request.get('_route') ? 'active' : '' }}"
+                       href="{{ path('app_tarifs_index') }}" title="Poney club"
+                       style="padding: 0.3rem 0.4rem; font-size: 0.85rem;">
+                        <i class="bi bi-heart-fill"></i>
+                        <span class="d-none d-xxl-inline ms-1" style="white-space: nowrap;">Poney club</span>
+                    </a>
+                </li>
+
+                {# Menu dropdown ultra compact #}
+                <li class="nav-item dropdown">
+                    <a class="nav-link nav-link-modern dropdown-toggle" id="navbarDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                       style="padding: 0.3rem 0.4rem; font-size: 0.85rem;">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                        <span class="d-none d-xxl-inline ms-1">Plus</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-modern" aria-labelledby="navbarDropdown">
+                        <li>
+                            <h6 class="dropdown-header text-primary-brand">
+                                <i class="bi bi-heart-fill me-2"></i>Nos Animaux
+                            </h6>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {{ 'cheval' in app.request.get('_route') ? 'active' : '' }}"
+                               href="{{ path('app_cheval_index') }}">
+                                <i class="bi bi-heart me-2"></i>Nos Chevaux
+                            </a>
+                        </li>
+                        <li>
+                            <h6 class="dropdown-header text-primary-brand">
+                                <i class="bi bi-trophy me-2"></i>Compétitions
+                            </h6>
+                        </li>
+                        <li>
+                            <a class="dropdown-item {{ 'competition' in app.request.get('_route') ? 'active' : '' }}"
+                               href="{{ path('app_competition_index') }}">
+                                <i class="bi bi-trophy me-2"></i>Nos Compétitions
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <h6 class="dropdown-header text-primary-brand">
+                                <i class="bi bi-info-circle me-2"></i>Informations
+                            </h6>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ path('app_contact_index') }}">
+                                <i class="bi bi-envelope me-2"></i>Notre équipe
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            {# Section utilisateur - Minimaliste #}
+            <div class="navbar-nav align-items-lg-center" style="flex-shrink: 0;">
+                {% if app.user %}
+                    {# Info utilisateur - Très compact #}
+                    <div class="user-welcome d-none d-xxl-flex align-items-center me-2">
+                        <small class="text-muted me-1" style="font-size: 0.7rem;">Bonjour</small>
+                        <span class="fw-bold text-primary-brand" style="font-size: 0.85rem;">{{ app.user.prenom }}</span>
+                        <i class="bi bi-person-badge ms-1" style="color: var(--accent-color); font-size: 1rem;"></i>
+                    </div>
+
+                    {# Menu utilisateur - Minimaliste #}
+                    <div class="dropdown">
+                        <button class="btn btn-user-modern dropdown-toggle" type="button"
+                                id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false"
+                                aria-label="Menu utilisateur"
+                                style="padding: 0.3rem 0.6rem; font-size: 0.9rem;">
+                            <i class="bi bi-person-gear"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-modern"
+                            aria-labelledby="userDropdown">
+                            <li class="dropdown-header" style="background: var(--bg-tertiary); border-radius: 8px;">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-person-circle fs-5 me-2 text-primary-brand"></i>
+                                    <div>
+                                        <div class="fw-bold text-primary-brand" style="font-size: 0.9rem;">{{ app.user.prenom }} {{ app.user.nom }}</div>
+                                        <small class="text-muted" style="font-size: 0.75rem;">{{ app.user.email }}</small>
+                                    </div>
+                                </div>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('app_user_show', {'id': app.user.id}) }}">
+                                    <i class="bi bi-person me-2"></i>Mon Profil
+                                </a>
+                            </li>
+                            {% if 'ROLE_ADMIN' in app.user.roles %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <h6 class="dropdown-header text-primary-brand">
+                                        <i class="bi bi-shield-lock me-2"></i>Administration
+                                    </h6>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ path('app_admin_index') }}">
+                                        <i class="bi bi-speedometer2 me-2"></i>Tableau de bord
+                                    </a>
+                                </li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item text-danger" href="{{ path('app_logout') }}">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Déconnexion
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    {# Boutons connexion/inscription - Icônes prioritaires #}
+                    <div class="d-flex gap-1 align-items-center">
+                        <a href="{{ path('app_login') }}" class="btn btn-outline-modern"
+                           style="padding: 0.3rem 0.6rem; font-size: 0.85rem;" title="Connexion">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span class="d-none d-xxl-inline ms-1">Connexion</span>
+                        </a>
+                        <a href="{{ path('app_register') }}" class="btn btn-modern-primary"
+                           style="padding: 0.3rem 0.6rem; font-size: 0.85rem;" title="S'inscrire">
+                            <i class="bi bi-person-plus"></i>
+                            <span class="d-none d-xxl-inline ms-1">S'inscrire</span>
+                        </a>
+                    </div>
+                {% endif %}
             </div>
-        {% endif %}
+        </div>
     </div>
 </nav>
+
+{# Barre d'info secondaire - Masquée sur petits écrans #}
+{% if app.user %}
+    <div class="info-bar-modern d-none d-md-block">
+        <div class="container-fluid px-2">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <small class="text-muted me-3" style="font-size: 0.75rem;">
+                        <i class="bi bi-calendar3 me-1 text-accent-brand"></i>
+                        {{ "now"|format_date('medium', locale='fr') }}
+                    </small>
+                    <small class="text-muted" style="font-size: 0.75rem;">
+                        <i class="bi bi-clock me-1 text-accent-brand"></i>
+                        <span id="current-time">{{ "now"|date('H:i') }}</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}

@@ -5,7 +5,7 @@ namespace App\Controller;
 use App\Entity\Cheval;
 use App\Form\ChevalType;
 use App\Repository\ChevalRepository;
-use App\Services\Uploader;
+use App\Service\Uploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;

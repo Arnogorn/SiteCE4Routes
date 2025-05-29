@@ -1,0 +1,130 @@
+{{ form_start(form, {'attr': {'class': 'form-modern', 'novalidate': 'novalidate'}}) }}
+
+{# Champ Catégorie #}
+<div class="form-group-modern">
+    {{ form_label(form.categorie, null, {'label_attr': {'class': 'form-label-modern required'}}) }}
+    {{ form_widget(form.categorie, {'attr': {'class': 'form-control-modern form-select-modern', 'placeholder': 'Sélectionnez une catégorie'}}) }}
+    {% if form.categorie.vars.help %}
+        <div class="form-text-modern">
+            <i class="bi bi-info-circle me-1"></i>{{ form.categorie.vars.help }}
+        </div>
+    {% else %}
+        <div class="form-text-modern">
+            <i class="bi bi-folder me-1"></i>Choisissez la catégorie qui correspond le mieux à ce tarif
+        </div>
+    {% endif %}
+    {{ form_errors(form.categorie, {'attr': {'class': 'form-error-modern'}}) }}
+</div>
+
+{# Champ Prix #}
+<div class="form-group-modern">
+    {{ form_label(form.prix, null, {'label_attr': {'class': 'form-label-modern required'}}) }}
+    <div class="input-group" style="border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-sm);">
+        {{ form_widget(form.prix, {'attr': {'class': 'form-control-modern', 'placeholder': '0.00', 'step': '0.01', 'min': '0', 'style': 'border-radius: 12px 0 0 12px; border-right: none;'}}) }}
+        <span class="input-group-text" style="background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-left: none; color: var(--primary-color); font-weight: 600; border-radius: 0 12px 12px 0; font-size: 1.1rem; min-width: 50px; display: flex; align-items: center; justify-content: center;">
+            <i class="bi bi-currency-euro"></i>
+        </span>
+    </div>
+    {% if form.prix.vars.help %}
+        <div class="form-text-modern">
+            <i class="bi bi-info-circle me-1"></i>{{ form.prix.vars.help }}
+        </div>
+    {% else %}
+        <div class="form-text-modern">
+            <i class="bi bi-lightbulb me-1"></i>Saisissez 0 pour un service gratuit
+        </div>
+    {% endif %}
+    {{ form_errors(form.prix, {'attr': {'class': 'form-error-modern'}}) }}
+</div>
+
+{# Champ Description #}
+<div class="form-group-modern">
+    {{ form_label(form.description, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+    {{ form_widget(form.description, {'attr': {'class': 'form-control-modern', 'placeholder': 'Décrivez ce tarif en détail...', 'rows': '4', 'style': 'resize: vertical; min-height: 100px; line-height: 1.6;'}}) }}
+    {% if form.description.vars.help %}
+        <div class="form-text-modern">
+            <i class="bi bi-info-circle me-1"></i>{{ form.description.vars.help }}
+        </div>
+    {% else %}
+        <div class="form-text-modern">
+            <i class="bi bi-chat-text me-1"></i>Description optionnelle pour donner plus de détails sur ce tarif
+        </div>
+    {% endif %}
+    {{ form_errors(form.description, {'attr': {'class': 'form-error-modern'}}) }}
+</div>
+
+{# Protection CSRF et champs cachés #}
+{{ form_rest(form) }}
+
+{# Boutons d'action #}
+<div class="d-flex flex-column flex-md-row gap-3 justify-content-between align-items-stretch align-items-md-center mt-4 pt-3" style="border-top: 2px solid var(--border-color);">
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ path('app_tarifs_index') }}" class="btn btn-outline-modern">
+            <i class="bi bi-arrow-left me-2"></i>Annuler
+        </a>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="reset" class="btn btn-outline-warning" onclick="return confirm('⚠️ Voulez-vous vraiment réinitialiser le formulaire ?\n\nTous les changements non sauvegardés seront perdus.');">
+            <i class="bi bi-arrow-clockwise me-2"></i>Réinitialiser
+        </button>
+    </div>
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-modern-primary">
+            <i class="bi bi-check-circle me-2"></i>
+            {{ button_label|default(app.request.get('_route') == 'app_tarifs_new' ? 'Créer le tarif' : 'Sauvegarder les modifications') }}
+        </button>
+    </div>
+</div>
+
+{# Protection anti-spam honeypot #}
+<div class="honeypot">
+    <label for="website">Laissez ce champ vide</label>
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+</div>
+
+{{ form_end(form, {'render_rest': false}) }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Validation en temps réel
+        const form = document.querySelector('.form-modern');
+        const inputs = form.querySelectorAll('.form-control-modern');
+
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.checkValidity()) {
+                    this.classList.remove('is-invalid');
+                    this.classList.add('is-valid');
+                } else {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                }
+            });
+
+            // Effacer la validation lors de la saisie
+            input.addEventListener('input', function() {
+                this.classList.remove('is-valid', 'is-invalid');
+            });
+        });
+
+        // Format automatique pour le prix
+        const prixInput = document.querySelector('input[name*="[prix]"]');
+        if (prixInput) {
+            prixInput.addEventListener('blur', function() {
+                const value = parseFloat(this.value);
+                if (!isNaN(value)) {
+                    this.value = value.toFixed(2);
+                }
+            });
+        }
+
+        // Confirmation avant reset
+        form.addEventListener('reset', function(e) {
+            const hasChanges = Array.from(inputs).some(input => input.value !== input.defaultValue);
+            if (hasChanges && !confirm('Voulez-vous vraiment réinitialiser le formulaire ?')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>

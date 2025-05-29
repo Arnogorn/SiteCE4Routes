@@ -1,110 +1,314 @@
 {% extends 'base.html.twig' %}
 
-
-{% block title %}Profil de {{ user.prenom }} {{ user.nom }}{% endblock %}
+{% block title %}Profil de {{ user.prenom }} {{ user.nom }} - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <h1>Profil de {{ user.prenom }} {{ user.nom }}</h1>
+    <section class="py-5">
+        <div class="container">
+            {# En-tête avec style uniforme #}
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-person-badge" style="color: var(--accent-color);"></i>
+                    Profil utilisateur
+                    <i class="bi bi-person-badge" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Informations détaillées de <strong>{{ user.prenom }} {{ user.nom }}</strong>
+                </p>
+            </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Photo</th>
-                    <td>
-                    {% if user.photo != null %}
-                        <img src="{{ asset('uploads/utilisateurs/' ~ user.photo) }}" alt="{{ user.prenom }}">
-                    {% else %}
-                        <img src="{{ asset('uploads/utilisateurs/logoED4R_redimension.png') }}" alt="photo par défaut">
 
-                {% endif %}
-            </td>
 
-        </tr>
-        <tr>
-            <th>Email</th>
-            <td>{{ user.email }}</td>
-        </tr>
-        <tr>
-            <th>Nom</th>
-            <td>{{ user.nom }}</td>
-        </tr>
-        <tr>
-            <th>Prénom</th>
-            <td>{{ user.prenom }}</td>
-        </tr>
-        <tr>
-            <th>Date de Naissance</th>
-            <td>{{ user.dateNaissance ? user.dateNaissance|date('Y-m-d') : '' }}</td>
-        </tr>
-        <tr>
-            <th>Adresse</th>
-            <td>{{ user.adresse }}</td>
-        </tr>
-        <tr>
-            <th>Telephone</th>
-            <td>{{ user.telephone }}</td>
-        </tr>
+            <div class="row g-4">
+                {# Section Photo #}
+                <div class="col-lg-4">
+                    <div class="card-modern">
+                        <div class="text-center">
+                            <h4 class="text-primary-brand mb-3">
+                                <i class="bi bi-camera me-2"></i>Photo de profil
+                            </h4>
+                            <div class="position-relative d-inline-block">
+                                {% if user.photo != null %}
+                                    <img src="{{ asset('images/uploads/utilisateurs/' ~ user.photo) }}"
+                                         alt="{{ user.prenom }} {{ user.nom }}"
+                                         class="img-fluid rounded shadow"
+                                         style="max-height: 300px; width: 100%; object-fit: cover; border: 3px solid var(--border-dark);">
+                                {% else %}
+                                    <div class="d-flex align-items-center justify-content-center rounded shadow"
+                                         style="height: 200px; width: 100%; background: var(--bg-tertiary); border: 3px solid var(--border-color);">
+                                        <div class="text-center">
+                                            <i class="bi bi-person-circle" style="font-size: 4rem; color: var(--text-light);"></i>
+                                            <p class="mt-2 text-muted">Aucune photo</p>
+                                        </div>
+                                    </div>
+                                {% endif %}
 
-        <tr>
-            <th>Téléphone de la personne à contacter</th>
-            <td>{{ user.telPersContact }}</td>
-        </tr>
-        <tr>
-            <th>Allergies</th>
-            <td>{{ user.allergies }}</td>
-        </tr>
-        <tr>
-            <th>Médecin Traitant</th>
-            <td>{{ user.medecinTraitant }}</td>
-        </tr>
-        <tr>
-            <th>Téléphone Médecin</th>
-            <td>{{ user.telMedecin }}</td>
-        </tr>
-        <tr>
-            <th>Droit à l'Image</th>
-            <td>{{ user.droitImage ? 'Oui' : 'Non' }}</td>
-        </tr>
-        <tr>
-            <th>Informations</th>
-            <td>{{ user.infos }}</td>
-        </tr>
-        <tr>
-            <th>
-                Famille
-            </th>
-            <td>
-                {% if app.user and app.user.famille %}
-                    <div class="alert alert-success">
-                        Famille créée automatiquement️ ID : {{ app.user.famille.id }}
+                            </div>
+                        </div>
                     </div>
-                {% else %}
-                    <div class="alert alert-warning">
-                        Aucune famille liée à l'utilisateur.
-                    </div>
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>Bouton famille</th>
-            <td>
-                {% if app.user and app.user.famille %}
-                    <a href="{{ path('app_membre_famille_index') }}" class="btn btn-primary">
-                        Voir les membres de ma famille
-                    </a>
-                {% endif %}
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    {% if 'ROLE_ADMIN' in app.user.roles %}
-        <a href="{{ path('app_user_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
-    {% else %}
-        <a href="{{ path('index') }}">Retour à l'acceuil</a>
-    {% endif %}
+                </div>
 
-    {% if app.user and app.user.id == user.id or 'ROLE_ADMIN' in app.user.roles %}
-        <a href="{{ path('app_user_edit', {'id': user.id}) }}">Modifier</a>
-        {{ include('user/_delete_form.html.twig') }}
-    {% endif %}
+                {# Informations principales #}
+                <div class="col-lg-8">
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-info-circle me-2"></i>Informations Personnelles
+                        </h4>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-person me-1" style="color: var(--accent-color);"></i>Prénom
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary); font-weight: 600; color: var(--primary-color);">
+                                        {{ user.prenom }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-person-badge me-1" style="color: var(--accent-color);"></i>Nom
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary); font-weight: 600; color: var(--primary-color);">
+                                        {{ user.nom }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-envelope me-1" style="color: var(--accent-color);"></i>Email
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        <a href="mailto:{{ user.email }}" class="text-decoration-none">{{ user.email }}</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-telephone me-1" style="color: var(--accent-color);"></i>Téléphone
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        <a href="tel:{{ user.telephone }}" class="text-decoration-none">{{ user.telephone }}</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-calendar me-1" style="color: var(--accent-color);"></i>Date de Naissance
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% if user.dateNaissance %}
+                                            <span class="badge bg-primary-brand text-white">{{ user.dateNaissance|date('d/m/Y') }}</span>
+                                            <small class="text-muted ms-2">
+                                                ({{ date('now').diff(date(user.dateNaissance)).y }} ans)
+                                            </small>
+                                        {% else %}
+                                            <span class="text-muted">Non renseigné</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-geo-alt me-1" style="color: var(--accent-color);"></i>Adresse
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {{ user.adresse }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Informations médicales et contact #}
+            <div class="row g-4 mt-4">
+                <div class="col-lg-6">
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-heart-pulse me-2"></i>Informations Médicales
+                        </h4>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-exclamation-triangle me-1" style="color: var(--warning-color);"></i>Allergies
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary); min-height: 60px;">
+                                        {% if user.allergies %}
+                                            <div class="alert alert-warning mb-0" style="background: rgba(255, 193, 7, 0.1); border: 1px solid var(--warning-color);">
+                                                <i class="bi bi-exclamation-triangle me-2"></i>{{ user.allergies }}
+                                            </div>
+                                        {% else %}
+                                            <span class="text-success"><i class="bi bi-check-circle me-1"></i>Aucune allergie déclarée</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-person-heart me-1" style="color: var(--accent-color);"></i>Médecin Traitant
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% if user.medecinTraitant %}
+                                            {{ user.medecinTraitant }}
+                                        {% else %}
+                                            <span class="text-muted">Non renseigné</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-telephone-plus me-1" style="color: var(--accent-color);"></i>Téléphone du Médecin
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% if user.telMedecin %}
+                                            <a href="tel:{{ user.telMedecin }}" class="text-decoration-none">{{ user.telMedecin }}</a>
+                                        {% else %}
+                                            <span class="text-muted">Non renseigné</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-person-lines-fill me-2"></i>Autres informations
+                        </h4>
+
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-telephone-forward me-1" style="color: var(--accent-color);"></i>Personne à Contacter
+                            </label>
+                            <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                {% if user.telPersContact %}
+                                    <a href="tel:{{ user.telPersContact }}" class="text-decoration-none">{{ user.telPersContact }}</a>
+                                {% else %}
+                                    <span class="text-muted">Non renseigné</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-camera me-1" style="color: var(--accent-color);"></i>Droit à l'Image
+                            </label>
+                            <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                {% if user.droitImage %}
+                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Autorisé</span>
+                                {% else %}
+                                    <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Non autorisé</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if user.infos %}
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-chat-text me-1" style="color: var(--accent-color);"></i>Informations Complémentaires
+                                </label>
+                                <div class="form-control-modern" style="background: var(--bg-tertiary); min-height: 80px; white-space: pre-wrap;">{{ user.infos }}</div>
+                            </div>
+                        {% endif %}
+
+                        {# Section Famille #}
+                        {% if app.user and app.user.famille %}
+                            <div class="mt-4 p-3" style="background: rgba(40, 167, 69, 0.1); border-radius: 12px; border-left: 4px solid var(--success-color);">
+                                <h6 class="text-success mb-2">
+                                    <i class="bi bi-people me-1"></i>Famille
+                                </h6>
+                                
+                                <a href="{{ path('app_membre_famille_index') }}" class="btn btn-outline-success btn-sm">
+                                    <i class="bi bi-eye me-1"></i>Voir les membres de ma famille
+                                </a>
+                            </div>
+                        {% else %}
+                            <div class="mt-4 p-3" style="background: rgba(255, 193, 7, 0.1); border-radius: 12px; border-left: 4px solid var(--warning-color);">
+                                <h6 class="text-warning mb-2">
+                                    <i class="bi bi-people me-1"></i>Famille
+                                </h6>
+                                <p class="small mb-0">Aucune famille liée à cet utilisateur.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {# Actions #}
+            <div class="card-modern mt-4">
+                <div class="d-flex flex-wrap gap-3 justify-content-center">
+                    <div class="d-flex gap-2">
+                        {% if 'ROLE_ADMIN' in app.user.roles %}
+                            <a href="{{ path('app_user_index') }}" class="btn btn-outline-modern">
+                                <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+                            </a>
+                        {% else %}
+                            <a href="{{ path('index') }}" class="btn btn-outline-modern">
+                                <i class="bi bi-house me-2"></i>Retour à l'accueil
+                            </a>
+                        {% endif %}
+                    </div>
+
+                    {% if app.user and app.user.id == user.id or 'ROLE_ADMIN' in app.user.roles %}
+                        <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-modern-primary">
+                            <i class="bi bi-pencil me-2"></i>Modifier le profil
+                        </a>
+                    {% endif %}
+
+                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash me-2"></i>Supprimer
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Modal de suppression #}
+        {% if 'ROLE_ADMIN' in app.user.roles %}
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-primary-brand" id="deleteModalLabel">
+                                <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Êtes-vous sûr de vouloir supprimer le profil de <strong>{{ user.prenom }} {{ user.nom }}</strong> ?</p>
+                            <p class="text-danger"><small><i class="bi bi-exclamation-triangle me-1"></i>Cette action est irréversible.</small></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-modern" data-bs-dismiss="modal">Annuler</button>
+                            {{ include('user/_delete_form.html.twig') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </section>
 {% endblock %}

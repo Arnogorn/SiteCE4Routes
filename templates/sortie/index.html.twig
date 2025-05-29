@@ -1,139 +1,300 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Sortie index{% endblock %}
+{% block title %}Liste des Sorties - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
+    <section class="py-5">
+        <div class="container">
 
-    <h1>Liste des sorties</h1>
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-compass" style="color: var(--accent-color);"></i>
+                    Liste des Sorties Équestres
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Découvrez toutes nos sorties équestres et aventures en Bretagne
+                </p>
+            </div>
 
-    <div class="mb-4">
-        {{ form_start(form) }}
-            <div class="row g-3">
-                <div class="col-md-3">
-                    {{ form_row(form.titre) }}
-                </div>
-                <div class="col-md-3">
-                    {{ form_row(form.dateMin) }}
-                </div>
-                <div class="col-md-3">
-                    {{ form_row(form.dateMax) }}
-                </div>
-                <div class="col-md-3">
-                    {{ form_row(form.niveau) }}
-                </div>
-                {% if is_granted('ROLE_ADMIN') %}
-                <div class="col-md-3">
-                    {{ form_row(form.etat) }}
-                </div>
+
+            <div class="card-modern mb-4">
+                <h3 class="text-primary-brand mb-3">
+                    <i class="bi bi-funnel me-2"></i>Filtrer les sorties
+                </h3>
+
+                {% if app.user and is_granted('ROLE_ADMIN') %}
+                    <div class="alert alert-info mb-3" style="background: var(--accent-light); border: 1px solid var(--accent-color); border-radius: 12px;">
+                        <i class="bi bi-shield-lock me-2"></i>
+                        <small><strong>Mode Administrateur :</strong> Vous avez accès aux filtres avancés</small>
+                    </div>
                 {% endif %}
-                <div class="col-md-3">
-                    {{ form_row(form.tri) }}
+
+                {{ form_start(form, {'attr': {'class': 'form-filtre-modern'}}) }}
+                <div class="row g-3">
+                    <div class="col-md-6 col-lg-3">
+                        {{ form_row(form.titre) }}
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        {{ form_row(form.dateMin) }}
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        {{ form_row(form.dateMax) }}
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        {{ form_row(form.niveau) }}
+                    </div>
+
+
+                    {% if form.etat is defined %}
+                        <div class="col-md-6 col-lg-3">
+                            <div style="background: var(--accent-light); padding: 1rem; border-radius: 12px; border-left: 4px solid var(--accent-color);">
+                                {{ form_row(form.etat) }}
+                                <small class="text-muted d-block mt-1">
+                                    <i class="bi bi-info-circle me-1"></i>Champ administrateur
+                                </small>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="col-md-6 col-lg-3 d-flex align-items-end">
+                        {{ form_widget(form.rechercher, {'attr': {'class': 'btn btn-modern-primary w-100'}}) }}
+                    </div>
                 </div>
-                <div class="col-md-3 align-self-end">
-                    {{ form_row(form.rechercher) }}
+                {{ form_end(form) }}
+
+                <div class="mt-3 text-center">
+                    <a href="{{ path('app_sortie_index') }}" class="btn btn-outline-modern">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Réinitialiser les filtres
+                    </a>
                 </div>
             </div>
-        {{ form_end(form) }}
-        <div class="mt-2">
-            <a href="{{ path('app_sortie_index') }}" class="btn btn-outline-secondary">Réinitialiser les filtres</a>
-        </div>
-    </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Titre</th>
-                <th>
-                    <a href="{{ path('app_sortie_index', app.request.query.all | merge({'tri': 'asc'})) }}">Date ↑</a> |
-                    <a href="{{ path('app_sortie_index', app.request.query.all | merge({'tri': 'desc'})) }}">↓</a>
-                </th>
-                <th>Durée (en minutes)</th>
-                <th>Date limite d'inscription</th>
-                <th>Nombre maximum d'inscriptions</th>
-                <th>Niveaux Admis</th>
-                <th>Prix</th>
-                <th>Informations</th>
+            <div class="card-modern">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="text-primary-brand mb-0">
+                        <i class="bi bi-list-ul me-2"></i>Résultats
+                        <span class="badge bg-accent-brand ms-2">{{ sorties|length }}</span>
+                    </h3>
 
-                <th>État de la sortie</th>
-                {% if is_granted('ROLE_ADMIN') %}
-                <th>Sortie publiée</th>
-                {% endif %}
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for sortie in sorties %}
-            {% if is_granted('ROLE_ADMIN') or sortie.etat.libelle != "Archivée" %}
-            <tr>
-                <td>{{ sortie.titre }}</td>
-                <td>{{ sortie.date ? sortie.date|date('d-m-Y H:i:s') : '' }}</td>
-                <td>{{ sortie.duree }}min</td>
-                <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d-m-Y H:i:s') : '' }}</td>
-                <td>{{ sortie.participants|length + sortie.membresFamilleInscrits|length }}/{{ sortie.nbInscriptionMax }}</td>
-                <td>
-                    {% if sortie.niveauxAdmis|length > 0 %}
-                        <ul class="list-unstyled mb-0">
-                            {% for niveau in sortie.niveauxAdmis %}
-                                <li>{{ niveau.libelle }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <span class="text-muted">Aucun niveau spécifié</span>
-                    {% endif %}
-                </td>
-                <td>{{ sortie.prix }} €</td>
-                <td>{{ sortie.infos }}</td>
-
-                <td><p class="border rounded
-                        {% if sortie.etat.libelle == 'Créée' %}
-                            border-warning
-                        {% elseif sortie.etat.libelle == 'Ouverte' %}
-                            border-success
-                        {% elseif sortie.etat.libelle == 'Clôturée' %}
-                            border-info
-                        {% elseif sortie.etat.libelle == 'Activité en cours' %}
-                            border-primary
-                        {% elseif sortie.etat.libelle == 'Passée' %}
-                            border-secondary
-                        {% else %}
-                            border-danger
-                        {% endif %}">{{ sortie.etat.libelle }}</p></td>
-
-                {% if is_granted('ROLE_ADMIN') %}
-                <td>{{ sortie.isPublished ? 'Oui' : 'Non' }}</td>
-                {% endif %}
-                <td>
-                    <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}">Voir</a>
                     {% if is_granted('ROLE_ADMIN') %}
-                        <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">Modifier</a>
-                            {% if sortie.etat.libelle == 'Créée' %}
-                        <a href="{{ path('sortie_publier', {'id': sortie.id}) }}"
-                           class="btn btn-outline-primary mt-2">
-                            <i class="bi bi-upload"></i> Publier
+                        <a href="{{ path('app_sortie_new') }}" class="btn btn-modern-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Nouvelle Sortie
                         </a>
-                            {% endif %}
                     {% endif %}
-                </td>
-            </tr>
-            {% endif %}
-        {% else %}
-            <tr>
-                <td colspan="10">Aucune sortie trouvée</td>
-            </tr>
-            {% if form is defined %}
-                <tr>
-                    <td colspan="10">
-                        <p>Essayez de modifier les filtres pour afficher d'autres résultats.</p>
-                    </td>
-                </tr>
-            {% endif %}
+                </div>
 
-        {% endfor %}
-        </tbody>
-    </table>
+                {% if sorties|length > 0 %}
+                    {# Version responsive avec cards pour mobile #}
+                    <div class="d-lg-none">
+                        {% for sortie in sorties %}
+                            <div class="card mb-3" style="border: 2px solid var(--border-color); border-radius: 12px;">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title text-primary-brand">{{ sortie.titre }}</h5>
+                                        <span class="badge
+                                        {% if sortie.etat.libelle == 'Créée' %}bg-warning
+                                        {% elseif sortie.etat.libelle == 'Ouverte' %}bg-success
+                                        {% elseif sortie.etat.libelle == 'Clôturée' %}bg-info
+                                        {% elseif sortie.etat.libelle == 'Activité en cours' %}bg-primary
+                                        {% elseif sortie.etat.libelle == 'Passée' %}bg-secondary
+                                        {% else %}bg-danger
+                                        {% endif %}">
+                                        {{ sortie.etat.libelle }}
+                                    </span>
+                                    </div>
+                                    <div class="row g-2 text-sm">
+                                        <div class="col-6">
+                                            <strong>Date :</strong><br>
+                                            {{ sortie.date ? sortie.date|date('d/m/Y H:i') : 'Non définie' }}
+                                        </div>
+                                        <div class="col-6">
+                                            <strong>Durée :</strong><br>
+                                            {{ sortie.duree }}min
+                                        </div>
+                                        <div class="col-6">
+                                            <strong>Prix :</strong><br>
+                                            {{ sortie.prix }} €
+                                        </div>
+                                        <div class="col-6">
+                                            <strong>Places :</strong><br>
+                                            {{ sortie.participants|length + sortie.membresFamilleInscrits|length }}/{{ sortie.nbInscriptionMax }}
+                                        </div>
+                                    </div>
+                                    {% if sortie.infos %}
+                                        <p class="mt-2 mb-2 text-muted">{{ sortie.infos }}</p>
+                                    {% endif %}
+                                    <div class="d-flex gap-2 mt-3">
+                                        <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}" class="btn btn-outline-modern btn-sm">
+                                            <i class="bi bi-eye"></i> Voir
+                                        </a>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}" class="btn btn-outline-modern btn-sm">
+                                                <i class="bi bi-pencil"></i> Modifier
+                                            </a>
+                                            {% if sortie.etat.libelle == 'Créée' %}
+                                                <a href="{{ path('sortie_publier', {'id': sortie.id}) }}" class="btn btn-modern-primary btn-sm">
+                                                    <i class="bi bi-upload"></i> Publier
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
 
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('app_sortie_new') }}">Ajouter une nouvelle sortie</a>
-    {% endif %}
+                   {# Version desktop #}
+                    <div class="d-none d-lg-block">
+                        <div class="table-responsive">
+                            <table class="table table-hover" style="border-radius: 12px; overflow: hidden;">
+                                <thead style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);">
+                                <tr>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-card-text me-1"></i>Titre
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-calendar me-1"></i>Date
+                                        <div class="btn-group btn-group-sm ms-2" role="group">
+                                            <a href="{{ path('app_sortie_index', app.request.query.all | merge({'tri': 'asc'})) }}"
+                                               class="btn btn-outline-primary btn-sm" title="Tri croissant">
+                                                <i class="bi bi-sort-up"></i>
+                                            </a>
+                                            <a href="{{ path('app_sortie_index', app.request.query.all | merge({'tri': 'desc'})) }}"
+                                               class="btn btn-outline-primary btn-sm" title="Tri décroissant">
+                                                <i class="bi bi-sort-down"></i>
+                                            </a>
+                                        </div>
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-clock me-1"></i>Durée
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-calendar-x me-1"></i>Limite inscription
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-people me-1"></i>Places
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-currency-euro me-1"></i>Prix
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-info-circle me-1"></i>Informations
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-flag me-1"></i>État
+                                    </th>
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <th style="color: var(--primary-color); font-weight: 600;">
+                                            <i class="bi bi-eye me-1"></i>Publiée
+                                        </th>
+                                    {% endif %}
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-gear me-1"></i>Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for sortie in sorties %}
+                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                        <td>
+                                            <strong>{{ sortie.titre }}</strong>
+                                        </td>
+                                        <td>
+                                            {{ sortie.date ? sortie.date|date('d-m-Y H:i') : '<span class="text-muted">Non définie</span>' }}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light-brand text-primary-brand">{{ sortie.duree }}min</span>
+                                        </td>
+                                        <td>
+                                            {{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d-m-Y H:i') : '<span class="text-muted">Non définie</span>' }}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress me-2" style="width: 60px; height: 8px;">
+                                                    {% set pourcentage = (sortie.participants|length + sortie.membresFamilleInscrits|length) / sortie.nbInscriptionMax * 100 %}
+                                                    <div class="progress-bar" style="width: {{ pourcentage }}%; background: var(--accent-color);"></div>
+                                                </div>
+                                                <small>{{ sortie.participants|length + sortie.membresFamilleInscrits|length }}/{{ sortie.nbInscriptionMax }}</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <strong style="color: var(--accent-color);">{{ sortie.prix }} €</strong>
+                                        </td>
+                                        <td>
+                                            {% if sortie.infos %}
+                                                <span title="{{ sortie.infos }}">{{ sortie.infos }}</span>
+                                            {% else %}
+                                                <span class="text-muted">Aucune info</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                        <span class="badge
+                                            {% if sortie.etat.libelle == 'Créée' %}bg-warning
+                                            {% elseif sortie.etat.libelle == 'Ouverte' %}bg-success
+                                            {% elseif sortie.etat.libelle == 'Clôturée' %}bg-info
+                                            {% elseif sortie.etat.libelle == 'Activité en cours' %}bg-primary
+                                            {% elseif sortie.etat.libelle == 'Passée' %}bg-secondary
+                                            {% else %}bg-danger
+                                            {% endif %}" style="border-radius: 12px;">
+                                            {{ sortie.etat.libelle }}
+                                        </span>
+                                        </td>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <td>
+                                                {% if sortie.isPublished %}
+                                                    <i class="bi bi-check-circle-fill text-success" title="Publiée"></i>
+                                                {% else %}
+                                                    <i class="bi bi-x-circle-fill text-danger" title="Non publiée"></i>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}"
+                                                   class="btn btn-outline-primary btn-sm" title="Voir les détails">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                {% if is_granted('ROLE_ADMIN') %}
+                                                    <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}"
+                                                       class="btn btn-outline-secondary btn-sm" title="Modifier">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                    {% if sortie.etat.libelle == 'Créée' %}
+                                                        <a href="{{ path('sortie_publier', {'id': sortie.id}) }}"
+                                                           class="btn btn-primary btn-sm" title="Publier la sortie">
+                                                            <i class="bi bi-upload"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% else %}
+
+                    <div class="text-center py-5">
+                        <i class="bi bi-search" style="font-size: 4rem; color: var(--text-light);"></i>
+                        <h4 class="mt-3 text-primary-brand">Aucune sortie trouvée</h4>
+                        <p class="text-muted">
+                            {% if app.request.query.count > 0 %}
+                                Essayez de modifier les filtres pour afficher d'autres résultats.
+                            {% else %}
+                                Il n'y a actuellement aucune sortie disponible.
+                            {% endif %}
+                        </p>
+                        {% if app.request.query.count > 0 %}
+                            <a href="{{ path('app_sortie_index') }}" class="btn btn-outline-modern mt-2">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Voir toutes les sorties
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
 
 {% endblock %}
