@@ -122,7 +122,7 @@
                                         {# Boutons d'action selon le prix #}
                                         {% if sortie.prix > 0 %}
                                             <div class="d-grid gap-2">
-                                                <form id="stripe-payment-form" method="post" action="{{ path('create_checkout_session', {id: sortie.id}) }}">
+                                                <form id="stripe-payment-form" method="post" action="{{ path('create_checkout_session', {id: sortie.id}) }}" data-turbo="false">
                                                     <button type="submit" class="btn btn-primary btn-lg" id="stripe-payment-button">
                                                         <i class="fas fa-credit-card"></i>
                                                         Payer {{ sortie.prix }}€ et s'inscrire

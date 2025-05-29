@@ -38,6 +38,18 @@
             "./migrations/.gitignore"
         ]
     },
+    "nelmio/security-bundle": {
+        "version": "3.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.4",
+            "ref": "71045833e4f882ad9de8c95fe47efb99a1eec2f7"
+        },
+        "files": [
+            "./config/packages/nelmio_security.yaml"
+        ]
+    },
     "phpunit/phpunit": {
         "version": "9.6",
         "recipe": {
@@ -295,20 +307,16 @@
             "./config/routes/web_profiler.yaml"
         ]
     },
-    "symfony/webpack-encore-bundle": {
-        "version": "2.2",
+    "symfonycasts/reset-password-bundle": {
+        "version": "1.23",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
-            "version": "2.0",
-            "ref": "9ef5412a4a2a8415aca3a3f2b4edd3866aab9a19"
+            "version": "1.0",
+            "ref": "97c1627c0384534997ae1047b93be517ca16de43"
         },
         "files": [
-            "./assets/app.js",
-            "./assets/styles/app.css",
-            "./config/packages/webpack_encore.yaml",
-            "./package.json",
-            "./webpack.config.js"
+            "./config/packages/reset_password.yaml"
         ]
     },
     "symfonycasts/verify-email-bundle": {

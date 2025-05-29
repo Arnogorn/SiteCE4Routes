@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Poney club - Tarifs - Écuries des 4 Routes{% endblock %}
+
+{% block body %}
+    <section class="py-5">
+        <div class="container">
+            {# En-tête avec style moderne #}
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    Tarifs du poney club
+                </h1>
+            </div>
+
+            {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                <div class="d-flex justify-content-center align-items-center mb-4">
+                    <a href="{{ path('app_tarifs_new') }}" class="btn btn-modern-primary">
+                        <i class="bi bi-plus-circle me-2"></i>Nouveau Tarif
+                    </a>
+                </div>
+            {% endif %}
+
+            {% if tarifs|length > 0 %}
+                {% set categories = {
+                    'forfait': 'Forfaits',
+                    'a_la_carte': 'À la carte',
+                    'balades': 'Balades',
+                    'licences': 'Licences',
+                    'adhesions': 'Adhésions'
+                } %}
+
+                {% set tarifs_par_categorie = {} %}
+                {% for tarif in tarifs %}
+                    {% set cat = tarif.categorieRaw %}
+                    {% if tarifs_par_categorie[cat] is not defined %}
+                        {% set tarifs_par_categorie = tarifs_par_categorie|merge({(cat): []}) %}
+                    {% endif %}
+                    {% set tarifs_par_categorie = tarifs_par_categorie|merge({(cat): tarifs_par_categorie[cat]|merge([tarif])}) %}
+                {% endfor %}
+
+                <div class="row g-4">
+                    {% for categorie_key, categorie_nom in categories %}
+                        {% if tarifs_par_categorie[categorie_key] is defined and tarifs_par_categorie[categorie_key]|length > 0 %}
+                            <div class="col-12">
+                                <div class="card-modern">
+                                    {# En-tête de la catégorie #}
+                                    <div class="d-flex align-items-center mb-4">
+                                        <div class="me-3">
+                                            {% if categorie_key == 'forfait' %}
+                                                <i class="bi bi-calendar-check text-primary-brand" style="font-size: 2rem;"></i>
+                                            {% elseif categorie_key == 'a_la_carte' %}
+                                                <i class="bi bi-list-check text-primary-brand" style="font-size: 2rem;"></i>
+                                            {% elseif categorie_key == 'balades' %}
+                                                <i class="bi bi-tree text-primary-brand" style="font-size: 2rem;"></i>
+                                            {% elseif categorie_key == 'licences' %}
+                                                <i class="bi bi-award text-primary-brand" style="font-size: 2rem;"></i>
+                                            {% elseif categorie_key == 'adhesions' %}
+                                                <i class="bi bi-people text-primary-brand" style="font-size: 2rem;"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div>
+                                            <h3 class="text-primary-brand mb-0">{{ categorie_nom }}</h3>
+                                            <small class="text-muted">{{ tarifs_par_categorie[categorie_key]|length }} tarif(s)</small>
+                                        </div>
+                                    </div>
+
+                                    {# Version desktop avec tableau #}
+                                    <div class="d-none d-lg-block">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover" style="border-radius: 12px; overflow: hidden;">
+                                                <thead style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);">
+                                                <tr>
+                                                    <th style="color: var(--primary-color); font-weight: 600;"><i class="bi bi-chat-text me-1"></i>Description</th>
+                                                    <th style="color: var(--primary-color); font-weight: 600;"><i class="bi bi-currency-euro me-1"></i>Prix</th>
+                                                    {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                                                        <th style="color: var(--primary-color); font-weight: 600;"><i class="bi bi-gear me-1"></i>Actions</th>
+                                                    {% endif %}
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for tarif in tarifs_par_categorie[categorie_key] %}
+                                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                                        <td>
+                                                            {% if tarif.description %}
+                                                                {% if tarif.description|length > 80 %}
+                                                                    <span title="{{ tarif.description }}">{{ tarif.description|slice(0, 80) }}...</span>
+                                                                {% else %}
+                                                                    {{ tarif.description }}
+                                                                {% endif %}
+                                                            {% else %}
+                                                                <span class="text-muted">-</span>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td>
+                                                            <span class="fw-bold text-success fs-5">
+                                                                {% if tarif.prix == '0' %}
+                                                                    Gratuit
+                                                                {% else %}
+                                                                    {{ tarif.prix }}€
+                                                                {% endif %}
+                                                            </span>
+                                                        </td>
+                                                        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                                                            <td>
+                                                                <div class="btn-group btn-group-sm" role="group">
+                                                                    <a href="{{ path('app_tarifs_show', {'id': tarif.id}) }}"
+                                                                       class="btn btn-outline-primary btn-sm" title="Voir les détails">
+                                                                        <i class="bi bi-eye"></i>
+                                                                    </a>
+                                                                    <a href="{{ path('app_tarifs_edit', {'id': tarif.id}) }}"
+                                                                       class="btn btn-outline-secondary btn-sm" title="Modifier">
+                                                                        <i class="bi bi-pencil"></i>
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                        {% endif %}
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    {# Version mobile avec cards #}
+                                    <div class="d-lg-none">
+                                        <div class="row g-3">
+                                            {% for tarif in tarifs_par_categorie[categorie_key] %}
+                                                <div class="col-12 col-md-6">
+                                                    <div class="card h-100" style="border: 2px solid var(--border-color); border-radius: 12px;">
+                                                        <div class="card-body">
+                                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                                <span class="fw-bold text-success fs-4">
+                                                                    {% if tarif.prix == '0' %}
+                                                                        Gratuit
+                                                                    {% else %}
+                                                                        {{ tarif.prix }}€
+                                                                    {% endif %}
+                                                                </span>
+                                                            </div>
+
+                                                            {% if tarif.description %}
+                                                                <p class="text-muted mb-3">{{ tarif.description }}</p>
+                                                            {% endif %}
+
+                                                            {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                                                                <div class="d-flex gap-2 mt-auto">
+                                                                    <a href="{{ path('app_tarifs_show', {'id': tarif.id}) }}" class="btn btn-outline-modern btn-sm flex-fill">
+                                                                        <i class="bi bi-eye me-1"></i> Voir
+                                                                    </a>
+                                                                    <a href="{{ path('app_tarifs_edit', {'id': tarif.id}) }}" class="btn btn-outline-modern btn-sm flex-fill">
+                                                                        <i class="bi bi-pencil me-1"></i> Modifier
+                                                                    </a>
+                                                                </div>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                {# État vide #}
+                <div class="card-modern">
+                    <div class="text-center py-5">
+                        <i class="bi bi-currency-euro" style="font-size: 4rem; color: var(--text-light);"></i>
+                        <h4 class="mt-3 text-primary-brand">Aucun tarif trouvé</h4>
+                        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                            <p class="text-muted">Commencez par ajouter votre premier tarif.</p>
+                            <a href="{{ path('app_tarifs_new') }}" class="btn btn-modern-primary mt-2">
+                                <i class="bi bi-plus-circle me-1"></i>Ajouter le premier tarif
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

@@ -1,23 +1,212 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Moniteur{% endblock %}
+{% block title %}{{ moniteur.user.prenom }} {{ moniteur.user.nom }} - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <h1>Moniteur {{ moniteur.user.prenom }} {{ moniteur.user.nom }}</h1>
+    <section class="py-5">
+        <div class="container">
+            {# En-tête avec style moderne #}
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-person-badge-fill" style="color: var(--accent-color);"></i>
+                    Moniteur {{ moniteur.user.prenom }} {{ moniteur.user.nom }}
+                    <i class="bi bi-person-badge-fill" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Profil détaillé de ce moniteur d'équitation
+                </p>
+            </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
 
-                <td>{{ moniteur.user.nom }}</td>
-                <td>{{ moniteur.user.prenom }}</td>
-            </tr>
-        </tbody>
-    </table>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    {# Informations personnelles #}
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-person-circle me-2"></i>Informations Personnelles
+                        </h4>
 
-    <a href="{{ path('app_moniteur_index') }}">Retour à la liste</a>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-person me-1" style="color: var(--accent-color);"></i>Nom
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary); font-weight: 600; color: var(--primary-color);">
+                                        {{ moniteur.user.nom }}
+                                    </div>
+                                </div>
+                            </div>
 
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-person-heart me-1" style="color: var(--accent-color);"></i>Prénom
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary); font-weight: 600; color: var(--primary-color);">
+                                        {{ moniteur.user.prenom }}
+                                    </div>
+                                </div>
+                            </div>
 
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-envelope me-1" style="color: var(--accent-color);"></i>Email
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        <a href="mailto:{{ moniteur.user.email }}" class="text-decoration-none" style="color: var(--accent-color);">
+                                            {{ moniteur.user.email }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
 
-    {{ include('moniteur/_delete_form.html.twig') }}
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-telephone me-1" style="color: var(--accent-color);"></i>Téléphone
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% if moniteur.user.telephone %}
+                                            <a href="tel:{{ moniteur.user.telephone }}" class="text-decoration-none" style="color: var(--accent-color);">
+                                                {{ moniteur.user.telephone }}
+                                            </a>
+                                        {% else %}
+                                            <span class="text-muted">Non renseigné</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if moniteur.user.dateNaissance %}
+                                <div class="col-md-6">
+                                    <div class="form-group-modern">
+                                        <label class="form-label-modern">
+                                            <i class="bi bi-calendar me-1" style="color: var(--accent-color);"></i>Date de naissance
+                                        </label>
+                                        <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                            {{ moniteur.user.dateNaissance|date('d/m/Y') }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if moniteur.user.adresse %}
+                                <div class="col-12">
+                                    <div class="form-group-modern">
+                                        <label class="form-label-modern">
+                                            <i class="bi bi-geo-alt me-1" style="color: var(--accent-color);"></i>Adresse
+                                        </label>
+                                        <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                            {{ moniteur.user.adresse }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {# Activités et sorties #}
+                    {% if moniteur.sorties|length > 0 %}
+                        <div class="card-modern mt-4">
+                            <h4 class="text-primary-brand mb-4">
+                                <i class="bi bi-calendar-event me-2"></i>Sorties Encadrées
+                                <span class="badge bg-accent-brand ms-2">{{ moniteur.sorties|length }}</span>
+                            </h4>
+
+                            <div class="row g-3">
+                                {% for sortie in moniteur.sorties|slice(0, 6) %}
+                                    <div class="col-md-6">
+                                        <div class="p-3" style="background: var(--bg-tertiary); border-radius: 8px; border-left: 3px solid var(--accent-color);">
+                                            <h6 class="text-primary-brand mb-1">{{ sortie.titre }}</h6>
+                                            <div class="d-flex align-items-center gap-2 text-sm">
+                                                <i class="bi bi-calendar3" style="color: var(--accent-color);"></i>
+                                                <span>{{ sortie.date|date('d/m/Y H:i') }}</span>
+                                            </div>
+                                            {% if sortie.prix %}
+                                                <div class="d-flex align-items-center gap-2 text-sm mt-1">
+                                                    <i class="bi bi-currency-euro" style="color: var(--accent-color);"></i>
+                                                    <span>{{ sortie.prix }}€</span>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            {% if moniteur.sorties|length > 6 %}
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">
+                                        Et {{ moniteur.sorties|length - 6 }} autre{% if moniteur.sorties|length - 6 > 1 %}s{% endif %} sortie{% if moniteur.sorties|length - 6 > 1 %}s{% endif %}...
+                                    </small>
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="card-modern mt-4">
+                            <div class="text-center py-4">
+                                <i class="bi bi-calendar-x" style="font-size: 3rem; color: var(--text-light);"></i>
+                                <h5 class="mt-3 text-primary-brand">Aucune sortie programmée</h5>
+                                <p class="text-muted">
+                                    Ce moniteur n'a pas encore de sorties assignées.
+                                </p>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {# Actions #}
+                    <div class="card-modern mt-4">
+                        <div class="d-flex flex-wrap gap-3 justify-content-center">
+                            <a href="{{ path('app_moniteur_index') }}" class="btn btn-outline-modern">
+                                <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+                            </a>
+
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <i class="bi bi-trash me-2"></i>Retirer le statut moniteur
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Modal de confirmation de suppression #}
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-primary-brand" id="deleteModalLabel">
+                                <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Êtes-vous sûr de vouloir retirer le statut de moniteur à <strong>{{ moniteur.user.prenom }} {{ moniteur.user.nom }}</strong> ?</p>
+                            {% if moniteur.sorties|length > 0 %}
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <strong>Attention :</strong> Ce moniteur encadre actuellement {{ moniteur.sorties|length }} sortie{% if moniteur.sorties|length > 1 %}s{% endif %}.
+                                    Ces sorties devront être réassignées.
+                                </div>
+                            {% endif %}
+                            <p class="text-danger">
+                                <small>
+                                    <i class="bi bi-exclamation-triangle me-1"></i>Cette action retirera uniquement le statut de moniteur, l'utilisateur restera dans le système.
+                                </small>
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-modern" data-bs-dismiss="modal">Annuler</button>
+                            {{ include('moniteur/_delete_form.html.twig') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </section>
 {% endblock %}

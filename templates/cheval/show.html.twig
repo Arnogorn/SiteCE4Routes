@@ -1,88 +1,298 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Cheval{% endblock %}
+{% block title %}{{ cheval.nom }} - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <h1>Profil de {{ cheval.nom }}</h1>
+    <section class="py-5">
+        <div class="container">
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Photo</th>
-                <td>
-                    {% if cheval.photo != null %}
-                        <img src="{{ asset('uploads/chevaux/' ~ cheval.photo) }}" alt="{{ cheval.nom }}">
-                    {% else %}
-                        <img src="{{ asset('uploads/utilisateurs/logoED4R_redimension.png') }}" alt="photo par défaut">
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-heart-fill" style="color: var(--accent-color);"></i>
+                    Profil de {{ cheval.nom }}
+                    <i class="bi bi-heart-fill" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Découvrez toutes les informations sur ce magnifique compagnon
+                </p>
+            </div>
 
-                    {% endif %}
-                </td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ cheval.nom }}</td>
-            </tr>
-            <tr>
-                <th>Nom du Père</th>
-                <td>{{ cheval.nomPere }}</td>
-            </tr>
-            <tr>
-                <th>Nom de la Mère</th>
-                <td>{{ cheval.nomMere }}</td>
-            </tr>
-            <tr>
-                <th>Sexe</th>
-                <td>{{ cheval.sexe.libelle }}</td>
-            </tr>
-            <tr>
-                <th>Âge</th>
-                <td>
-                {% if cheval.dateNaissance %}
-                    {% set age_years = date('now').diff(date(cheval.dateNaissance)).y %}
-                    {% if age_years >= 1 %}
-                        {{ age_years }} an{% if age_years > 1 %}s{% endif %}
-                    {% else %}
-                        {% set age_months = date('now').diff(date(cheval.dateNaissance)).m %}
-                        {{ age_months }} mois
-                    {% endif %}
-                {% else %}
-                    Âge inconnu
+
+            <div class="text-center mb-4">
+                {% if cheval.appartientEcurie %}
+                    <span class="badge bg-success me-2" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        <i class="bi bi-building me-1"></i>Cheval de Club
+                    </span>
                 {% endif %}
-                </td>
-            </tr>
-            <tr>
-                <th>Lieu de Naissance</th>
-                <td>{{ cheval.lieuNaissance }}</td>
-            </tr>
-            {% if not null %}
-            <tr>
-                <th>Informations</th>
-                <td>{{ cheval.infos }}</td>
-            </tr>
-            {% endif %}
-            {% if 'ROLE_ADMIN' in app.user.roles %}
-            <tr>
-                <th>Cheval de club</th>
-                <td>{{ cheval.appartientEcurie ? 'Oui' : 'Non' }}</td>
-            </tr>
-            <tr>
-                <th>À Vendre</th>
-                <td>{{ cheval.aVendre ? 'Oui' : 'Non' }}</td>
-            </tr>
-            <tr>
-                <th>Vendu</th>
-                <td>{{ cheval.vendu ? 'Oui' : 'Non' }}</td>
-            </tr>
-        {% endif %}
-        </tbody>
-    </table>
+                {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                    {% if cheval.aVendre and not cheval.vendu %}
+                        <span class="badge bg-warning me-2" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                            <i class="bi bi-currency-euro me-1"></i>À Vendre
+                        </span>
+                    {% endif %}
+                    {% if cheval.vendu %}
+                        <span class="badge bg-secondary me-2" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                            <i class="bi bi-check-circle me-1"></i>Vendu
+                        </span>
+                    {% endif %}
+                {% endif %}
+            </div>
 
-    <a href="{{ path('app_cheval_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
-    {% if (app.user and cheval.user and app.user.id == cheval.user.id) or (app.user and 'ROLE_ADMIN' in app.user.roles) %}
-        <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}">Modifier</a>
-    {% endif %}
-    {% if 'ROLE_ADMIN' in app.user.roles %}
-        {{ include('cheval/_delete_form.html.twig') }}
+            <div class="row g-4">
+
+                <div class="col-lg-4">
+                    <div class="card-modern">
+                        <div class="text-center">
+                            <h4 class="text-primary-brand mb-3">
+                                <i class="bi bi-camera me-2"></i>Photo
+                            </h4>
+                            <div class="position-relative d-inline-block">
+                                {% if cheval.photo != null %}
+                                    <img src="{{ asset('images/uploads/chevaux/' ~ cheval.photo) }}"
+                                         alt="{{ cheval.nom }}"
+                                         class="img-fluid rounded shadow"
+                                         style="max-height: 300px; width: 100%; object-fit: cover; border: 3px solid var(--border-dark);">
+                                {% else %}
+                                    <img src="{{ asset('images/logoED4R_redimension.png') }}"
+                                         alt="Photo par défaut"
+                                         class="img-fluid rounded shadow"
+                                         style="max-height: 300px; width: 100%; object-fit: cover; border: 3px solid var(--border-color); opacity: 0.7;">
+                                {% endif %}
+
+
+                                {% if cheval.appartientEcurie %}
+                                    <span class="position-absolute top-0 end-0 mt-2 me-2 badge bg-success rounded-pill">
+                                        <i class="bi bi-star-fill"></i> Club
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-8">
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-info-circle me-2"></i>Informations Générales
+                        </h4>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-heart me-1" style="color: var(--accent-color);"></i>Nom
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary); font-weight: 600; color: var(--primary-color);">
+                                        {{ cheval.nom }}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-gender-ambiguous me-1" style="color: var(--accent-color);"></i>Sexe
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        <span class="badge bg-accent-brand text-white">{{ cheval.sexe.libelle }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-calendar me-1" style="color: var(--accent-color);"></i>Âge
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% if cheval.dateNaissance %}
+                                            {% set age_years = date('now').diff(date(cheval.dateNaissance)).y %}
+                                            {% if age_years >= 1 %}
+                                                <span class="badge bg-primary-brand text-white">{{ age_years }} an{% if age_years > 1 %}s{% endif %}</span>
+                                            {% else %}
+                                                {% set age_months = date('now').diff(date(cheval.dateNaissance)).m %}
+                                                <span class="badge bg-primary-brand text-white">{{ age_months }} mois</span>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">Âge inconnu</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-geo-alt me-1" style="color: var(--accent-color);"></i>Lieu de Naissance
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% if cheval.lieuNaissance %}
+                                            {{ cheval.lieuNaissance }}
+                                        {% else %}
+                                            <span class="text-muted">Non renseigné</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-4">
+                <div class="col-lg-6">
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-tree me-2"></i>Généalogie
+                        </h4>
+
+                        <div class="row g-3">
+
+                            <div class="col-12">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-person me-1" style="color: var(--accent-color);"></i>Nom du Père
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% if cheval.nomPere %}
+                                            {{ cheval.nomPere }}
+                                        {% else %}
+                                            <span class="text-muted">Non renseigné</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-12">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-person-heart me-1" style="color: var(--accent-color);"></i>Nom de la Mère
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% if cheval.nomMere %}
+                                            {{ cheval.nomMere }}
+                                        {% else %}
+                                            <span class="text-muted">Non renseigné</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-6">
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-chat-text me-2"></i>Informations Complémentaires
+                        </h4>
+
+                        {% if cheval.infos %}
+                            <div class="form-group-modern">
+                                <div class="form-control-modern" style="background: var(--bg-tertiary); min-height: 120px; white-space: pre-wrap;">{{ cheval.infos }}</div>
+                            </div>
+                        {% else %}
+                            <div class="text-center py-4">
+                                <i class="bi bi-chat-text" style="font-size: 3rem; color: var(--text-light);"></i>
+                                <p class="text-muted mt-2">Aucune information complémentaire</p>
+                            </div>
+                        {% endif %}
+
+
+                        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                            <div class="mt-4">
+                                <h5 class="text-secondary mb-3">
+                                    <i class="bi bi-gear me-1"></i>Informations Administratives
+                                </h5>
+
+                                <div class="row g-2">
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-between align-items-center p-2" style="background: var(--bg-tertiary); border-radius: 8px;">
+                                            <span><i class="bi bi-building me-1"></i>Cheval de club</span>
+                                            <span class="badge {{ cheval.appartientEcurie ? 'bg-success' : 'bg-secondary' }}">
+                                                {{ cheval.appartientEcurie ? 'Oui' : 'Non' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-between align-items-center p-2" style="background: var(--bg-tertiary); border-radius: 8px;">
+                                            <span><i class="bi bi-currency-euro me-1"></i>À Vendre</span>
+                                            <span class="badge {{ cheval.aVendre ? 'bg-warning' : 'bg-secondary' }}">
+                                                {{ cheval.aVendre ? 'Oui' : 'Non' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="d-flex justify-content-between align-items-center p-2" style="background: var(--bg-tertiary); border-radius: 8px;">
+                                            <span><i class="bi bi-check-circle me-1"></i>Vendu</span>
+                                            <span class="badge {{ cheval.vendu ? 'bg-success' : 'bg-secondary' }}">
+                                                {{ cheval.vendu ? 'Oui' : 'Non' }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card-modern mt-4">
+                <div class="d-flex flex-wrap gap-3 justify-content-center">
+
+                    <a href="{{ path('app_cheval_index') }}" class="btn btn-outline-modern">
+                        <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+                    </a>
+
+
+                    {% if (app.user and cheval.user and app.user.id == cheval.user.id) or (app.user and 'ROLE_ADMIN' in app.user.roles) %}
+                        <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}" class="btn btn-modern-primary">
+                            <i class="bi bi-pencil me-2"></i>Modifier
+                        </a>
+                    {% endif %}
+
+
+                    {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash me-2"></i>Supprimer
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de confirmation de suppression -->
+    {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-primary-brand" id="deleteModalLabel">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Êtes-vous sûr de vouloir supprimer <strong>{{ cheval.nom }}</strong> ?</p>
+                        <p class="text-danger"><small><i class="bi bi-exclamation-triangle me-1"></i>Cette action est irréversible.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-modern" data-bs-dismiss="modal">Annuler</button>
+                        {{ include('cheval/_delete_form.html.twig') }}
+                    </div>
+                </div>
+            </div>
+        </div>
     {% endif %}
 
 {% endblock %}

@@ -1,44 +1,230 @@
 {% extends 'base.html.twig' %}
 
-
-{% block title %}Competition{% endblock %}
+{% block title %}{{ competition.titre }} - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <h1>Competition : {{ competition.titre }}</h1>
+    <section class="py-5">
+        <div class="container">
+            {# En-tête avec style moderne #}
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-trophy-fill" style="color: var(--accent-color);"></i>
+                    {{ competition.titre }}
+                    <i class="bi bi-trophy-fill" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Détails de cette compétition équestre
+                </p>
+            </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Titre</th>
-                <td>{{ competition.titre }}</td>
-            </tr>
-            <tr>
-                <th>Date de début de la compétition</th>
-                <td>{{ competition.dateDebut ? competition.dateDebut|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Date de fin de la compétition</th>
-                <td>{{ competition.dateFin ? competition.dateFin|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Prix du transport</th>
-                <td>{{ competition.prixTransport }}</td>
-            </tr>
-            <tr>
-                <th>Prix d'une épreuve</th>
-                <td>{{ competition.prixEpreuve }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ competition.description }}</td>
-            </tr>
-        </tbody>
-    </table>
+            {# Badge de statut #}
+            <div class="text-center mb-4">
+                {% if competition.dateDebut > date('now') %}
+                    <span class="badge bg-success me-2" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        <i class="bi bi-clock me-1"></i>Compétition à venir
+                    </span>
+                {% elseif competition.dateFin < date('now') %}
+                    <span class="badge bg-secondary me-2" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        <i class="bi bi-check-circle me-1"></i>Compétition terminée
+                    </span>
+                {% else %}
+                    <span class="badge bg-warning me-2" style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        <i class="bi bi-play-circle me-1"></i>Compétition en cours
+                    </span>
+                {% endif %}
+            </div>
 
-    <a href="{{ path('app_competition_index') }}" class="btn btn-secondary mt-3">retour à la liste</a>
-    {% if is_granted('ROLE_ADMIN') %}
-    <a href="{{ path('app_competition_edit', {'id': competition.id}) }}">modifier</a>
+            <div class="row g-4">
+                {# Informations principales #}
+                <div class="col-lg-8">
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-info-circle me-2"></i>Informations Générales
+                        </h4>
 
-    {{ include('competition/_delete_form.html.twig') }}
-    {% endif %}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-trophy me-1" style="color: var(--accent-color);"></i>Titre
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary); font-weight: 600; color: var(--primary-color);">
+                                        {{ competition.titre }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-calendar-event me-1" style="color: var(--accent-color);"></i>Date de début
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        <span class="badge bg-accent-brand text-white">
+                                            {{ competition.dateDebut|date('d/m/Y à H:i') }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-calendar-check me-1" style="color: var(--accent-color);"></i>Date de fin
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        <span class="badge bg-accent-brand text-white">
+                                            {{ competition.dateFin|date('d/m/Y à H:i') }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-clock me-1" style="color: var(--accent-color);"></i>Durée
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% set duree = date(competition.dateFin).diff(date(competition.dateDebut)) %}
+                                        {% if duree.days > 0 %}
+                                            <span class="badge bg-primary-brand text-white">
+                                                {{ duree.days }} jour{% if duree.days > 1 %}s{% endif %}
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-primary-brand text-white">
+                                                {{ duree.h }}h{{ duree.i > 0 ? duree.i ~ 'min' : '' }}
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {# Tarifs et informations pratiques #}
+                <div class="col-lg-4">
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-currency-euro me-2"></i>Tarifs
+                        </h4>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-truck me-1" style="color: var(--accent-color);"></i>Transport
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% if competition.prixTransport %}
+                                            <span class="text-success fw-bold">{{ competition.prixTransport }}€</span>
+                                        {% else %}
+                                            <span class="text-muted">Gratuit</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
+                                        <i class="bi bi-trophy-fill me-1" style="color: var(--accent-color);"></i>Prix par épreuve
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% if competition.prixEpreuve %}
+                                            <span class="text-primary fw-bold">{{ competition.prixEpreuve }}€</span>
+                                        {% else %}
+                                            <span class="text-muted">Gratuit</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if competition.prixTransport or competition.prixEpreuve %}
+                                <div class="col-12">
+                                    <div class="p-3" style="background: var(--primary-ultra-light); border-radius: 8px; border: 1px solid var(--border-color);">
+                                        <h6 class="text-primary-brand mb-2">
+                                            <i class="bi bi-calculator me-1"></i>Coût total estimé
+                                        </h6>
+                                        <div class="text-center">
+                                            <span class="badge bg-primary-brand" style="font-size: 1.1rem; padding: 0.5rem 1rem;">
+                                                {{ (competition.prixTransport|default(0) + competition.prixEpreuve|default(0)) }}€
+                                            </span>
+                                            <br><small class="text-muted mt-1">Pour une épreuve + transport</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Description #}
+            {% if competition.description %}
+                <div class="row g-4 mt-4">
+                    <div class="col-12">
+                        <div class="card-modern">
+                            <h4 class="text-primary-brand mb-4">
+                                <i class="bi bi-chat-text me-2"></i>Description de la compétition
+                            </h4>
+
+                            <div class="form-group-modern">
+                                <div class="form-control-modern" style="background: var(--bg-tertiary); min-height: 120px; white-space: pre-wrap; line-height: 1.6;">{{ competition.description }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {# Actions #}
+            <div class="card-modern mt-4">
+                <div class="d-flex flex-wrap gap-3 justify-content-center">
+                    <a href="{{ path('app_competition_index') }}" class="btn btn-outline-modern">
+                        <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+                    </a>
+
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_competition_edit', {'id': competition.id}) }}" class="btn btn-modern-primary">
+                            <i class="bi bi-pencil me-2"></i>Modifier
+                        </a>
+
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash me-2"></i>Supprimer
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Modal de confirmation de suppression #}
+        {% if is_granted('ROLE_ADMIN') %}
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-primary-brand" id="deleteModalLabel">
+                                <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Êtes-vous sûr de vouloir supprimer la compétition <strong>{{ competition.titre }}</strong> ?</p>
+                            <p class="text-danger">
+                                <small>
+                                    <i class="bi bi-exclamation-triangle me-1"></i>Cette action est irréversible et supprimera toutes les inscriptions associées.
+                                </small>
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-modern" data-bs-dismiss="modal">Annuler</button>
+                            {{ include('competition/_delete_form.html.twig') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </section>
 {% endblock %}

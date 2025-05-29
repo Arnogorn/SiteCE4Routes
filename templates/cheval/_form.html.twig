@@ -1,4 +1,133 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Enregistrer') }}</button>
+{{ form_start(form, {'attr': {'class': 'form-modern', 'novalidate': 'novalidate'}}) }}
+
+<div class="row g-4">
+
+    <div class="col-md-6">
+
+        <div class="form-group-modern">
+            {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.nom, {'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Tornado, Belle...'}}) }}
+            {{ form_errors(form.nom) }}
+        </div>
+
+
+        <div class="form-group-modern">
+            {{ form_label(form.sexe, null, {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.sexe, {'attr': {'class': 'form-select-modern form-control-modern'}}) }}
+            {{ form_errors(form.sexe) }}
+        </div>
+
+
+        <div class="form-group-modern">
+            {{ form_label(form.dateNaissance, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.dateNaissance, {'attr': {'class': 'form-control-modern'}}) }}
+            {{ form_errors(form.dateNaissance) }}
+            <div class="form-text-modern">
+                <i class="bi bi-calendar me-1"></i>
+                Cette date permettra de calculer automatiquement l'âge du cheval
+            </div>
+        </div>
+
+
+        <div class="form-group-modern">
+            {{ form_label(form.lieuNaissance, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.lieuNaissance, {'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Bretagne, Normandie...'}}) }}
+            {{ form_errors(form.lieuNaissance) }}
+        </div>
+    </div>
+
+
+    <div class="col-md-6">
+
+        <div class="form-group-modern">
+            {{ form_label(form.nomPere, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.nomPere, {'attr': {'class': 'form-control-modern', 'placeholder': 'Nom de l\'étalon'}}) }}
+            {{ form_errors(form.nomPere) }}
+        </div>
+
+
+        <div class="form-group-modern">
+            {{ form_label(form.nomMere, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.nomMere, {'attr': {'class': 'form-control-modern', 'placeholder': 'Nom de la jument'}}) }}
+            {{ form_errors(form.nomMere) }}
+        </div>
+
+
+        <div class="form-group-modern">
+            {{ form_label(form.photo, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.photo, {'attr': {'class': 'form-control-modern', 'accept': 'image/*'}}) }}
+            {{ form_errors(form.photo) }}
+            <div class="form-text-modern">
+                <i class="bi bi-camera me-1"></i>
+                Formats acceptés : JPG, PNG, GIF (max. 5Mo)
+            </div>
+        </div>
+
+
+        {% if form.user is defined %}
+            <div class="form-group-modern">
+                {{ form_label(form.user, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+                {{ form_widget(form.user, {'attr': {'class': 'form-select-modern form-control-modern'}}) }}
+                {{ form_errors(form.user) }}
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+
+<div class="form-group-modern">
+    {{ form_label(form.infos, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+    {{ form_widget(form.infos, {'attr': {'class': 'form-control-modern', 'rows': '4', 'placeholder': 'Décrivez le caractère, les particularités, l\'histoire de ce cheval...'}}) }}
+    {{ form_errors(form.infos) }}
+    <div class="form-text-modern">
+        <i class="bi bi-chat-text me-1"></i>
+        Partagez tout ce qui rend ce cheval unique !
+    </div>
+</div>
+
+
+{% if is_granted('ROLE_ADMIN') %}
+    <div class="mt-4 p-4" style="background: var(--bg-tertiary); border-radius: 12px; border: 2px solid var(--border-color);">
+        <h5 class="text-primary-brand mb-3">
+            <i class="bi bi-gear me-2"></i>Paramètres Administratifs
+        </h5>
+
+        <div class="row g-3">
+
+            <div class="col-md-4">
+                <div class="form-check" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                    {{ form_widget(form.appartientEcurie, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(form.appartientEcurie, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                    {{ form_errors(form.appartientEcurie) }}
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="form-check" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                    {{ form_widget(form.aVendre, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(form.aVendre, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                    {{ form_errors(form.aVendre) }}
+                </div>
+            </div>
+
+
+            <div class="col-md-4">
+                <div class="form-check" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                    {{ form_widget(form.vendu, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(form.vendu, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                    {{ form_errors(form.vendu) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+
+<div class="text-center mt-4">
+    <button type="submit" class="btn btn-modern-primary" style="min-width: 200px;">
+        <i class="bi bi-check-circle me-2"></i>{{ button_label|default('Enregistrer') }}
+    </button>
+</div>
+
 {{ form_end(form) }}

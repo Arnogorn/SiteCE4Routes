@@ -5,11 +5,11 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        body {
+        .planning-page {
             background-color: #a8dadc;
             padding: 20px;
         }
-        .container {
+        .planning-container {
             background-color: white;
             border-radius: 10px;
             padding: 20px;
@@ -103,7 +103,8 @@
 {% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="planning-page">
+    <div class="planning-container">
         <h1 class="mb-4">Planning Hebdomadaire</h1>
 
         {% for label, messages in app.flashes %}
@@ -165,4 +166,6 @@
             </table>
         </div>
     </div>
+    </div>
+
 {% endblock %}

@@ -20,6 +20,9 @@ class Contact
     #[ORM\Column(length: 255)]
     private ?string $prenom = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $photo = null;
+
     #[ORM\Column(length: 20)]
     private ?string $tel = null;
 
@@ -51,6 +54,20 @@ class Contact
     public function setPrenom(string $prenom): static
     {
         $this->prenom = $prenom;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhoto(): ?string
+    {
+        return $this->photo;
+    }
+    public function setPhoto(string $photo): static
+    {
+        $this->photo = $photo;
 
         return $this;
     }

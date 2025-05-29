@@ -1,77 +1,377 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des chevaux{% endblock %}
+{% block title %}Nos Chevaux - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <h1>Liste des chevaux</h1>
+    <section class="py-5">
+        <div class="container">
+{#            <!-- En-tête avec style aquatique -->#}
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-heart-fill" style="color: var(--accent-color);"></i>
+                    Nos Magnifiques Chevaux
+                    <i class="bi bi-heart-fill" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Découvrez nos compagnons équins, chacun avec sa personnalité unique
+                </p>
+            </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Photo</th>
-                <th>Nom</th>
-                <th>Nom du Père</th>
-                <th>Nom de la Mère</th>
-                <th>Sexe</th>
-                <th>Âge</th>
-                <th>Lieu de Naissance</th>
-                <th>Informations</th>
-                <th>Cheval de club</th>
-                {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
-                <th>À Vendre</th>
-                <th>Vendu</th>
+{#            <!-- Statistiques rapides -->#}
+            {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center" style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px;">
+                        <div class="card-body py-3">
+                            <h5 class="text-primary-brand mb-1">{{ chevaux|length }}</h5>
+                            <small class="text-muted">Chevaux au total</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center" style="background: linear-gradient(135deg, var(--accent-light) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px;">
+                        <div class="card-body py-3">
+                            <h5 class="text-accent-brand mb-1">
+                                {% set chevaux_club = 0 %}
+                                {% for cheval in chevaux %}
+                                    {% if cheval.appartientEcurie %}
+                                        {% set chevaux_club = chevaux_club + 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                                {{ chevaux_club }}
+                            </h5>
+                            <small class="text-muted">Chevaux de club</small>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="col-md-3">
+                        <div class="card text-center" style="background: linear-gradient(135deg, var(--bg-wood) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px;">
+                            <div class="card-body py-3">
+                                <h5 class="text-warning mb-1">
+                                    {% set chevaux_vente = 0 %}
+                                    {% for cheval in chevaux %}
+                                        {% if cheval.aVendre and not cheval.vendu %}
+                                            {% set chevaux_vente = chevaux_vente + 1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {{ chevaux_vente }}
+                                </h5>
+                                <small class="text-muted">À vendre</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center" style="background: linear-gradient(135deg, var(--success-color) 0%, var(--secondary-light) 100%); border: 2px solid var(--border-color); border-radius: 12px;">
+                            <div class="card-body py-3">
+                                <h5 class="text-white mb-1">
+                                    {% set chevaux_vendus = 0 %}
+                                    {% for cheval in chevaux %}
+                                        {% if cheval.vendu %}
+                                            {% set chevaux_vendus = chevaux_vendus + 1 %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    {{ chevaux_vendus }}
+                                </h5>
+                                <small class="text-white">Vendus</small>
+                            </div>
+                        </div>
+                    </div>
                 {% endif %}
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for cheval in chevaux %}
-            <tr>
-                <td>{% if cheval.photo != null %}
-                        <img src="{{ asset('uploads/chevaux/' ~ cheval.photo) }}" alt="{{ cheval.nom }}">
-                    {% else %}
-                        <img src="{{ asset('uploads/utilisateurs/logoED4R_redimension.png') }}" alt="photo par défaut">
+            </div>
 
-                    {% endif %}</td>
-                <td>{{ cheval.nom }}</td>
-                <td>{{ cheval.nomPere }}</td>
-                <td>{{ cheval.nomMere }}</td>
-                <td>{{ cheval.sexe.libelle }}</td>
-                <td>
-                {% if cheval.dateNaissance %}
-                    {% set age_years = date('now').diff(date(cheval.dateNaissance)).y %}
-                    {% if age_years >= 1 %}
-                        {{ age_years }} an{% if age_years > 1 %}s{% endif %}
-                    {% else %}
-                        {% set age_months = date('now').diff(date(cheval.dateNaissance)).m %}
-                        {{ age_months }} mois
+{#            <!-- Contenu principal -->#}
+            <div class="card-modern">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="text-primary-brand mb-0">
+                        <i class="bi bi-list-ul me-2"></i>Nos Chevaux
+                        <span class="badge bg-accent-brand ms-2">{{ chevaux|length }}</span>
+                    </h3>
+
+                    {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                        <a href="{{ path('app_cheval_new') }}" class="btn btn-modern-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Nouveau Cheval
+                        </a>
                     {% endif %}
+                </div>
+
+                {% if chevaux|length > 0 %}
+{#                    <!-- Version responsive avec cards pour mobile -->#}
+                    <div class="d-lg-none">
+                        {% for cheval in chevaux %}
+                            <div class="card mb-3" style="border: 2px solid var(--border-color); border-radius: 12px;">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="position-relative">
+                                                {% if cheval.photo != null %}
+                                                    <img src="{{ asset('images/uploads/chevaux/' ~ cheval.photo) }}"
+                                                         alt="{{ cheval.nom }}"
+                                                         class="img-fluid rounded"
+                                                         style="width: 100%; height: 80px; object-fit: cover; border: 2px solid var(--border-color);">
+                                                {% else %}
+                                                    <img src="{{ asset('images/logoED4R_redimension.png') }}"
+                                                         alt="Photo par défaut"
+                                                         class="img-fluid rounded"
+                                                         style="width: 100%; height: 80px; object-fit: cover; border: 2px solid var(--border-color); opacity: 0.7;">
+                                                {% endif %}
+
+{#                                                <!-- Badges de statut -->#}
+                                                <div class="position-absolute top-0 end-0 mt-1 me-1">
+                                                    {% if cheval.appartientEcurie %}
+                                                        <span class="badge bg-success rounded-pill" style="font-size: 0.6rem;">Club</span>
+                                                    {% endif %}
+                                                    {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                                                        {% if cheval.aVendre and not cheval.vendu %}
+                                                            <span class="badge bg-warning rounded-pill" style="font-size: 0.6rem;">Vente</span>
+                                                        {% endif %}
+                                                        {% if cheval.vendu %}
+                                                            <span class="badge bg-secondary rounded-pill" style="font-size: 0.6rem;">Vendu</span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <h5 class="card-title text-primary-brand mb-1">{{ cheval.nom }}</h5>
+                                            <div class="text-sm mb-2">
+                                                <div><strong>Sexe:</strong> {{ cheval.sexe.libelle }}</div>
+                                                <div><strong>Âge:</strong>
+                                                    {% if cheval.dateNaissance %}
+                                                        {% set age_years = date('now').diff(date(cheval.dateNaissance)).y %}
+                                                        {% if age_years >= 1 %}
+                                                            {{ age_years }} an{% if age_years > 1 %}s{% endif %}
+                                                        {% else %}
+                                                            {% set age_months = date('now').diff(date(cheval.dateNaissance)).m %}
+                                                            {{ age_months }} mois
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <span class="text-muted">Inconnu</span>
+                                                    {% endif %}
+                                                </div>
+                                                {% if cheval.lieuNaissance %}
+                                                    <div><strong>Né à:</strong> {{ cheval.lieuNaissance }}</div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% if cheval.infos %}
+                                        <p class="mt-2 mb-2 text-muted small">
+                                            {% if cheval.infos|length > 80 %}
+                                                {{ cheval.infos|slice(0, 80) }}...
+                                            {% else %}
+                                                {{ cheval.infos }}
+                                            {% endif %}
+                                        </p>
+                                    {% endif %}
+
+                                    <div class="d-flex gap-2 mt-3">
+                                        <a href="{{ path('app_cheval_show', {'id': cheval.id}) }}" class="btn btn-outline-modern btn-sm">
+                                            <i class="bi bi-eye"></i> Voir
+                                        </a>
+                                        {% if (app.user and cheval.user and app.user.id == cheval.user.id) or (app.user and 'ROLE_ADMIN' in app.user.roles) %}
+                                            <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}" class="btn btn-outline-modern btn-sm">
+                                                <i class="bi bi-pencil"></i> Modifier
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+
+                    <div class="d-none d-lg-block">
+                        <div class="table-responsive">
+                            <table class="table table-hover" style="border-radius: 12px; overflow: hidden;">
+                                <thead style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);">
+                                <tr>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-camera me-1"></i>Photo
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-heart me-1"></i>Nom
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-person me-1"></i>Père
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-person-heart me-1"></i>Mère
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-gender-ambiguous me-1"></i>Sexe
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-calendar me-1"></i>Âge
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-geo-alt me-1"></i>Lieu naissance
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-info-circle me-1"></i>Informations
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-building me-1"></i>Cheval club
+                                    </th>
+                                    {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                                        <th style="color: var(--primary-color); font-weight: 600;">
+                                            <i class="bi bi-currency-euro me-1"></i>À vendre
+                                        </th>
+                                        <th style="color: var(--primary-color); font-weight: 600;">
+                                            <i class="bi bi-check-circle me-1"></i>Vendu
+                                        </th>
+                                    {% endif %}
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-gear me-1"></i>Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for cheval in chevaux %}
+                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                        <td>
+                                            <div class="position-relative" style="width: 60px; height: 60px;">
+                                                {% if cheval.photo != null %}
+                                                    <img src="{{ asset('images/uploads/chevaux/' ~ cheval.photo) }}"
+                                                         alt="{{ cheval.nom }}"
+                                                         class="rounded"
+                                                         style="width: 60px; height: 60px; object-fit: cover; border: 2px solid var(--border-color);">
+                                                {% else %}
+                                                    <img src="{{ asset('images/logoED4R_redimension.png') }}"
+                                                         alt="Photo par défaut"
+                                                         class="rounded"
+                                                         style="width: 60px; height: 60px; object-fit: cover; border: 2px solid var(--border-color); opacity: 0.5;">
+                                                {% endif %}
+
+
+                                                {% if cheval.appartientEcurie %}
+                                                    <span class="position-absolute top-0 end-0 badge bg-success rounded-circle" style="width: 15px; height: 15px;" title="Cheval de club"></span>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <strong class="text-primary-brand">{{ cheval.nom }}</strong>
+                                        </td>
+                                        <td>
+                                            {% if cheval.nomPere %}
+                                                {{ cheval.nomPere }}
+                                            {% else %}
+                                                <span class="text-muted">Non renseigné</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if cheval.nomMere %}
+                                                {{ cheval.nomMere }}
+                                            {% else %}
+                                                <span class="text-muted">Non renseigné</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light-brand text-primary-brand">{{ cheval.sexe.libelle }}</span>
+                                        </td>
+                                        <td>
+                                            {% if cheval.dateNaissance %}
+                                                {% set age_years = date('now').diff(date(cheval.dateNaissance)).y %}
+                                                {% if age_years >= 1 %}
+                                                    <span class="badge bg-accent-brand text-white">{{ age_years }} an{% if age_years > 1 %}s{% endif %}</span>
+                                                {% else %}
+                                                    {% set age_months = date('now').diff(date(cheval.dateNaissance)).m %}
+                                                    <span class="badge bg-accent-brand text-white">{{ age_months }} mois</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">Âge inconnu</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if cheval.lieuNaissance %}
+                                                {{ cheval.lieuNaissance }}
+                                            {% else %}
+                                                <span class="text-muted">Non renseigné</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if cheval.infos %}
+                                                <span title="{{ cheval.infos }}" class="text-truncate-custom">
+                                                {% if cheval.infos|length > 30 %}
+                                                    {{ cheval.infos|slice(0, 30) }}...
+                                                {% else %}
+                                                    {{ cheval.infos }}
+                                                {% endif %}
+                                            </span>
+                                            {% else %}
+                                                <span class="text-muted">Aucune info</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if cheval.appartientEcurie %}
+                                                <i class="bi bi-check-circle-fill text-success" title="Cheval de club"></i>
+                                                <span class="text-success fw-bold">Oui</span>
+                                            {% else %}
+                                                <i class="bi bi-x-circle-fill text-muted" title="Cheval privé"></i>
+                                                <span class="text-muted">Non</span>
+                                            {% endif %}
+                                        </td>
+                                        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                                            <td>
+                                                {% if cheval.aVendre %}
+                                                    {% if cheval.vendu %}
+                                                        <span class="badge bg-secondary">Était à vendre</span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning">À vendre</span>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <span class="text-muted">Non</span>
+                                                {% endif %}
+                                            </td>
+                                            <td>
+                                                {% if cheval.vendu %}
+                                                    <i class="bi bi-check-circle-fill text-success" title="Vendu"></i>
+                                                    <span class="text-success fw-bold">Oui</span>
+                                                {% else %}
+                                                    <i class="bi bi-x-circle-fill text-muted" title="Disponible"></i>
+                                                    <span class="text-muted">Non</span>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{{ path('app_cheval_show', {'id': cheval.id}) }}"
+                                                   class="btn btn-outline-primary btn-sm" title="Voir les détails">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                {% if (app.user and cheval.user and app.user.id == cheval.user.id) or (app.user and 'ROLE_ADMIN' in app.user.roles) %}
+                                                    <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}"
+                                                       class="btn btn-outline-secondary btn-sm" title="Modifier">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 {% else %}
-                    Âge inconnu
+
+                    <div class="text-center py-5">
+                        <i class="bi bi-heart" style="font-size: 4rem; color: var(--text-light);"></i>
+                        <h4 class="mt-3 text-primary-brand">Aucun cheval trouvé</h4>
+                        <p class="text-muted">
+                            Il n'y a actuellement aucun cheval enregistré.
+                        </p>
+                        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                            <a href="{{ path('app_cheval_new') }}" class="btn btn-modern-primary mt-2">
+                                <i class="bi bi-plus-circle me-1"></i>Ajouter le premier cheval
+                            </a>
+                        {% endif %}
+                    </div>
                 {% endif %}
-                </td>
-                <td>{{ cheval.lieuNaissance }}</td>
-                <td>{{ cheval.infos }}</td>
-                <td>{{ cheval.appartientEcurie ? 'Oui' : 'Non' }}</td>
-                {% if  app.user and 'ROLE_ADMIN' in app.user.roles %}
-                <td>{{ cheval.aVendre ? 'Oui' : 'Non' }}</td>
-                <td>{{ cheval.vendu ? 'Oui' : 'Non' }}</td>
-                {% endif %}
-                <td>
-                    <a href="{{ path('app_cheval_show', {'id': cheval.id}) }}">Voir</a>
-                    {% if (app.user and cheval.user and app.user.id == cheval.user.id) or (app.user and 'ROLE_ADMIN' in app.user.roles) %}
-                    <a href="{{ path('app_cheval_edit', {'id': cheval.id}) }}">Modifier</a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="12">Aucun cheval trouvé</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
-    <a href="{{ path('app_cheval_new') }}">Ajouter un nouveau cheval</a>
-    {% endif %}
+            </div>
+        </div>
+    </section>
+
 {% endblock %}

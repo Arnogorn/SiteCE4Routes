@@ -22,9 +22,9 @@
         {% for chevalAVendre in chevauxAVendre %}
                 <tr>
                     <td>{% if chevalAVendre.photo != null %}
-                            <img src="{{ asset('uploads/chevaux/' ~ chevalAVendre.photo) }}" alt="{{ chevalAVendre.nom }}">
+                            <img src="{{ asset('images/uploads/chevaux/' ~ cheval.photo) }}" alt="{{ chevalAVendre.nom }}">
                         {% else %}
-                            <img src="{{ asset('uploads/utilisateurs/logoED4R_redimension.png') }}" alt="photo par défaut">
+                            <img src="{{ asset('images/logoED4R_redimension.png') }}" alt="photo par défaut">
 
                         {% endif %}
                     </td>

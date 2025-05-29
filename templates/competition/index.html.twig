@@ -1,48 +1,213 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des compétitions{% endblock %}
+{% block title %}Compétitions - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <h1>Liste des compétitions</h1>
+    <section class="py-5">
+        <div class="container">
+            {# En-tête avec style moderne #}
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-trophy-fill" style="color: var(--accent-color);"></i>
+                    Nos Compétitions
+                    <i class="bi bi-trophy-fill" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Découvrez toutes les compétitions équestres à venir
+                </p>
+            </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Titre</th>
-                <th>Date</th>
 
-                <th>Date de fin</th>
+            {# Contenu principal #}
+            <div class="card-modern">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="text-primary-brand mb-0">
+                        <i class="bi bi-list-ul me-2"></i>Liste des Compétitions
+                        <span class="badge bg-accent-brand ms-2">{{ competitions|length }}</span>
+                    </h3>
 
-                <th>Tarif du transport</th>
-                <th>Tarif de l'engagement</th>
-                <th>Description</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for competition in competitions %}
-            <tr>
-                <td>{{ competition.titre }}</td>
-                <td>{{ competition.dateDebut ? competition.dateDebut|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ competition.dateFin ? competition.dateFin|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ competition.prixTransport }}</td>
-                <td>{{ competition.prixEpreuve }}</td>
-                <td>{{ competition.description }}</td>
-                <td>
-                    <a href="{{ path('app_competition_show', {'id': competition.id}) }}">Voir</a>
                     {% if is_granted('ROLE_ADMIN') %}
-                    <a href="{{ path('app_competition_edit', {'id': competition.id}) }}">Modifier</a>
+                        <a href="{{ path('app_competition_new') }}" class="btn btn-modern-primary">
+                            <i class="bi bi-plus-circle me-2"></i>Nouvelle Compétition
+                        </a>
                     {% endif %}
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="8">Aucune compétition trouvée</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    {% if is_granted('ROLE_ADMIN') %}
-    <a href="{{ path('app_competition_new') }}">Créer une nouvelle compétition</a>
-    {% endif %}
+                </div>
+
+                {% if competitions|length > 0 %}
+                    {# Version responsive avec cards pour mobile #}
+                    <div class="d-lg-none">
+                        {% for competition in competitions %}
+                            <div class="card mb-3" style="border: 2px solid var(--border-color); border-radius: 12px;">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title text-primary-brand mb-1">{{ competition.titre }}</h5>
+                                        {% if competition.dateDebut > date('now') %}
+                                            <span class="badge bg-success">À venir</span>
+                                        {% elseif competition.dateFin < date('now') %}
+                                            <span class="badge bg-secondary">Terminée</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">En cours</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="text-sm mb-2">
+                                        <div><strong>Début:</strong> {{ competition.dateDebut|date('d/m/Y à H:i') }}</div>
+                                        <div><strong>Fin:</strong> {{ competition.dateFin|date('d/m/Y à H:i') }}</div>
+                                        {% if competition.prixTransport %}
+                                            <div><strong>Transport:</strong> {{ competition.prixTransport }}€</div>
+                                        {% endif %}
+                                        {% if competition.prixEpreuve %}
+                                            <div><strong>Épreuve:</strong> {{ competition.prixEpreuve }}€</div>
+                                        {% endif %}
+                                    </div>
+
+                                    {% if competition.description %}
+                                        <p class="mt-2 mb-2 text-muted small">
+                                            {% if competition.description|length > 100 %}
+                                                {{ competition.description|slice(0, 100) }}...
+                                            {% else %}
+                                                {{ competition.description }}
+                                            {% endif %}
+                                        </p>
+                                    {% endif %}
+
+                                    <div class="d-flex gap-2 mt-3">
+                                        <a href="{{ path('app_competition_show', {'id': competition.id}) }}" class="btn btn-outline-modern btn-sm">
+                                            <i class="bi bi-eye"></i> Voir
+                                        </a>
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <a href="{{ path('app_competition_edit', {'id': competition.id}) }}" class="btn btn-outline-modern btn-sm">
+                                                <i class="bi bi-pencil"></i> Modifier
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {# Version desktop avec tableau #}
+                    <div class="d-none d-lg-block">
+                        <div class="table-responsive">
+                            <table class="table table-hover" style="border-radius: 12px; overflow: hidden;">
+                                <thead style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);">
+                                <tr>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-trophy me-1"></i>Titre
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-calendar-event me-1"></i>Début
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-calendar-check me-1"></i>Fin
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-truck me-1"></i>Transport
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-currency-euro me-1"></i>Épreuve
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-info-circle me-1"></i>Statut
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-gear me-1"></i>Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for competition in competitions %}
+                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                        <td>
+                                            <strong class="text-primary-brand">{{ competition.titre }}</strong>
+                                            {% if competition.description %}
+                                                <br><small class="text-muted">
+                                                {% if competition.description|length > 50 %}
+                                                    {{ competition.description|slice(0, 50) }}...
+                                                {% else %}
+                                                    {{ competition.description }}
+                                                {% endif %}
+                                            </small>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                                <span class="badge bg-accent-brand text-white">
+                                                    {{ competition.dateDebut|date('d/m/Y') }}
+                                                </span>
+                                            <br><small class="text-muted">{{ competition.dateDebut|date('H:i') }}</small>
+                                        </td>
+                                        <td>
+                                                <span class="badge bg-accent-brand text-white">
+                                                    {{ competition.dateFin|date('d/m/Y') }}
+                                                </span>
+                                            <br><small class="text-muted">{{ competition.dateFin|date('H:i') }}</small>
+                                        </td>
+                                        <td>
+                                            {% if competition.prixTransport %}
+                                                <span class="text-success fw-bold">{{ competition.prixTransport }}€</span>
+                                            {% else %}
+                                                <span class="text-muted">Gratuit</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if competition.prixEpreuve %}
+                                                <span class="text-primary fw-bold">{{ competition.prixEpreuve }}€</span>
+                                            {% else %}
+                                                <span class="text-muted">Gratuit</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if competition.dateDebut > date('now') %}
+                                                <span class="badge bg-success">
+                                                        <i class="bi bi-clock me-1"></i>À venir
+                                                    </span>
+                                            {% elseif competition.dateFin < date('now') %}
+                                                <span class="badge bg-secondary">
+                                                        <i class="bi bi-check-circle me-1"></i>Terminée
+                                                    </span>
+                                            {% else %}
+                                                <span class="badge bg-warning">
+                                                        <i class="bi bi-play-circle me-1"></i>En cours
+                                                    </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{{ path('app_competition_show', {'id': competition.id}) }}"
+                                                   class="btn btn-outline-primary btn-sm" title="Voir les détails">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                {% if is_granted('ROLE_ADMIN') %}
+                                                    <a href="{{ path('app_competition_edit', {'id': competition.id}) }}"
+                                                       class="btn btn-outline-secondary btn-sm" title="Modifier">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% else %}
+                    {# État vide #}
+                    <div class="text-center py-5">
+                        <i class="bi bi-trophy" style="font-size: 4rem; color: var(--text-light);"></i>
+                        <h4 class="mt-3 text-primary-brand">Aucune compétition trouvée</h4>
+                        <p class="text-muted">
+                            Il n'y a actuellement aucune compétition programmée.
+                        </p>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_competition_new') }}" class="btn btn-modern-primary mt-2">
+                                <i class="bi bi-plus-circle me-1"></i>Ajouter la première compétition
+                            </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
 {% endblock %}

@@ -25,7 +25,7 @@ class Uploader
         try {
             $manager = new ImageManager(new Driver());
             $image = $manager->read($fullPath);
-            $image->resize(250, 300);
+            $image->cover(250, 250);
             $image->save($fullPath);
         } catch (\Exception $e) {
 

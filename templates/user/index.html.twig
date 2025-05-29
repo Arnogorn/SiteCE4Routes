@@ -1,62 +1,269 @@
 {% extends 'base.html.twig' %}
 
-
-{% block title %}Liste des utilisateurs{% endblock %}
+{% block title %}Gestion des utilisateurs - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <h1>liste des utilisateurs</h1>
+    <section class="py-5">
+        <div class="container">
+            {# En-tête avec style uniforme #}
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-people-fill" style="color: var(--accent-color);"></i>
+                    Gestion des utilisateurs
+                    <i class="bi bi-people-fill" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Administration des comptes utilisateurs
+                </p>
+            </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Email</th>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>Date de Naissance</th>
-                <th>Adresse</th>
-                <th>Téléphone</th>
-                <th>Téléphone de la personne à contacter</th>
-                <th>Allergies</th>
-                <th>Médecin Traitant</th>
-                <th>Téléphone du Médecin</th>
-                <th>Droit à l'image</th>
-                <th>Actif</th>
-                <th>Informations</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr>
-                <td>{{ user.email }}</td>
-                <td>{{ user.nom }}</td>
-                <td>{{ user.prenom }}</td>
-                <td>{{ user.dateNaissance ? user.dateNaissance|date('Y-m-d') : '' }}</td>
-                <td>{{ user.adresse }}</td>
-                <td>{{ user.telephone }}</td>
-                <td>{{ user.telPersContact }}</td>
-                {% if user.allergies is not empty %}
-                    <td>{{ user.allergies }}</td>
+
+
+            {# Contenu principal #}
+            <div class="card-modern">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3 class="text-primary-brand mb-0">
+                        <i class="bi bi-list-ul me-2"></i>Liste des utilisateurs
+                        <span class="badge bg-accent-brand ms-2">{{ users|length }}</span>
+                    </h3>
+
+                    {# Bouton d'ajout si nécessaire #}
+                    <a href="{{ path('app_register') }}" class="btn btn-modern-primary">
+                        <i class="bi bi-person-plus me-2"></i>Nouvel utilisateur
+                    </a>
+                </div>
+
+                {% if users|length > 0 %}
+                    {# Version responsive avec cards pour mobile #}
+                    <div class="d-lg-none">
+                        {% for user in users %}
+                            <div class="card mb-3" style="border: 2px solid var(--border-color); border-radius: 12px;">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="position-relative">
+                                                {% if user.photo != null %}
+                                                    <img src="{{ asset('images/uploads/utilisateurs/' ~ user.photo) }}"
+                                                         alt="{{ user.prenom }} {{ user.nom }}"
+                                                         class="img-fluid rounded"
+                                                         style="width: 100%; height: 80px; object-fit: cover; border: 2px solid var(--border-color);">
+                                                {% else %}
+                                                    <div class="d-flex align-items-center justify-content-center rounded"
+                                                         style="width: 100%; height: 80px; background: var(--bg-tertiary); border: 2px solid var(--border-color);">
+                                                        <i class="bi bi-person-circle" style="font-size: 2rem; color: var(--text-light);"></i>
+                                                    </div>
+                                                {% endif %}
+
+                                                {# Badges de statut #}
+                                                <div class="position-absolute top-0 end-0 mt-1 me-1">
+                                                    {% if user.actif %}
+                                                        <span class="badge bg-success rounded-pill" style="font-size: 0.6rem;">Actif</span>
+                                                    {% else %}
+                                                        <span class="badge bg-secondary rounded-pill" style="font-size: 0.6rem;">Inactif</span>
+                                                    {% endif %}
+                                                    {% if user.allergies is not empty %}
+                                                        <span class="badge bg-warning rounded-pill" style="font-size: 0.6rem;" title="Allergies">⚠️</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <h5 class="card-title text-primary-brand mb-1">{{ user.prenom }} {{ user.nom }}</h5>
+                                            <div class="text-sm mb-2">
+                                                <div><strong>Email:</strong> {{ user.email }}</div>
+                                                <div><strong>Téléphone:</strong> {{ user.telephone }}</div>
+                                                {% if user.dateNaissance %}
+                                                    <div><strong>Né(e) le:</strong> {{ user.dateNaissance|date('d/m/Y') }}</div>
+                                                {% endif %}
+                                            </div>
+                                            {% if user.allergies is not empty %}
+                                                <div class="alert alert-warning py-1 px-2 mb-2" style="font-size: 0.8rem;">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                                    <strong>Allergies:</strong> {{ user.allergies }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex gap-2 mt-3">
+                                        <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-outline-modern btn-sm">
+                                            <i class="bi bi-eye"></i> Voir
+                                        </a>
+                                        {% if app.user and app.user.id == user.id or 'ROLE_ADMIN' in app.user.roles %}
+                                            <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-outline-modern btn-sm">
+                                                <i class="bi bi-pencil"></i> Modifier
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {# Version desktop avec tableau #}
+                    <div class="d-none d-lg-block">
+                        <div class="table-responsive">
+                            <table class="table table-hover" style="border-radius: 12px; overflow: hidden;">
+                                <thead style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);">
+                                <tr>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-person-circle me-1"></i>Utilisateur
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-envelope me-1"></i>Email
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-calendar me-1"></i>Naissance
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-telephone me-1"></i>Téléphone
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-person-lines-fill me-1"></i>Contact urgence
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-heart-pulse me-1"></i>Allergies
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-camera me-1"></i>Droit image
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-toggle-on me-1"></i>Statut
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-gear me-1"></i>Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for user in users %}
+                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="position-relative me-3">
+                                                    {% if user.photo != null %}
+                                                        <img src="{{ asset('images/uploads/utilisateurs/' ~ user.photo) }}"
+                                                             alt="{{ user.prenom }} {{ user.nom }}"
+                                                             class="rounded-circle"
+                                                             style="width: 40px; height: 40px; object-fit: cover; border: 2px solid var(--border-color);">
+                                                    {% else %}
+                                                        <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                                             style="width: 40px; height: 40px; background: var(--bg-tertiary); border: 2px solid var(--border-color);">
+                                                            <i class="bi bi-person" style="color: var(--text-light);"></i>
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <strong class="text-primary-brand">{{ user.prenom }} {{ user.nom }}</strong>
+                                                    <br>
+                                                    <small class="text-muted">{{ user.adresse }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a href="mailto:{{ user.email }}" class="text-decoration-none">
+                                                {{ user.email }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% if user.dateNaissance %}
+                                                <span class="badge bg-light-brand text-primary-brand">
+                                                    {{ user.dateNaissance|date('d/m/Y') }}
+                                                </span>
+                                                <br>
+                                                <small class="text-muted">
+                                                    {% set age = date('now').diff(date(user.dateNaissance)).y %}
+                                                    {{ age }} ans
+                                                </small>
+                                            {% else %}
+                                                <span class="text-muted">Non renseigné</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="tel:{{ user.telephone }}" class="text-decoration-none">
+                                                {{ user.telephone }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% if user.telPersContact %}
+                                                <a href="tel:{{ user.telPersContact }}" class="text-decoration-none">
+                                                    {{ user.telPersContact }}
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted">Non renseigné</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if user.allergies is not empty %}
+                                                <span class="badge bg-warning text-dark" title="{{ user.allergies }}">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                                    {% if user.allergies|length > 15 %}
+                                                        {{ user.allergies|slice(0, 15) }}...
+                                                    {% else %}
+                                                        {{ user.allergies }}
+                                                    {% endif %}
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle me-1"></i>Aucune
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if user.droitImage %}
+                                                <i class="bi bi-check-circle-fill text-success" title="Accepté"></i>
+                                                <span class="text-success fw-bold">Oui</span>
+                                            {% else %}
+                                                <i class="bi bi-x-circle-fill text-danger" title="Refusé"></i>
+                                                <span class="text-danger fw-bold">Non</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if user.actif %}
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle me-1"></i>Actif
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">
+                                                    <i class="bi bi-pause-circle me-1"></i>Inactif
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{{ path('app_user_show', {'id': user.id}) }}"
+                                                   class="btn btn-outline-primary btn-sm" title="Voir le profil">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                {% if app.user and app.user.id == user.id or 'ROLE_ADMIN' in app.user.roles %}
+                                                    <a href="{{ path('app_user_edit', {'id': user.id}) }}"
+                                                       class="btn btn-outline-secondary btn-sm" title="Modifier">
+                                                        <i class="bi bi-pencil"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 {% else %}
-                    <td>Aucune</td>
+                    {# Message si aucun utilisateur #}
+                    <div class="text-center py-5">
+                        <i class="bi bi-people" style="font-size: 4rem; color: var(--text-light);"></i>
+                        <h4 class="mt-3 text-primary-brand">Aucun utilisateur trouvé</h4>
+                        <p class="text-muted">
+                            Il n'y a actuellement aucun utilisateur enregistré.
+                        </p>
+                        <a href="{{ path('app_register') }}" class="btn btn-modern-primary mt-2">
+                            <i class="bi bi-person-plus me-1"></i>Ajouter le premier utilisateur
+                        </a>
+                    </div>
                 {% endif %}
-                <td>{{ user.medecinTraitant }}</td>
-                <td>{{ user.telMedecin }}</td>
-                <td>{{ user.droitImage ? 'Oui' : 'Non' }}</td>
-                <td>{{ user.actif ? 'Oui' : 'Non' }}</td>
-                <td>{{ user.infos }}</td>
-                <td>
-                    <a href="{{ path('app_user_show', {'id': user.id}) }}">Voir</a>
-                    {% if app.user and app.user.id == user.id or 'ROLE_ADMIN' in app.user.roles%}
-                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">Modifier</a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="19">Aucun utilisateur trouvé</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </div>
+        </div>
+    </section>
 {% endblock %}
