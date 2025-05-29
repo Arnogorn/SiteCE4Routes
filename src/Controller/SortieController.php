@@ -69,7 +69,6 @@ final class SortieController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/ajouter', name: 'app_sortie_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response

@@ -63,7 +63,14 @@ class SortieType extends AbstractType
                 'class' => Niveau::class,
                 'choice_label' => 'libelle',
                 'multiple' => true,
+                'expanded' => true,
                 'label' => 'Niveau(x) admis pour la sortie ',
+                'attr' => [
+                    'class' => 'checkbox-group', // Classe CSS personnalisée pour le styling
+                ],
+                'label_attr' => [
+                    'class' => 'checkbox-group-label',
+                ],
             ])
             ->add('participants', EntityType::class, [
                 'class' => User::class,
