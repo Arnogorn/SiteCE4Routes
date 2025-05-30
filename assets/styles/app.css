@@ -3289,8 +3289,6 @@
 
 
 
-
-
 :root {
     /* Couleurs principales - Nouvelle palette avec 3C3744, 090C9B, 3066BE, B4C5E4, 7695C9 */
     --primary-color: #090C9B;        /* Bleu-violet foncé principal */
@@ -3963,6 +3961,11 @@ a:hover {
         background-color: var(--bg-tertiary);
         border: 1px solid var(--border-color);
     }
+
+    /* Pour les petits écrans, gardez la logique mobile existante */
+    .navbar-nav .nav-link-modern span {
+        display: inline !important;
+    }
 }
 
 @media (max-width: 768px) {
@@ -4098,61 +4101,6 @@ a:hover {
         color: white;
     }
 
-    /* Optimisations navbar responsive */
-    @media (min-width: 992px) and (max-width: 1199px) {
-        .nav-link-modern {
-            padding: 0.5rem 0.5rem !important;
-            font-size: 0.9rem;
-        }
-
-        .navbar-brand .brand-text {
-            font-size: 1rem !important;
-        }
-
-        .btn-user-modern {
-            padding: 0.4rem 0.8rem;
-        }
-    }
-
-    @media (min-width: 1200px) and (max-width: 1399px) {
-        .nav-link-modern {
-            padding: 0.5rem 0.75rem !important;
-        }
-    }
-
-    /* Amélioration du toggler */
-    .navbar-toggler {
-        font-size: 0.9rem;
-    }
-
-    .navbar-toggler:focus {
-        box-shadow: none;
-    }
-
-    /* Force le texte sur une ligne */
-    .nav-link-modern span {
-        white-space: nowrap !important;
-    }
-
-    /* Réduction pour écrans moyens */
-    @media (min-width: 992px) and (max-width: 1399px) {
-        .nav-link-modern {
-            padding: 0.25rem 0.3rem !important;
-            font-size: 0.8rem !important;
-        }
-
-        .navbar-nav {
-            gap: 0 !important;
-        }
-    }
-
-    /* Gestion d'urgence si ça déborde encore */
-    @media (max-width: 1299px) {
-        .navbar-nav .nav-link-modern span {
-            display: none !important;
-        }
-    }
-
     /* Navigation mobile en mode sombre */
     .navbar-nav {
         background: rgba(42, 43, 50, 0.95);
@@ -4185,6 +4133,62 @@ a:hover {
 
     a:hover {
         color: var(--accent-hover);
+    }
+}
+
+/* NOUVELLES RÈGLES RESPONSIVE CORRIGÉES - Garde les textes visibles */
+@media (min-width: 992px) and (max-width: 1299px) {
+    .nav-link-modern {
+        padding: 0.4rem 0.6rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    .nav-link-modern span {
+        margin-left: 0.25rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    .navbar-brand .brand-text {
+        font-size: 0.9rem !important;
+    }
+
+    .btn-user-modern {
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    .navbar-nav {
+        gap: 0.25rem !important;
+    }
+
+    .nav-link-modern {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+}
+
+@media (min-width: 1200px) and (max-width: 1399px) {
+    .nav-link-modern {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.85rem !important;
+    }
+
+    .nav-link-modern span {
+        margin-left: 0.3rem !important;
+    }
+}
+
+/* Optimisation pour que tout tienne sur une ligne */
+@media (min-width: 1000px) and (max-width: 1299px) {
+    .container-fluid {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .navbar-nav {
+        margin-left: auto !important;
+        margin-right: auto !important;
     }
 }
 
@@ -4310,5 +4314,3 @@ a:hover {
     color: var(--text-primary);
     cursor: pointer;
 }
-
-
