@@ -240,7 +240,7 @@
                                 <h6 class="text-success mb-2">
                                     <i class="bi bi-people me-1"></i>Famille
                                 </h6>
-                                
+
                                 <a href="{{ path('app_membre_famille_index') }}" class="btn btn-outline-success btn-sm">
                                     <i class="bi bi-eye me-1"></i>Voir les membres de ma famille
                                 </a>
@@ -275,6 +275,9 @@
                     {% if app.user and app.user.id == user.id or 'ROLE_ADMIN' in app.user.roles %}
                         <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-modern-primary">
                             <i class="bi bi-pencil me-2"></i>Modifier le profil
+                        </a>
+                        <a href="{{ path('historique_index') }}" class="btn btn-outline-secondary mt-2">
+                            🔎 Voir mon historique de paiements
                         </a>
                     {% endif %}
 

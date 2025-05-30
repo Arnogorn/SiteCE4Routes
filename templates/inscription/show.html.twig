@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Détail de l'inscription</h1>
+
+    <ul>
+        <li><strong>ID :</strong> {{ inscription.id }}</li>
+        <li><strong>Nom du participant :</strong> {{ inscription.nom }}</li>
+        <li><strong>Sortie :</strong>
+            <a href="{{ path('inscription_sortie', {id: inscription.sortie.id}) }}">
+                {{ inscription.sortie.titre }}
+            </a>
+        </li>
+        <li><strong>Inscrit par :</strong>
+{#            <a href="{{ path('user_show', {id: inscription.inscritPar.id}) }}">{{ inscription.inscritPar.email }}</a>#}
+        </li>
+        <li><strong>Paiement :</strong>
+            #{{ inscription.paiement.id }} –
+            Statut : {{ inscription.paiement.statut }}
+        </li>
+        <li><strong>Date d'inscription :</strong> {{ inscription.dateInscription|date('d/m/Y H:i') }}</li>
+    </ul>
+
+    <a href="{{ path('inscription_index') }}">← Retour à la liste</a>
+    <a href="{{ path('inscription_sortie', {id: inscription.sortie.id}) }}">← Voir tous les inscrits à cette sortie</a>
+{% endblock %}

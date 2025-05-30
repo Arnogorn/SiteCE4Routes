@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gérer les inscriptions - {{ sortie.titre }}{% endblock %}
+
+{% block body %}
+  <h1>Gérer les inscriptions pour "{{ sortie.titre }}"</h1>
+
+  {{ form_start(form) }}
+    <div class="form-group">
+      {% for child in form.participants %}
+        {% if loop.index0 == 1 %}
+          <hr>
+          <h3>Membres de la famille</h3>
+        {% endif %}
+        <div class="form-check">
+          {{ form_widget(child, {attr: {class: 'form-check-input'}}) }}
+          <label class="form-check-label" for="{{ child.vars.id }}">
+            {{ child.vars.value }}
+          </label>
+        </div>
+      {% endfor %}
+    </div>
+    <button class="btn btn-primary">Valider</button>
+    <a href="{{ path('app_sortie_show', {id: sortie.id}) }}" class="btn btn-secondary">Annuler</a>
+  {{ form_end(form) }}
+{% endblock %}

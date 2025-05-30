@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="alert alert-warning">
+            <h1 class="h3">❌ Paiement annulé</h1>
+            <p>Le processus de paiement a été interrompu ou annulé.</p>
+        </div>
+
+        <p>Aucune inscription ni paiement n’a été enregistré. Vous pouvez reprendre le processus d’inscription à tout moment.</p>
+
+        {% if sortie is defined %}
+            <a href="{{ path('paiement_choisir_membres', {'id': sortie.id}) }}" class="btn btn-outline-primary mt-2">
+                Revenir à l’inscription pour {{ sortie.titre }}
+            </a>
+        {% endif %}
+
+        <a href="{{ path('app_sortie_index') }}" class="btn btn-secondary mt-3">
+            Retour aux sorties
+        </a>
+    </div>
+{% endblock %}

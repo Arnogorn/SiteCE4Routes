@@ -8,6 +8,9 @@ parameters:
     participant_picture_dir: '%kernel.project_dir%/assets/images/uploads/utilisateurs'
     cheval_picture_dir: '%kernel.project_dir%/assets/images/uploads/chevaux'
     app.timezone: '%env(APP_TIMEZONE)%'
+    stripe_base_url: '%env(STRIPE_BASE_URL)%'
+    router.request_context.host: a1e2-2a01-08b-82c3-bc00-643b-15f2-af19-a9b.ngrok-free.app
+    router.request_context.scheme: https
     app.mail_from: '%env(MAIL_FROM)%'
     app.contact_email: '%env(CONTACT_EMAIL)%'
 
@@ -24,13 +27,17 @@ services:
         exclude:
             - '../src/DependencyInjection/'
 
-    App\Service\StripeService:
-        arguments:
-            $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
 
     App\Kernel:
         calls:
             - [ setTimezone, [ '%app.timezone%' ] ]
+
+
+    Stripe\StripeClient:
+        arguments:
+            - '%env(STRIPE_SECRET_KEY)%'
+
+
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

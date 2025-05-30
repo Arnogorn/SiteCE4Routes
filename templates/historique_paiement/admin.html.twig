@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Historique des paiements (admin){% endblock %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="mb-4">📋 Historique des paiements - Administration</h1>
+
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <label for="utilisateur" class="form-label">ID utilisateur</label>
+            <input type="text" id="utilisateur" name="utilisateur" class="form-control"
+                   value="{{ filters.utilisateur ?? '' }}">
+        </div>
+
+        <div class="col-md-4">
+            <label for="type" class="form-label">Type</label>
+            <select id="type" name="type" class="form-select">
+                <option value="">-- Tous --</option>
+                <option value="paiement_annule" {% if filters.type == 'paiement_annule' %}selected{% endif %}>Annulé</option>
+                <option value="paiement_reussi" {% if filters.type == 'paiement_reussi' %}selected{% endif %}>Réussi</option>
+            </select>
+        </div>
+
+        <div class="col-md-4 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary">Filtrer</button>
+        </div>
+    </form>
+
+    <div class="mb-3">
+        <a href="{{ path('historique_export_csv', filters) }}" class="btn btn-success">
+            📤 Exporter au format CSV
+        </a>
+    </div>
+
+    {% if logs is empty %}
+        <div class="alert alert-info">Aucun résultat pour ces filtres.</div>
+    {% else %}
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Utilisateur</th>
+                    <th>Type</th>
+                    <th>Sortie</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        <td>{{ log.date|date('d/m/Y H:i') }}</td>
+                        <td>{{ log.utilisateur.email }}</td>
+                        <td>
+                            {% if log.type == 'paiement_annule' %}
+                                ❌ Annulé
+                            {% elseif log.type == 'paiement_reussi' %}
+                                ✅ Réussi
+                            {% else %}
+                                {{ log.type }}
+                            {% endif %}
+                        </td>
+                        <td>{{ log.sortie ? log.sortie.titre : '—' }}</td>
+                        <td>{{ log.message }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</div>
+{% endblock %}
