@@ -1,5 +1,5 @@
 <?php
-namespace App\Services;
+namespace App\Service;
 
 use App\Entity\MembreFamille;
 use App\Entity\Sortie;

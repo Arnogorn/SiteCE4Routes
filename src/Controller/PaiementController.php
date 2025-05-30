@@ -20,7 +20,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Psr\Log\LoggerInterface;
 use App\Entity\MembreFamille;
 use App\Entity\Inscription;
-use App\Services\InscriptionService;
+use App\Service\InscriptionService;
 use Stripe\Exception\ApiErrorException;
 
 

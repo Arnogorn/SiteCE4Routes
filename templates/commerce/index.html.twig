@@ -1,130 +1,415 @@
 {% extends 'base.html.twig' %}
-{% block title %}Commerce{% endblock %}
+{% block title %}Commerce - Vente de chevaux{% endblock %}
 
 {% block body %}
-    <h1>Vente de chevaux</h1>
+    <section class="py-5 hero-modern">
+        <div class="container">
+            {# En-tête avec style unifié #}
+            <div class="text-center mb-5 fade-in-up">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-shop" style="color: var(--accent-color);"></i>
+                    Vente de chevaux
+                    <i class="bi bi-shop" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Découvrez nos magnifiques chevaux disponibles à la vente
+                </p>
+            </div>
 
-    <h2>Chevaux à vendre</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Photo</th>
-                <th>Nom</th>
-                <th>Nom du Père</th>
-                <th>Nom de la Mère</th>
-                <th>Sexe</th>
-                <th>Âge</th>
-                <th>Lieu de Naissance</th>
-                <th>Informations</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for chevalAVendre in chevauxAVendre %}
-                <tr>
-                    <td>{% if chevalAVendre.photo != null %}
-                            <img src="{{ asset('images/uploads/chevaux/' ~ cheval.photo) }}" alt="{{ chevalAVendre.nom }}">
-                        {% else %}
-                            <img src="{{ asset('images/logoED4R_redimension.png') }}" alt="photo par défaut">
+            {# Section Chevaux à vendre #}
+            <div class="card-modern mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-primary-brand mb-0">
+                        <i class="bi bi-currency-euro me-2" style="color: var(--accent-color);"></i>
+                        Chevaux à vendre
+                        <span class="badge bg-accent-brand ms-2">{{ chevauxAVendre|length }}</span>
+                    </h2>
+                </div>
 
-                        {% endif %}
-                    </td>
-                    <td>
-                         {{ chevalAVendre.nom }}
-                    </td>
-                    <td>
-                        {{ chevalAVendre.nomPere }}
-                    </td>
-                    <td>
-                        {{ chevalAVendre.nomMere }}
-                    </td>
-                    <td>
-                        {{ chevalAVendre.sexe.libelle }}
-                    </td>
-                    <td>
-                        {% if chevalAVendre.dateNaissance %}
-                            {% set age_years = date('now').diff(date(chevalAVendre.dateNaissance)).y %}
-                            {% if age_years >= 1 %}
-                                {{ age_years }} an{% if age_years > 1 %}s{% endif %}
-                            {% else %}
-                                {% set age_months = date('now').diff(date(chevalAVendre.dateNaissance)).m %}
-                                {{ age_months }} mois
-                            {% endif %}
-                        {% else %}
-                            Âge inconnu
-                        {% endif %}
-                    </td>
-                    <td>
-                        {{ chevalAVendre.lieuNaissance }}
-                    </td>
-                    <td>
-                        {{ chevalAVendre.infos }}
-                    </td>
-                </tr>
-        {% else %}
-            <tr>
-                <td colspan="10">Aucun Cheval à vendre </td>
-            </tr>
-        {% endfor %}
-            </tbody>
-        </table>
+                {% if chevauxAVendre|length > 0 %}
+                    {# Version responsive avec cards pour mobile #}
+                    <div class="d-lg-none">
+                        {% for chevalAVendre in chevauxAVendre %}
+                            <div class="card mb-3" style="border: 2px solid var(--border-color); border-radius: 12px; background: linear-gradient(135deg, white 0%, var(--bg-secondary) 100%);">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="position-relative">
+                                                {% if chevalAVendre.photo != null %}
+                                                    <img src="{{ asset('images/uploads/chevaux/' ~ chevalAVendre.photo) }}"
+                                                         alt="{{ chevalAVendre.nom }}"
+                                                         class="img-fluid rounded"
+                                                         style="width: 100%; height: 80px; object-fit: cover; border: 2px solid var(--border-color); box-shadow: var(--shadow-sm);">
+                                                {% else %}
+                                                    <img src="{{ asset('images/logoED4R_redimension.png') }}"
+                                                         alt="Photo par défaut"
+                                                         class="img-fluid rounded"
+                                                         style="width: 100%; height: 80px; object-fit: cover; border: 2px solid var(--border-color); opacity: 0.7;">
+                                                {% endif %}
 
-    <h2>Chevaux vendus</h2>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Photo</th>
-                <th>Nom</th>
-                <th>Nom du Père</th>
-                <th>Nom de la Mère</th>
-                <th>Sexe</th>
-                <th>Âge</th>
-                <th>Lieu de Naissance</th>
-                <th>Informations</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for chevalVendu in chevauxVendu %}
-            <tr>
-                <td>{% if chevalVendu.photo != null %}
-                        <img src="{{ asset('uploads/chevaux/' ~ chevalVendu.photo) }}" alt="{{ chevalVendu.nom }}">
-                    {% else %}
-                        <img src="{{ asset('uploads/utilisateurs/logoED4R_redimension.png') }}" alt="photo par défaut">
+                                                <div class="position-absolute top-0 end-0 mt-1 me-1">
+                                                    <span class="badge bg-warning rounded-pill" style="font-size: 0.6rem;">À vendre</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <h5 class="card-title text-primary-brand mb-1">{{ chevalAVendre.nom }}</h5>
+                                            <div class="text-sm mb-2" style="color: var(--text-secondary);">
+                                                <div><strong>Père:</strong> {{ chevalAVendre.nomPere ?: 'Non renseigné' }}</div>
+                                                <div><strong>Mère:</strong> {{ chevalAVendre.nomMere ?: 'Non renseigné' }}</div>
+                                                <div><strong>Sexe:</strong> {{ chevalAVendre.sexe.libelle }}</div>
+                                                <div><strong>Âge:</strong>
+                                                    {% if chevalAVendre.dateNaissance %}
+                                                        {% set age_years = date('now').diff(date(chevalAVendre.dateNaissance)).y %}
+                                                        {% if age_years >= 1 %}
+                                                            {{ age_years }} an{% if age_years > 1 %}s{% endif %}
+                                                        {% else %}
+                                                            {% set age_months = date('now').diff(date(chevalAVendre.dateNaissance)).m %}
+                                                            {{ age_months }} mois
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <span class="text-muted">Inconnu</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
 
-                    {% endif %}
-                </td>
-                <td>
-                    {{ chevalVendu.nom }}
-                </td>
-                <td>
-                    {{ chevalVendu.nomPere }}
-                </td>
-                <td>
-                    {{ chevalVendu.nomMere }}
-                </td>
-                <td>
-                    {{ chevalVendu.sexe.libelle }}
-                </td>
-                <td>
-                    {% if chevalVendu.dateNaissance %}
-                        {% set age_years = date('now').diff(date(chevalVendu.dateNaissance)).y %}
-                        {% if age_years >= 1 %}
-                            {{ age_years }} an{% if age_years > 1 %}s{% endif %}
-                        {% else %}
-                            {% set age_months = date('now').diff(date(chevalVendu.dateNaissance)).m %}
-                            {{ age_months }} mois
-                        {% endif %}
-                    {% else %}
-                        Âge inconnu
-                    {% endif %}
-                </td>
-                <td>
-                    {{ chevalVendu.lieuNaissance }}
-                </td>
-                <td>
-                    {{ chevalVendu.infos }}
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+                                            {% if chevalAVendre.infos %}
+                                                <p class="mt-2 mb-2 text-muted small">
+                                                    {% if chevalAVendre.infos|length > 60 %}
+                                                        {{ chevalAVendre.infos|slice(0, 60) }}...
+                                                    {% else %}
+                                                        {{ chevalAVendre.infos }}
+                                                    {% endif %}
+                                                </p>
+                                            {% endif %}
+
+                                            <div class="mt-3">
+                                                <a href="{{ path('app_cheval_show', {'id': chevalAVendre.id}) }}" class="btn btn-outline-modern btn-sm">
+                                                    <i class="bi bi-eye me-1"></i>Voir le profil
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {# Version desktop avec tableau #}
+                    <div class="d-none d-lg-block">
+                        <div class="table-responsive">
+                            <table class="table table-hover" style="border-radius: 12px; overflow: hidden;">
+                                <thead style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);">
+                                <tr>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-camera me-1"></i>Photo
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-heart me-1"></i>Nom
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-person me-1"></i>Nom du Père
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-person-heart me-1"></i>Nom de la Mère
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-gender-ambiguous me-1"></i>Sexe
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-calendar me-1"></i>Âge
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-geo-alt me-1"></i>Lieu de Naissance
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-info-circle me-1"></i>Informations
+                                    </th>
+                                    <th style="color: var(--primary-color); font-weight: 600;">
+                                        <i class="bi bi-gear me-1"></i>Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for chevalAVendre in chevauxAVendre %}
+                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                        <td>
+                                            <div class="position-relative" style="width: 80px; height: 80px;">
+                                                {% if chevalAVendre.photo != null %}
+                                                    <img src="{{ asset('images/uploads/chevaux/' ~ chevalAVendre.photo) }}"
+                                                         alt="{{ chevalAVendre.nom }}"
+                                                         class="rounded"
+                                                         style="width: 80px; height: 80px; object-fit: cover; border: 2px solid var(--border-color); box-shadow: var(--shadow-sm);">
+                                                {% else %}
+                                                    <img src="{{ asset('images/logoED4R_redimension.png') }}"
+                                                         alt="Photo par défaut"
+                                                         class="rounded"
+                                                         style="width: 80px; height: 80px; object-fit: cover; border: 2px solid var(--border-color); opacity: 0.5;">
+                                                {% endif %}
+
+                                                <span class="position-absolute top-0 end-0 badge bg-warning rounded-circle" style="width: 15px; height: 15px;" title="À vendre"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <strong class="text-primary-brand">{{ chevalAVendre.nom }}</strong>
+                                        </td>
+                                        <td style="color: var(--text-secondary);">
+                                            {{ chevalAVendre.nomPere ?: 'Non renseigné' }}
+                                        </td>
+                                        <td style="color: var(--text-secondary);">
+                                            {{ chevalAVendre.nomMere ?: 'Non renseigné' }}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light-brand text-primary-brand">{{ chevalAVendre.sexe.libelle }}</span>
+                                        </td>
+                                        <td>
+                                            {% if chevalAVendre.dateNaissance %}
+                                                {% set age_years = date('now').diff(date(chevalAVendre.dateNaissance)).y %}
+                                                {% if age_years >= 1 %}
+                                                    <span class="badge bg-accent-brand text-white">{{ age_years }} an{% if age_years > 1 %}s{% endif %}</span>
+                                                {% else %}
+                                                    {% set age_months = date('now').diff(date(chevalAVendre.dateNaissance)).m %}
+                                                    <span class="badge bg-accent-brand text-white">{{ age_months }} mois</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">Âge inconnu</span>
+                                            {% endif %}
+                                        </td>
+                                        <td style="color: var(--text-secondary);">
+                                            {{ chevalAVendre.lieuNaissance ?: 'Non renseigné' }}
+                                        </td>
+                                        <td style="color: var(--text-secondary);">
+                                            {% if chevalAVendre.infos %}
+                                                <span title="{{ chevalAVendre.infos }}">
+                                                        {% if chevalAVendre.infos|length > 40 %}
+                                                            {{ chevalAVendre.infos|slice(0, 40) }}...
+                                                        {% else %}
+                                                            {{ chevalAVendre.infos }}
+                                                        {% endif %}
+                                                    </span>
+                                            {% else %}
+                                                <span class="text-muted">Aucune info</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('app_cheval_show', {'id': chevalAVendre.id}) }}"
+                                               class="btn btn-outline-modern btn-sm"
+                                               title="Voir le profil">
+                                                <i class="bi bi-eye me-1"></i>Voir le profil
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-shop" style="font-size: 4rem; color: var(--text-light);"></i>
+                        <h4 class="mt-3 text-primary-brand">Aucun cheval à vendre</h4>
+                        <p class="text-muted">Il n'y a actuellement aucun cheval disponible à la vente.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            {# Section Chevaux vendus #}
+            <div class="card-modern">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-primary-brand mb-0">
+                        <i class="bi bi-check-circle me-2" style="color: var(--success-color);"></i>
+                        Chevaux vendus
+                        <span class="badge bg-secondary ms-2">{{ chevauxVendu|length }}</span>
+                    </h2>
+                </div>
+
+                {% if chevauxVendu|length > 0 %}
+                    {# Version responsive avec cards pour mobile #}
+                    <div class="d-lg-none">
+                        {% for chevalVendu in chevauxVendu %}
+                            <div class="card mb-3" style="border: 2px solid var(--border-color); border-radius: 12px; background: linear-gradient(135deg, white 0%, var(--bg-secondary) 100%); opacity: 0.8;">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="position-relative">
+                                                {% if chevalVendu.photo != null %}
+                                                    <img src="{{ asset('uploads/chevaux/' ~ chevalVendu.photo) }}"
+                                                         alt="{{ chevalVendu.nom }}"
+                                                         class="img-fluid rounded"
+                                                         style="width: 100%; height: 80px; object-fit: cover; border: 2px solid var(--border-color); filter: grayscale(20%);">
+                                                {% else %}
+                                                    <img src="{{ asset('uploads/utilisateurs/logoED4R_redimension.png') }}"
+                                                         alt="Photo par défaut"
+                                                         class="img-fluid rounded"
+                                                         style="width: 100%; height: 80px; object-fit: cover; border: 2px solid var(--border-color); opacity: 0.5;">
+                                                {% endif %}
+
+                                                <div class="position-absolute top-0 end-0 mt-1 me-1">
+                                                    <span class="badge bg-success rounded-pill" style="font-size: 0.6rem;">Vendu</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-8">
+                                            <h5 class="card-title text-primary-brand mb-1">{{ chevalVendu.nom }}</h5>
+                                            <div class="text-sm mb-2" style="color: var(--text-secondary);">
+                                                <div><strong>Père:</strong> {{ chevalVendu.nomPere ?: 'Non renseigné' }}</div>
+                                                <div><strong>Mère:</strong> {{ chevalVendu.nomMere ?: 'Non renseigné' }}</div>
+                                                <div><strong>Sexe:</strong> {{ chevalVendu.sexe.libelle }}</div>
+                                                <div><strong>Âge:</strong>
+                                                    {% if chevalVendu.dateNaissance %}
+                                                        {% set age_years = date('now').diff(date(chevalVendu.dateNaissance)).y %}
+                                                        {% if age_years >= 1 %}
+                                                            {{ age_years }} an{% if age_years > 1 %}s{% endif %}
+                                                        {% else %}
+                                                            {% set age_months = date('now').diff(date(chevalVendu.dateNaissance)).m %}
+                                                            {{ age_months }} mois
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <span class="text-muted">Inconnu</span>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+
+                                            {% if chevalVendu.infos %}
+                                                <p class="mt-2 mb-2 text-muted small">
+                                                    {% if chevalVendu.infos|length > 60 %}
+                                                        {{ chevalVendu.infos|slice(0, 60) }}...
+                                                    {% else %}
+                                                        {{ chevalVendu.infos }}
+                                                    {% endif %}
+                                                </p>
+                                            {% endif %}
+
+                                            <div class="mt-3">
+                                                <a href="{{ path('app_cheval_show', {'id': chevalVendu.id}) }}" class="btn btn-outline-modern btn-sm">
+                                                    <i class="bi bi-eye me-1"></i>Voir le profil
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    {# Version desktop avec tableau #}
+                    <div class="d-none d-lg-block">
+                        <div class="table-responsive">
+                            <table class="table table-hover" style="border-radius: 12px; overflow: hidden; opacity: 0.8;">
+                                <thead style="background: linear-gradient(135deg, var(--secondary-color) 0%, var(--text-light) 100%);">
+                                <tr>
+                                    <th style="color: white; font-weight: 600;">
+                                        <i class="bi bi-camera me-1"></i>Photo
+                                    </th>
+                                    <th style="color: white; font-weight: 600;">
+                                        <i class="bi bi-heart me-1"></i>Nom
+                                    </th>
+                                    <th style="color: white; font-weight: 600;">
+                                        <i class="bi bi-person me-1"></i>Nom du Père
+                                    </th>
+                                    <th style="color: white; font-weight: 600;">
+                                        <i class="bi bi-person-heart me-1"></i>Nom de la Mère
+                                    </th>
+                                    <th style="color: white; font-weight: 600;">
+                                        <i class="bi bi-gender-ambiguous me-1"></i>Sexe
+                                    </th>
+                                    <th style="color: white; font-weight: 600;">
+                                        <i class="bi bi-calendar me-1"></i>Âge
+                                    </th>
+                                    <th style="color: white; font-weight: 600;">
+                                        <i class="bi bi-geo-alt me-1"></i>Lieu de Naissance
+                                    </th>
+                                    <th style="color: white; font-weight: 600;">
+                                        <i class="bi bi-info-circle me-1"></i>Informations
+                                    </th>
+                                    <th style="color: white; font-weight: 600;">
+                                        <i class="bi bi-gear me-1"></i>Actions
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for chevalVendu in chevauxVendu %}
+                                    <tr style="border-bottom: 1px solid var(--border-color);">
+                                        <td>
+                                            <div class="position-relative" style="width: 80px; height: 80px;">
+                                                {% if chevalVendu.photo != null %}
+                                                    <img src="{{ asset('uploads/chevaux/' ~ chevalVendu.photo) }}"
+                                                         alt="{{ chevalVendu.nom }}"
+                                                         class="rounded"
+                                                         style="width: 80px; height: 80px; object-fit: cover; border: 2px solid var(--border-color); filter: grayscale(20%);">
+                                                {% else %}
+                                                    <img src="{{ asset('uploads/utilisateurs/logoED4R_redimension.png') }}"
+                                                         alt="Photo par défaut"
+                                                         class="rounded"
+                                                         style="width: 80px; height: 80px; object-fit: cover; border: 2px solid var(--border-color); opacity: 0.5;">
+                                                {% endif %}
+
+                                                <span class="position-absolute top-0 end-0 badge bg-success rounded-circle" style="width: 15px; height: 15px;" title="Vendu"></span>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <strong class="text-primary-brand">{{ chevalVendu.nom }}</strong>
+                                        </td>
+                                        <td style="color: var(--text-secondary);">
+                                            {{ chevalVendu.nomPere ?: 'Non renseigné' }}
+                                        </td>
+                                        <td style="color: var(--text-secondary);">
+                                            {{ chevalVendu.nomMere ?: 'Non renseigné' }}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-light-brand text-primary-brand">{{ chevalVendu.sexe.libelle }}</span>
+                                        </td>
+                                        <td>
+                                            {% if chevalVendu.dateNaissance %}
+                                                {% set age_years = date('now').diff(date(chevalVendu.dateNaissance)).y %}
+                                                {% if age_years >= 1 %}
+                                                    <span class="badge bg-secondary text-white">{{ age_years }} an{% if age_years > 1 %}s{% endif %}</span>
+                                                {% else %}
+                                                    {% set age_months = date('now').diff(date(chevalVendu.dateNaissance)).m %}
+                                                    <span class="badge bg-secondary text-white">{{ age_months }} mois</span>
+                                                {% endif %}
+                                            {% else %}
+                                                <span class="text-muted">Âge inconnu</span>
+                                            {% endif %}
+                                        </td>
+                                        <td style="color: var(--text-secondary);">
+                                            {{ chevalVendu.lieuNaissance ?: 'Non renseigné' }}
+                                        </td>
+                                        <td style="color: var(--text-secondary);">
+                                            {% if chevalVendu.infos %}
+                                                <span title="{{ chevalVendu.infos }}">
+                                                        {% if chevalVendu.infos|length > 40 %}
+                                                            {{ chevalVendu.infos|slice(0, 40) }}...
+                                                        {% else %}
+                                                            {{ chevalVendu.infos }}
+                                                        {% endif %}
+                                                    </span>
+                                            {% else %}
+                                                <span class="text-muted">Aucune info</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{{ path('app_cheval_show', {'id': chevalVendu.id}) }}"
+                                               class="btn btn-outline-modern btn-sm"
+                                               title="Voir le profil">
+                                                <i class="bi bi-eye me-1"></i>Voir le profil
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-check-circle" style="font-size: 4rem; color: var(--text-light);"></i>
+                        <h4 class="mt-3 text-primary-brand">Aucun cheval vendu</h4>
+                        <p class="text-muted">Aucune vente n'a encore été enregistrée.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
 {% endblock %}
