@@ -216,11 +216,6 @@ fabric.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/symfony,phpunit,phpstorm
 /migrations/
-
-###> symfony/asset-mapper ###
-/public/assets/
-/assets/vendor/
-###< symfony/asset-mapper ###
 # Ignorer les fichiers de lock
 composer.lock
 symfony.lock
@@ -229,7 +224,7 @@ symfony.lock
 /public/build/
 
 # Ignorer les uploads
-/public/uploads/
+/assets/images/uploads/
 
 # Ignorer les fichiers IDE
 /.idea/
@@ -247,3 +242,7 @@ manifest.json
 *.woff2
 *.jpg
 *.jpeg
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###

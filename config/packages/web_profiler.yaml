@@ -9,3 +9,7 @@ when@dev:
 when@test:
     framework:
         profiler: { collect: false }
+
+when@prod:
+    web_profiler:
+        toolbar: false

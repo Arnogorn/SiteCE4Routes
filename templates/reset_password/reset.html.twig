@@ -1,23 +1,126 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Réinitialisation du mot de passe{% endblock %}
+{% block title %}Nouveau mot de passe - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <h1>Réinitialisation du mot de passe</h1>
+    <section class="py-5">
+        <div class="container">
 
-    {{ form_start(resetForm) }}
-        {{ form_row(resetForm.plainPassword) }}
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-shield-lock" style="color: var(--accent-color);"></i>
+                    Nouveau mot de passe
+                    <i class="bi bi-shield-lock" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Choisissez un mot de passe sécurisé
+                </p>
+            </div>
 
-    <div class="password-requirements">
-        <p>Votre mot de passe doit :</p>
-        <ul>
-            <li>Comporter au moins 8 caractères</li>
-            <li>Contenir au moins une lettre majuscule</li>
-            <li>Contenir au moins une lettre minuscule</li>
-            <li>Contenir au moins un chiffre</li>
-            <li>Contenir au moins un caractère spécial (@$!%*?&)</li>
-        </ul>
-    </div>
-        <button class="btn btn-primary">Réinitialiser le mot de passe</button>
-    {{ form_end(resetForm) }}
+            <div class="row justify-content-center">
+                <div class="col-lg-6 col-md-8">
+                    <div class="card-modern">
+                        <div class="text-center mb-4">
+                            <div class="feature-icon mx-auto mb-3" style="width: 80px; height: 80px;">
+                                <i class="bi bi-key-fill"></i>
+                            </div>
+                            <h3 class="text-primary-brand mb-3">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Réinitialisation du mot de passe
+                            </h3>
+                        </div>
+
+                        {{ form_start(resetForm, {'attr': {'class': 'form-modern', 'novalidate': 'novalidate'}}) }}
+
+
+                        <div class="form-group-modern">
+                            {{ form_label(resetForm.plainPassword, 'Nouveau mot de passe', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                            {{ form_widget(resetForm.plainPassword, {'attr': {'class': 'form-control-modern', 'placeholder': 'Entrez votre nouveau mot de passe'}}) }}
+                            {{ form_errors(resetForm.plainPassword) }}
+                        </div>
+
+
+                        <div class="mt-4 p-4" style="background: var(--bg-tertiary); border-radius: 12px; border: 2px solid var(--border-color);">
+                            <h5 class="text-primary-brand mb-3">
+                                <i class="bi bi-shield-check me-2"></i>Exigences de sécurité
+                            </h5>
+                            <p class="small mb-2"><strong>Votre mot de passe doit contenir :</strong></p>
+
+                            <div class="row g-2">
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-check-circle text-success me-2"></i>
+                                        <span class="small">Au moins 8 caractères</span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-check-circle text-success me-2"></i>
+                                        <span class="small">Une lettre majuscule (A-Z)</span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-check-circle text-success me-2"></i>
+                                        <span class="small">Une lettre minuscule (a-z)</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-check-circle text-success me-2"></i>
+                                        <span class="small">Au moins un chiffre (0-9)</span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-check-circle text-success me-2"></i>
+                                        <span class="small">Un caractère spécial</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-info-circle text-primary me-2"></i>
+                                        <span class="small">(@$!%*?&)</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="mt-3 p-3" style="background: rgba(40, 167, 69, 0.1); border-radius: 8px; border-left: 3px solid var(--success-color);">
+                                <h6 class="text-success mb-1">
+                                    <i class="bi bi-lightbulb me-1"></i>Conseil de sécurité
+                                </h6>
+                                <p class="small mb-0">
+                                    Utilisez une combinaison unique de mots, chiffres et symboles que vous seul connaissez.
+                                </p>
+                            </div>
+                        </div>
+
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-modern-primary" style="min-width: 250px;">
+                                <i class="bi bi-check-circle me-2"></i>Réinitialiser le mot de passe
+                            </button>
+                        </div>
+
+                        {{ form_end(resetForm) }}
+
+
+                        <div class="mt-4 p-3" style="background: rgba(9, 12, 155, 0.05); border-radius: 12px; border-left: 4px solid var(--primary-color);">
+                            <h6 class="text-primary-brand mb-2">
+                                <i class="bi bi-shield-shaded me-1"></i>Sécurité renforcée
+                            </h6>
+                            <p class="small mb-0" style="color: var(--text-primary);">
+                                Une fois votre mot de passe modifié, vous serez automatiquement déconnecté de tous vos appareils pour votre sécurité.
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div class="card-modern mt-4">
+                        <div class="text-center">
+                            <h5 class="text-primary-brand mb-3">
+                                <i class="bi bi-arrow-left-circle me-2"></i>Retour à la connexion
+                            </h5>
+                            <a href="{{ path('app_login') }}" class="btn btn-outline-modern">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

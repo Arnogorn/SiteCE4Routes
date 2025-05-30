@@ -1,9 +1,529 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
+{% block title %}Écuries des 4 Routes - Équitation en Bretagne{% endblock %}
+{% block meta_description %}Bienvenue à l'Écurie Des 4 Routes en Bretagne. Cours d'équitation pour tous niveaux, pension chevaux, stages équestres près d'Iffendic.{% endblock %}
 
 {% block body %}
-    <h1>Accueil</h1>
 
+
+    <section class="hero-modern wave-effect">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-12">
+                    <div class="hero-content fade-in-up text-center">
+                        <div style="margin-bottom: 2rem;">
+                            <div style="display: inline-flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                                <i class="bi bi-droplet-fill" style="color: var(--accent-color); font-size: 1.5rem;"></i>
+                                <span style="height: 2px; width: 60px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color)); border-radius: 1px;"></span>
+                                <i class="bi bi-heart-fill" style="color: var(--primary-color); font-size: 1.2rem;"></i>
+                                <span style="height: 2px; width: 60px; background: linear-gradient(90deg, var(--accent-color), var(--primary-color)); border-radius: 1px;"></span>
+                                <i class="bi bi-droplet-fill" style="color: var(--accent-color); font-size: 1.5rem;"></i>
+                            </div>
+                        </div>
+
+                        <h1 style="color: var(--primary-color); margin-bottom: 1.5rem;">
+                            Bienvenue aux Écuries des 4 Routes
+                        </h1>
+                        <p class="lead" style="font-size: 1.3rem; color: var(--text-secondary); margin-bottom: 2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                            Un havre de paix pour vos chevaux, au cœur de la nature bretonne.
+                            Découvrez nos installations modernes et notre passion pour l'équitation.
+                        </p>
+
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            <a href="#contact" class="btn btn-modern-primary">
+                                <i class="bi bi-envelope-heart me-2"></i>Nous contacter
+                            </a>
+                            <a href="{{ path('app_sortie_index') }}" class="btn btn-outline-modern">
+                                <i class="bi bi-compass me-2"></i>Nos sorties
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {# <!--section équipe -->#}
+    <section class="py-5">
+        <div class="container">
+
+            <div class="text-center mb-5">
+                <h2 class="text-primary-brand mb-3">
+                    <i class="bi bi-people-fill" style="color: var(--accent-color);"></i>
+                    Notre Équipe
+                    <i class="bi bi-people-fill" style="color: var(--accent-color);"></i>
+                </h2>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Découvrez les passionnés qui font vivre notre écurie au quotidien
+                </p>
+            </div>
+
+
+            <div class="card-modern">
+                <div class="d-flex justify-content-center align-items-center mb-4">
+                    <h3 class="text-primary-brand mb-0">
+                        <i class="bi bi-person-hearts me-2"></i>Membres de l'équipe
+                    </h3>
+                </div>
+
+                {% if contacts|length > 0 %}
+{#                    <!-- Version responsive avec cards pour mobile -->#}
+                    <div class="d-lg-none">
+                        {% for contact in contacts %}
+                            <div class="card mb-3" style="border: 2px solid var(--border-color); border-radius: 12px;">
+                                <div class="card-body">
+                                    <div class="row align-items-center">
+                                        <div class="col-3">
+                                            <div class="text-center">
+                                                {% if contact.photo %}
+                                                    <img src="{{ asset('images/uploads/contact/' ~ contact.photo) }}"
+                                                         alt="{{ contact.prenom }} {{ contact.nom }}"
+                                                         class="rounded-circle"
+                                                         style="width: 60px; height: 60px; object-fit: cover; border: 2px solid var(--border-dark);">
+                                                {% else %}
+                                                    <div class="feature-icon" style="width: 60px; height: 60px; margin: 0; background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);">
+                                                        <i class="bi bi-person-fill" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="col-9">
+                                            <h5 class="card-title text-primary-brand mb-1">
+                                                {{ contact.prenom }} {{ contact.nom }}
+                                            </h5>
+                                            {% if contact.description %}
+                                                <p class="text-muted small mb-2">{{ contact.description }}</p>
+                                            {% endif %}
+                                            {% if contact.tel %}
+                                                <div class="d-flex align-items-center">
+                                                    <i class="bi bi-telephone me-2" style="color: var(--accent-color);"></i>
+                                                    <small class="text-secondary">{{ contact.tel }}</small>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+{#                    <!-- Version grille pour desktop -->#}
+                    <div class="d-none d-lg-block">
+                        <div class="row g-4 justify-content-center">
+                            {% for contact in contacts %}
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="card h-100" style="border: 2px solid var(--border-color); border-radius: 16px; transition: var(--transition-base); background: linear-gradient(135deg, white 0%, var(--bg-secondary) 100%);"
+                                         onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='var(--shadow-xl)'"
+                                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+
+
+                                        <div style="height: 4px; background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%); border-radius: 16px 16px 0 0;"></div>
+
+                                        <div class="card-body text-center p-4">
+
+                                            {% if contact.photo %}
+                                                <img src="{{ asset('images/uploads/contact/' ~ contact.photo) }}"
+                                                     alt="{{ contact.prenom }} {{ contact.nom }}"
+                                                     class="rounded-circle mb-3 mx-auto"
+                                                     style="width: 200px; height: 200px; object-fit: cover; border: 3px solid var(--border-dark); display: block;">
+                                            {% else %}
+                                                <div class="feature-icon mx-auto mb-3" style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);">
+                                                    <i class="bi bi-person-fill" style="font-size: 2.5rem; color: var(--primary-color);"></i>
+                                                </div>
+                                            {% endif %}
+
+
+                                            <h5 class="card-title text-primary-brand mb-2">
+                                                {{ contact.prenom }} {{ contact.nom }}
+                                            </h5>
+
+
+                                            {% if contact.description %}
+                                                <p class="text-muted mb-3" style="font-style: italic;">
+                                                    {{ contact.description }}
+                                                </p>
+                                            {% endif %}
+
+
+                                            {% if contact.tel %}
+                                                <div class="mt-auto">
+                                                    <div class="d-flex align-items-center justify-content-center p-2"
+                                                         style="background: var(--bg-tertiary); border-radius: 8px; border: 1px solid var(--border-color);">
+                                                        <i class="bi bi-telephone me-2" style="color: var(--accent-color);"></i>
+                                                        <span class="text-secondary fw-bold">{{ contact.tel }}</span>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% else %}
+
+                    <div class="text-center py-5">
+                        <i class="bi bi-people" style="font-size: 4rem; color: var(--text-light);"></i>
+                        <h4 class="mt-3 text-primary-brand">Aucun membre trouvé</h4>
+                        <p class="text-muted">
+                            L'équipe n'a pas encore été présentée.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+
+{#            <!-- Section informations complémentaires -->#}
+            <div class="card-modern mt-4">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <i class="bi bi-heart-fill" style="font-size: 3rem; color: var(--accent-color);"></i>
+                    </div>
+                    <div class="col-md-10">
+                        <h5 class="text-primary-brand mb-2">
+                            <i class="bi me-2"></i>Une équipe passionnée à votre service
+                        </h5>
+                        <p class="mb-2" style="color: var(--text-secondary);">
+                            Chaque membre de notre équipe partage la même passion pour les chevaux et s'engage à vous offrir
+                            la meilleure expérience équestre possible. N'hésitez pas à les contacter pour toute question.
+                        </p>
+                        <div class="d-flex flex-wrap gap-2">
+                        <span class="badge" style="background: var(--primary-ultra-light); color: var(--primary-color); border: 1px solid var(--border-color);">
+                            <i class="bi bi-award me-1"></i>Professionnels expérimentés
+                        </span>
+                            <span class="badge" style="background: var(--bg-tertiary); color: var(--primary-color); border: 1px solid var(--border-color);">
+                            <i class="bi bi-heart me-1"></i>Passionnés de chevaux
+                        </span>
+                            <span class="badge" style="background: var(--primary-ultra-light); color: var(--accent-color); border: 1px solid var(--border-color);">
+                            <i class="bi bi-telephone me-1"></i>À votre écoute
+                        </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Section Services #}
+
+    <section class="py-5" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="text-primary-brand mb-3">
+                    <i class="bi bi-stars" style="color: var(--accent-color);"></i>
+                    Nos Services Équestres
+                    <i class="bi bi-stars" style="color: var(--accent-color);"></i>
+                </h2>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="lead mt-3" style="color: var(--text-secondary);">
+                    Des prestations de qualité dans un cadre naturel exceptionnel
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <a href="{{ path('app_ecurie_proprietaire_index') }}">
+                        <div class="card-modern text-center">
+
+                            <div class="feature-icon">
+                                <i class="bi bi-house-heart"></i>
+                            </div>
+                            <h3 class="text-primary-brand">Pension Complète</h3>
+                            <p style="color: var(--text-secondary); line-height: 1.7;">
+                                Hébergement de qualité avec soins quotidiens personnalisés pour votre cheval.
+                                Boxes spacieux, paddocks et surveillance attentive dans un environnement naturel.
+                            </p>
+                            <div class="mt-3">
+                                <small class="text-muted" style="color: var(--accent-color) !important;">
+                                    <i class="bi bi-clock me-1"></i>Soins 7j/7
+                                </small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4">
+                    <a href="{{ path('app_calendrier_index') }}">
+                        <div class="card-modern text-center">
+                            <div class="feature-icon">
+                                <i class="bi bi-mortarboard"></i>
+                            </div>
+                            <h3 class="text-primary-brand">Cours d'Équitation</h3>
+                            <p style="color: var(--text-secondary); line-height: 1.7;">
+                                Des cours adaptés à tous les niveaux, du débutant au cavalier confirmé.
+                                Enseignement professionnel dans le respect du cheval et de la tradition équestre.
+                            </p>
+                            <div class="mt-3">
+                                <small class="text-muted" style="color: var(--accent-color) !important;">
+                                    <i class="bi bi-people me-1"></i>Tous niveaux
+                                </small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="col-md-4">
+                    <a href="{{ path('app_sortie_index') }}">
+                        <div class="card-modern text-center">
+                            <div class="feature-icon">
+                                <i class="bi bi-calendar-event"></i>
+                            </div>
+                            <h3 class="text-primary-brand">Événements</h3>
+                            <p style="color: var(--text-secondary); line-height: 1.7;">
+                                Compétitions, stages et animations tout au long de l'année.
+                                Découvrez l'art équestre dans un cadre convivial et professionnel.
+                            </p>
+                            <div class="mt-3">
+                                <small class="text-muted" style="color: var(--accent-color) !important;">
+                                    <i class="bi bi-trophy me-1"></i>Toute l'année
+                                </small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Section citation #}
+    <section class="py-4" style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--bg-tertiary) 100%);">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <blockquote class="blockquote" style="font-size: 1.4rem; color: var(--text-primary); font-style: italic;">
+                        <i class="bi bi-quote" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                        "Il n'y a pas de secret aussi intime que celui d'un cavalier et de son cheval."
+                        <i class="bi bi-quote" style="font-size: 2.5rem; color: var(--accent-color); transform: scaleX(-1); display: inline-block;"></i>
+                    </blockquote>
+                    <footer class="blockquote-footer mt-3" style="color: var(--text-secondary);">
+                        <cite title="Robert Smith Surtees" style="font-weight: 600;">Robert Smith Surtees</cite>
+                    </footer>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Section localisation  #}
+    <section class="py-5">
+        <div class="container">
+            <div class="map-wrapper-modern fade-in-up">
+                <div class="text-center mb-4">
+                    <h2 class="text-primary-brand mb-3">
+                        <i class="bi bi-geo-alt-fill" style="color: var(--accent-color);"></i>
+                        Nous Trouver
+                        <i class="bi bi-geo-alt-fill" style="color: var(--accent-color);"></i>
+                    </h2>
+                    <div style="height: 3px; width: 150px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                    <p class="lead mt-3" style="color: var(--text-primary); font-weight: 600;">
+                        217 Les Quatre Routes, 35750 Iffendic
+                    </p>
+                    <p style="color: var(--text-secondary); font-style: italic;">
+                        Au cœur de la forêt de Brocéliande, terre de légendes
+                    </p>
+                </div>
+
+                <div class="map-responsive-modern">
+                    <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2665.0067823985964!2d-2.002566123181565!3d48.090811354415195!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x480effb22e8d24f9%3A0x2e85f63bfead7ea4!2sEcuries%20des%20quatre%20routes!5e0!3m2!1sfr!2sfr!4v1747831268325!5m2!1sfr!2sfr"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Localisation des Écuries des 4 Routes">
+                    </iframe>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-4 text-center mb-3">
+                        <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 16px; border: 2px solid var(--border-color); transition: var(--transition-base);"
+                             onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-lg)'"
+                             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                            <i class="bi bi-telephone-fill" style="color: var(--primary-color); font-size: 2.5rem;"></i>
+                            <h5 class="mt-3 mb-2 text-primary-brand">Téléphone</h5>
+                            <p class="mb-0" style="font-weight: 600; color: var(--text-primary);">
+                                <a href="tel:0698737600" style="color: var(--text-primary); text-decoration: none;">06 98 73 76 00</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 16px; border: 2px solid var(--border-color); transition: var(--transition-base);"
+                             onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-lg)'"
+                             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                            <i class="bi bi-envelope-fill" style="color: var(--primary-color); font-size: 2.5rem;"></i>
+                            <h5 class="mt-3 mb-2 text-primary-brand">Email</h5>
+                            <p class="mb-0" style="font-weight: 600; color: var(--text-primary);">
+                                <a href="mailto:contact@ecuries4routes.fr" style="color: var(--text-primary); text-decoration: none;">contact@ecuries4routes.fr</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-center mb-3">
+                        <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 16px; border: 2px solid var(--border-color); transition: var(--transition-base);"
+                             onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-lg)'"
+                             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                            <i class="bi bi-clock-fill" style="color: var(--primary-color); font-size: 2.5rem;"></i>
+                            <h5 class="mt-3 mb-2 text-primary-brand">Horaires</h5>
+                            <p class="mb-0" style="font-weight: 600; color: var(--text-primary);">
+                                8h - 20h<br><small style="color: var(--text-secondary);">Tous les jours</small>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {# Section contact  #}
+    <section class="py-5" id="contact" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    {% for type, messages in app.flashes %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ type == 'error' ? 'danger' : 'success' }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+
+                    <form class="form-modern" method="post" action="/send-contact">
+                        <div class="text-center mb-4">
+                            <h2 class="text-primary-brand mb-3">
+                                <i class="bi bi-envelope-heart" style="color: var(--accent-color);"></i>
+                                Contactez-nous
+                                <i class="bi bi-envelope-heart" style="color: var(--accent-color);"></i>
+                            </h2>
+                            <div style="height: 3px; width: 120px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                            <p class="mt-3" style="color: var(--text-secondary);">
+                                Une question ? Un projet ? N'hésitez pas à nous écrire
+                            </p>
+                        </div>
+
+                        {# Protection honeypot #}
+                        <div style="position: absolute !important; left: -9999px !important; top: -9999px !important; visibility: hidden !important; opacity: 0 !important; width: 0 !important; height: 0 !important; overflow: hidden !important;">
+                            <label for="website">Site web</label>
+                            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" value="">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label for="nom" class="form-label-modern required">
+                                        <i class="bi bi-person me-1 text-accent-brand"></i>Nom complet
+                                    </label>
+                                    <input id="nom" name="nom" type="text" class="form-control-modern"
+                                           placeholder="Jean Dupont" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label for="email" class="form-label-modern required">
+                                        <i class="bi bi-envelope me-1 text-accent-brand"></i>Email
+                                    </label>
+                                    <input id="email" name="email" type="email" class="form-control-modern"
+                                           placeholder="jean@example.com" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group-modern">
+                            <label for="telephone" class="form-label-modern">
+                                <i class="bi bi-telephone me-1 text-accent-brand"></i>Téléphone
+                            </label>
+                            <input id="telephone" name="telephone" type="tel" class="form-control-modern"
+                                   placeholder="06 XX XX XX XX">
+                        </div>
+
+                        <div class="form-group-modern">
+                            <label for="sujet" class="form-label-modern required">
+                                <i class="bi bi-tag me-1 text-accent-brand"></i>Sujet
+                            </label>
+                            <select id="sujet" name="sujet" class="form-control-modern form-select-modern" required>
+                                <option value="">Choisissez un sujet...</option>
+                                <option value="pension">🏡 Pension pour chevaux</option>
+                                <option value="cours">🎓 Cours d'équitation</option>
+                                <option value="evenements">🎪 Événements et stages</option>
+                                <option value="visite">👁️ Visite des installations</option>
+                                <option value="autre">❓ Autre demande</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group-modern">
+                            <label for="message" class="form-label-modern required">
+                                <i class="bi bi-chat-text me-1 text-accent-brand"></i>Message
+                            </label>
+                            <textarea id="message" name="message" class="form-control-modern" rows="5"
+                                      placeholder="Décrivez-nous votre projet ou votre demande..." required></textarea>
+                            <div class="form-text-modern">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Plus vous serez précis, mieux nous pourrons vous renseigner.
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-modern-primary me-3">
+                                <i class="bi bi-send me-2"></i>Envoyer le message
+                            </button>
+                            <button type="reset" class="btn btn-outline-modern">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Effacer
+                            </button>
+                        </div>
+
+                        <div class="mt-4 text-center">
+                            <small style="color: var(--text-light); font-style: italic;">
+                                <i class="bi bi-shield-check me-1 text-accent-brand"></i>
+                                Vos données personnelles sont protégées et ne seront jamais communiquées à des tiers.
+                            </small>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script>
+        // Scripts avec effets aquatiques
+        document.addEventListener('DOMContentLoaded', function() {
+            // Effet au scroll pour la navbar
+            window.addEventListener('scroll', function() {
+                const navbar = document.querySelector('.navbar-modern');
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+            // Mise à jour de l'heure
+            function updateTime() {
+                const timeElement = document.getElementById('current-time');
+                if (timeElement) {
+                    const now = new Date();
+                    timeElement.textContent = now.toLocaleTimeString('fr-FR', {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+            }
+            setInterval(updateTime, 60000);
+
+            // Animation des cartes au scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver(function(entries) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('fade-in-up');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.card-modern, .feature-icon, .map-wrapper-modern').forEach(el => {
+                observer.observe(el);
+            })});
+
+    </script>
 
 {% endblock %}
+

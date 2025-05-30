@@ -1,4 +1,23 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Enregistrer') }}</button>
+{{ form_start(form, {'attr': {'class': 'form-modern', 'novalidate': 'novalidate'}}) }}
+
+<div class="row g-4">
+    <div class="col-12">
+        <div class="form-group-modern">
+            {{ form_label(form.libelle, null, {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.libelle, {'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Débutant, Intermédiaire, Confirmé, Galop 1, Galop 2...'}}) }}
+            {{ form_errors(form.libelle) }}
+            <div class="form-text-modern">
+                <i class="bi bi-star me-1"></i>
+                Définissez un niveau d'équitation clair et précis pour classer vos cavaliers
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <button type="submit" class="btn btn-modern-primary" style="min-width: 200px;">
+        <i class="bi bi-check-circle me-2"></i>{{ button_label|default('Enregistrer') }}
+    </button>
+</div>
+
 {{ form_end(form) }}

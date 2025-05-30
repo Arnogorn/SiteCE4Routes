@@ -32,6 +32,13 @@ class ChevalType extends AbstractType
         $builder
             ->add('nom', TextType::class, [
                 'label' => 'Nom * : ',
+                'attr' => [
+                    'placeholder' => 'Entrez le nom du cheval',
+                    'class' => 'form-control'
+                    ],
+                'label_attr' => [
+                    'class' => 'form-label'
+                ]
             ])
             ->add('nomPere', TextType::class, [
                 'label' => 'Nom du Père : ',
@@ -61,13 +68,14 @@ class ChevalType extends AbstractType
                 'mapped' => false,
                 'required' => false,
                 'constraints' => [
-                    new Image(
-                        maxSize: '5M',
-                        maxSizeMessage: "Format trop volumineux !",
-                        mimeTypesMessage: "Format non valide !"
-                    )
-                ]
-            ])
+                    new Image([
+                        'maxSize' => '5M',
+                        'mimeTypes' => ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'],
+                        'mimeTypesMessage' => 'Seuls les formats JPG, PNG et GIF sont acceptés.',
+                        'maxSizeMessage' => 'La taille du fichier ne doit pas dépasser 5Mo.',
+
+                    ])
+                ]])
             ->add('infos', TextareaType::class, [
                 'label' => 'Informations : ',
                 'required' => false,
@@ -89,7 +97,9 @@ class ChevalType extends AbstractType
                     'required' => false,
                 ])
                 ->add('user', EntityType::class, [
+
                     'class' => User::class,
+                    'label' => 'Propriétaire : ',
                     'choice_label' => 'nom',
                     'required' => false,
                     'placeholder' => 'Aucun propriétaire',

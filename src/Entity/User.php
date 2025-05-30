@@ -61,7 +61,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $prenom = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-
+    #[Assert\NotBlank(message: 'La date de naissance est obligatoire')]
+    #[Assert\LessThan('today', message: 'La date de naissance doit être antérieure à aujourd\'hui')]
     private ?\DateTimeImmutable $dateNaissance = null;
 
     #[ORM\Column(length: 255)]

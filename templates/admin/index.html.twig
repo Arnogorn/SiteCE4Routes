@@ -1,38 +1,197 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Index Admin{% endblock %}
+{% block title %}Espace Administrateur - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <h1>Espace Administrateur</h1>
-    <div>
-        <ul>
-            <li>
-                <a href="{{ path('app_cheval_index') }}" title="nos chevaux">Gérer les Chevaux</a>
-            </li>
-            <li>
-                <a href="{{ path('app_sortie_index') }}" title="sorties">Gérer les Sorties</a>
-            </li>
-            <li>
-                <a href="{{ path('app_contact_index') }}" title="contact">Gérer les Contacts</a>
-            </li>
-            <li>
-                <a href="{{ path('app_niveau_index') }}">Gérer les Niveaux</a>
-            </li>
-            <li>
-                <a href="{{ path('app_user_index') }}">Gérer les Utilisateurs</a>
-            </li>
-            <li>
-                <a href="{{ path('app_competition_index') }}">Gérer les Compétitions</a>
-            </li>
-            <li>
-                <a href="{{ path('app_calendrier_index') }}">Gérer le Planning</a>
-            </li>
-            <li>
-                <a href="{{ path('app_ecurie_proprietaire_index') }}">Gérer l'écurie de propriétaire</a>
-            </li>
-            <li>
-                <a href="{{ path('app_type_sortie_index') }}">Gérer les catégories des sorties</a>
-            </li>
-        </ul>
-    </div>
+    <section class="py-5">
+        <div class="container">
+
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-gear-fill" style="color: var(--accent-color);"></i>
+                    Espace Administrateur
+                    <i class="bi bi-gear-fill" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Gérez tous les aspects de votre écurie depuis ce tableau de bord
+                </p>
+            </div>
+
+
+
+
+            <div class="row g-4">
+
+                <div class="col-lg-6">
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-database me-2" style="color: var(--accent-color);"></i>
+                            Gestion des Données Principales
+                        </h4>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <a href="{{ path('app_cheval_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-heart-fill" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                                    <strong>Chevaux</strong>
+                                    <small class="text-muted">Gérer les chevaux</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-6">
+                                <a href="{{ path('app_sortie_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-compass" style="font-size: 2rem; color: var(--accent-color); margin-bottom: 0.5rem;"></i>
+                                    <strong>Sorties</strong>
+                                    <small class="text-muted">Gérer les sorties</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-6">
+                                <a href="{{ path('app_competition_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-trophy" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                                    <strong>Compétitions</strong>
+                                    <small class="text-muted">Gérer les compétitions</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-6">
+                                <a href="{{ path('app_calendrier_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-calendar3" style="font-size: 2rem; color: var(--accent-color); margin-bottom: 0.5rem;"></i>
+                                    <strong>Planning</strong>
+                                    <small class="text-muted">Gérer le calendrier</small>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-6">
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-people me-2" style="color: var(--accent-color);"></i>
+                            Utilisateurs & Communication
+                        </h4>
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <a href="{{ path('app_user_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-person-gear" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);"></i>
+                                    <strong>Utilisateurs</strong>
+                                    <small class="text-muted">Gérer les comptes</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-6">
+                                <a href="{{ path('app_contact_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-envelope-at" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-color);"></i>
+                                    <strong>Messages</strong>
+                                    <small class="text-muted">Gérer les contacts</small>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-lg-12">
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-sliders me-2" style="color: var(--accent-color);"></i>
+                            Configuration & Paramétrage
+                        </h4>
+
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <a href="{{ path('app_niveau_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-bar-chart-steps" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);"></i>
+                                    <strong>Niveaux</strong>
+                                    <small class="text-muted">Gérer les niveaux</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-3">
+                                <a href="{{ path('app_type_sortie_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-tags" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-color);"></i>
+                                    <strong>Types Sorties</strong>
+                                    <small class="text-muted">Catégories sorties</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-3">
+                                <a href="{{ path('app_ecurie_proprietaire_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-house-gear" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);"></i>
+                                    <strong>Écurie Propriétaire</strong>
+                                    <small class="text-muted">Gestion écurie</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-3">
+                                <a href="{{ path('app_tarifs_index') }}" title="Tarifs" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-heart-fill" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);"></i>
+                                    <strong>Poney club</strong>
+                                    <small>Gestion des tarifs</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-3">
+                                <a href="{{ path('app_moniteur_index') }}" title="Moniteurs" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi-person-workspace" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);"></i>
+                                    <strong>Moniteurs</strong>
+                                    <small>Gestion des moniteurs</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-3">
+                                <a href="{{ path('app_cheval_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--secondary-light) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-arrow-return-left" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-color);"></i>
+                                    <strong>Retour Site</strong>
+                                    <small class="text-muted">Vers l'accueil</small>
+                                </a>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

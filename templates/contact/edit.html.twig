@@ -1,13 +1,166 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier un contact{% endblock %}
+{% block title %}Modifier {{ contact.prenom }} {{ contact.nom }} - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <h1>Modifier le contact : {{ contact.nom }} {{ contact.prenom }}</h1>
+    <section class="py-5">
+        <div class="container">
 
-    {{ include('contact/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-pencil-square" style="color: var(--accent-color);"></i>
+                    Modifier {{ contact.prenom }} {{ contact.nom }}
+                    <i class="bi bi-pencil-square" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Modifiez les informations de ce membre de l'équipe
+                </p>
+            </div>
 
-    <a href="{{ path('app_contact_index') }}" class="btn btn-secondary mt-3">retour à la liste</a>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
 
-    {{ include('contact/_delete_form.html.twig') }}
+                    {% if contact.photo %}
+                        <div class="card-modern mb-4">
+                            <div class="text-center">
+                                <h5 class="text-primary-brand mb-3">Photo actuelle</h5>
+                                <img src="{{ asset('images/uploads/contact/' ~ contact.photo) }}"
+                                     alt="{{ contact.prenom }} {{ contact.nom }}"
+                                     class="rounded-circle"
+                                     style="width: 120px; height: 120px; object-fit: cover; border: 3px solid var(--border-dark);">
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="card-modern">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="text-primary-brand mb-0">
+                                <i class="bi bi-form me-2"></i>Formulaire de modification
+                            </h3>
+                            <span class="badge bg-accent-brand">
+                                <i class="bi bi-info-circle me-1"></i>Modification
+                            </span>
+                        </div>
+
+                        {{ form_start(form, {'attr': {'class': 'form-modern', 'novalidate': 'novalidate'}}) }}
+
+                        <div class="row g-4">
+
+                            <div class="col-md-6">
+
+                                <div class="form-group-modern">
+                                    {{ form_label(form.nom, null, {'label_attr': {'class': 'form-label-modern required'}}) }}
+                                    {{ form_widget(form.nom, {'attr': {'class': 'form-control-modern'}}) }}
+                                    {{ form_errors(form.nom) }}
+                                </div>
+
+
+                                <div class="form-group-modern">
+                                    {{ form_label(form.prenom, null, {'label_attr': {'class': 'form-label-modern required'}}) }}
+                                    {{ form_widget(form.prenom, {'attr': {'class': 'form-control-modern'}}) }}
+                                    {{ form_errors(form.prenom) }}
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <div class="form-group-modern">
+                                    {{ form_label(form.tel, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+                                    {{ form_widget(form.tel, {'attr': {'class': 'form-control-modern'}}) }}
+                                    {{ form_errors(form.tel) }}
+                                </div>
+
+
+                                <div class="form-group-modern">
+                                    {{ form_label(form.photo, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+                                    {{ form_widget(form.photo, {'attr': {'class': 'form-control-modern'}}) }}
+                                    {{ form_errors(form.photo) }}
+                                    {% if form.photo.vars.help %}
+                                        <div class="form-text-modern">
+                                            <i class="bi bi-camera me-1"></i>
+                                            {{ form.photo.vars.help }}
+                                        </div>
+                                    {% endif %}
+                                    {% if contact.photo %}
+                                        <div class="form-text-modern">
+                                            <i class="bi bi-info-circle me-1"></i>
+                                            Laissez vide pour conserver la photo actuelle
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group-modern">
+                            {{ form_label(form.description, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control-modern'}}) }}
+                            {{ form_errors(form.description) }}
+                            <div class="form-text-modern">
+                                <i class="bi bi-chat-text me-1"></i>
+                                Décrivez le rôle ou les responsabilités de cette personne
+                            </div>
+                        </div>
+
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-modern-primary" style="min-width: 200px;">
+                                <i class="bi bi-check-circle me-2"></i>Mettre à jour
+                            </button>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+
+
+                    <div class="card-modern mt-4">
+                        <div class="d-flex flex-wrap gap-3 justify-content-center">
+                            <div class="d-flex gap-2">
+                                <a href="{{ path('app_contact_index') }}" class="btn btn-outline-modern">
+                                    <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+                                </a>
+                                <a href="{{ path('app_contact_show', {'id': contact.id}) }}" class="btn btn-outline-modern">
+                                    <i class="bi bi-eye me-2"></i>Voir le profil
+                                </a>
+                            </div>
+
+
+                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                <i class="bi bi-trash me-2"></i>Supprimer ce contact
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{#        <!-- Modal de confirmation de suppression -->#}
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title text-primary-brand" id="deleteModalLabel">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Êtes-vous sûr de vouloir supprimer <strong>{{ contact.prenom }} {{ contact.nom }}</strong> ?</p>
+                        <p class="text-danger"><small><i class="bi bi-exclamation-triangle me-1"></i>Cette action est irréversible.</small></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-modern" data-bs-dismiss="modal">Annuler</button>
+                        <form method="post" action="{{ path('app_contact_delete', {'id': contact.id}) }}" class="d-inline">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ contact.id) }}">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i>Confirmer la suppression
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

@@ -1,10 +1,194 @@
-{{ form_start(form) }}
-    {% for field in form %}
-        {% if field.vars.name != 'actif' or is_granted('ROLE_ADMIN') %}
-            {# Rajouter condition pour la famille et mettre ça dans le formtype #}
-            {{ form_row(field) }}
-        {% endif %}
-    {% endfor %}
+{{ form_start(form, {'attr': {'class': 'form-modern', 'novalidate': 'novalidate'}}) }}
 
-<button class="btn">{{ button_label|default('Enregistrer') }}</button>
+{# Token CSRF explicite si nécessaire #}
+{% if form._token is defined %}
+    {{ form_widget(form._token) }}
+{% endif %}
+
+<div class="row g-4">
+    {# Colonne gauche #}
+    <div class="col-md-6">
+        {# Nom #}
+        <div class="form-group-modern">
+            {{ form_label(form.nom, 'Nom *', {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.nom, {'attr': {'class': 'form-control-modern', 'placeholder': 'Votre nom de famille'}}) }}
+            {{ form_errors(form.nom) }}
+        </div>
+
+        {# Prénom #}
+        <div class="form-group-modern">
+            {{ form_label(form.prenom, 'Prénom *', {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.prenom, {'attr': {'class': 'form-control-modern', 'placeholder': 'Votre prénom'}}) }}
+            {{ form_errors(form.prenom) }}
+        </div>
+
+        {# Date de naissance #}
+        <div class="form-group-modern">
+            {{ form_label(form.dateNaissance, 'Date de naissance *', {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.dateNaissance, {'attr': {'class': 'form-control-modern'}}) }}
+            {{ form_errors(form.dateNaissance) }}
+            <div class="form-text-modern">
+                <i class="bi bi-calendar me-1"></i>
+                Format : JJ/MM/AAAA
+            </div>
+        </div>
+
+        {# Adresse #}
+        <div class="form-group-modern">
+            {{ form_label(form.adresse, 'Adresse *', {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.adresse, {'attr': {'class': 'form-control-modern', 'placeholder': 'Votre adresse complète'}}) }}
+            {{ form_errors(form.adresse) }}
+        </div>
+
+        {# Téléphone #}
+        <div class="form-group-modern">
+            {{ form_label(form.telephone, 'Téléphone *', {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.telephone, {'attr': {'class': 'form-control-modern', 'placeholder': '06 12 34 56 78'}}) }}
+            {{ form_errors(form.telephone) }}
+        </div>
+    </div>
+
+    {# Colonne droite #}
+    <div class="col-md-6">
+        {# Niveau #}
+        <div class="form-group-modern">
+            {{ form_label(form.niveau, null, {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.niveau, {'attr': {'class': 'form-select-modern form-control-modern'}}) }}
+            {{ form_errors(form.niveau) }}
+            <div class="form-text-modern">
+                <i class="bi bi-star me-1"></i>
+                Sélectionnez votre niveau d'équitation
+            </div>
+        </div>
+
+        {# Téléphone personne de contact #}
+        <div class="form-group-modern">
+            {{ form_label(form.telPersContact, 'Téléphone personne à contacter', {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.telPersContact, {'attr': {'class': 'form-control-modern', 'placeholder': '06 12 34 56 78'}}) }}
+            {{ form_errors(form.telPersContact) }}
+            <div class="form-text-modern">
+                <i class="bi bi-telephone me-1"></i>
+                En cas d'urgence (optionnel)
+            </div>
+        </div>
+
+        {# Allergies #}
+        <div class="form-group-modern">
+            {{ form_label(form.allergies, 'Allergies', {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.allergies, {'attr': {'class': 'form-control-modern', 'placeholder': 'Précisez vos allergies si vous en avez'}}) }}
+            {{ form_errors(form.allergies) }}
+            <div class="form-text-modern">
+                <i class="bi bi-heart-pulse me-1"></i>
+                Important pour votre sécurité (optionnel)
+            </div>
+        </div>
+
+        {# Médecin traitant #}
+        <div class="form-group-modern">
+            {{ form_label(form.medecinTraitant, 'Médecin traitant', {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.medecinTraitant, {'attr': {'class': 'form-control-modern', 'placeholder': 'Nom du médecin'}}) }}
+            {{ form_errors(form.medecinTraitant) }}
+        </div>
+
+        {# Téléphone médecin #}
+        <div class="form-group-modern">
+            {{ form_label(form.telMedecin, 'Téléphone du médecin', {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.telMedecin, {'attr': {'class': 'form-control-modern', 'placeholder': '02 12 34 56 78'}}) }}
+            {{ form_errors(form.telMedecin) }}
+            <div class="form-text-modern">
+                <i class="bi bi-telephone-plus me-1"></i>
+                Numéro du médecin traitant (optionnel)
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Photo #}
+<div class="form-group-modern">
+    {{ form_label(form.photo, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+    {{ form_widget(form.photo, {'attr': {'class': 'form-control-modern', 'accept': 'image/*'}}) }}
+    {{ form_errors(form.photo) }}
+    <div class="form-text-modern">
+        <i class="bi bi-camera me-1"></i>
+        Formats acceptés : JPG, PNG, GIF (max. 5Mo)
+    </div>
+</div>
+
+{# Informations #}
+<div class="form-group-modern">
+    {{ form_label(form.infos, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+    {{ form_widget(form.infos, {'attr': {'class': 'form-control-modern', 'rows': '4', 'placeholder': 'Informations complémentaires...'}}) }}
+    {{ form_errors(form.infos) }}
+    <div class="form-text-modern">
+        <i class="bi bi-chat-text me-1"></i>
+        Toute information utile à partager
+    </div>
+</div>
+
+{# Section mots de passe #}
+<div class="mt-4 p-4" style="background: var(--bg-tertiary); border-radius: 12px; border: 2px solid var(--border-color);">
+    <h5 class="text-primary-brand mb-3">
+        <i class="bi bi-key me-2"></i>Modification du mot de passe
+    </h5>
+
+    <div class="row g-3">
+        {# Nouveau mot de passe #}
+        <div class="col-md-6">
+            <div class="form-group-modern">
+                {{ form_label(form.new_password, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+                {{ form_widget(form.new_password, {'attr': {'class': 'form-control-modern'}}) }}
+                {{ form_errors(form.new_password) }}
+                <div class="form-text-modern">
+                    <i class="bi bi-lock me-1"></i>
+                    Minimum 6 caractères. Laissez vide pour conserver le mot de passe actuel.
+                </div>
+            </div>
+        </div>
+
+        {# Confirmation mot de passe #}
+        <div class="col-md-6">
+            <div class="form-group-modern">
+                {{ form_label(form.confirm_password, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+                {{ form_widget(form.confirm_password, {'attr': {'class': 'form-control-modern'}}) }}
+                {{ form_errors(form.confirm_password) }}
+                <div class="form-text-modern">
+                    <i class="bi bi-shield-check me-1"></i>
+                    Répétez le nouveau mot de passe pour confirmation
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Section administrateur #}
+{% if is_granted('ROLE_ADMIN') %}
+    <div class="mt-4 p-4" style="background: var(--bg-tertiary); border-radius: 12px; border: 2px solid var(--border-color);">
+        <h5 class="text-primary-brand mb-3">
+            <i class="bi bi-gear me-2"></i>Paramètres Administratifs
+        </h5>
+
+        <div class="row g-3">
+            {# Compte actif #}
+            <div class="col-md-6">
+                <div class="form-check" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                    {{ form_widget(form.actif, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(form.actif, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                    {{ form_errors(form.actif) }}
+                    <div class="form-text-modern mt-2">
+                        <i class="bi bi-toggle-on me-1"></i>
+                        Compte actif ou suspendu
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{# Bouton de soumission #}
+<div class="text-center mt-4">
+    <button type="submit" class="btn btn-modern-primary" style="min-width: 200px;">
+        <i class="bi bi-check-circle me-2"></i>{{ button_label|default('Enregistrer') }}
+    </button>
+</div>
+
 {{ form_end(form, {render_rest: false}) }}

@@ -236,6 +236,7 @@ final class SortieController extends AbstractController
     {
         /** @var User $user */
         $user = $security->getUser();
+
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour vous désinscrire.');
         }
@@ -256,6 +257,7 @@ final class SortieController extends AbstractController
         EntityManagerInterface $entityManager,
         EtatRepository $etatRepository,
     ){
+
 
 
         $etatOuverte = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
