@@ -2,7 +2,11 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Contact;
+use App\Entity\EcurieProprietaire;
 use App\Entity\Sexe;
+use App\Entity\Tarifs;
+use App\Entity\TypeSortie;
 use App\Entity\User;
 use App\Entity\Famille;
 use App\Entity\MembreFamille;
@@ -248,5 +252,78 @@ class AppFixtures extends Fixture
 
 
         $manager->flush();
+
+        //contact
+        $contact1 = (new Contact());
+        $contact1->setNom("Jehanno")
+            ->setPrenom("Damien")
+            ->setDescription("cavalier CSO, Jeunes chevaux - pro 1/ International")
+            ->setTel("0632935092");
+        $manager->persist($contact1);
+        $manager->flush();
+        $contact2 = (new Contact());
+        $contact2->setNom("Kitzing")
+            ->setPrenom("Lorraine")
+            ->setDescription("Monitrice d'équitation, cavalière dressage, Jeune chevaux-pro 2")
+            ->setTel("0698737600");
+        $manager->persist($contact2);
+        $manager->flush();
+
+        //écurie propriétaire
+    $ecurieproprio1 = (new ecurieProprietaire());
+    $ecurieproprio1->setPrestation("Pension travail")
+        ->setDescription("Nourris 3 fois par jour + 2 repas de foin.
+        Travail 5 fois par semaine ou participation aux cours + sortie paddock ou marcheur")
+        ->setPrix("483");
+    $manager->persist($ecurieproprio1);
+    $manager->flush();
+
+    $ecurieproprio2 = (new ecurieProprietaire());
+    $ecurieproprio2->setPrestation("Pension club")
+        ->setDescription("travail maximum 5 fois par semaine en club,
+        boxe maréchal et vermifuge compris")
+        ->setPrix("300");
+
+    $manager->persist($ecurieproprio2);
+    $manager->flush();
+
+    $ecurieproprio3 = (new ecurieProprietaire());
+    $ecurieproprio3->setPrestation("Demi pension")
+        ->setDescription("3 séances montées dont 1 cours comprit par semaine")
+        ->setPrix("150");
+    $manager->persist($ecurieproprio3);
+    $manager->flush();
+
+// Poney club
+
+        $poneyClub1 = (new tarifs());
+        $poneyClub1->setCategorie("licences")
+            ->setDescription("Licence - 18 ans")
+            ->setPrix("25");
+        $manager->persist($poneyClub1);
+        $manager->flush();
+
+        $poneyClub2 = (new tarifs());
+        $poneyClub2->setCategorie("licences")
+            ->setDescription("Licence + 18 ans")
+            ->setPrix("36");
+        $manager->persist($poneyClub2);
+        $manager->flush();
+
+        $poneyClub3 = (new tarifs());
+        $poneyClub3->setCategorie("a_la_carte")
+            ->setDescription("10 cours collectif")
+            ->setPrix("245");
+        $manager->persist($poneyClub3);
+        $manager->flush();
+
+
+        $typeSortie1 = (new typeSortie());
+        $typeSortie1->setLibelle("Randonnée");
+        $manager->persist($typeSortie1);
+        $manager->flush();
+
     }
+
+
 }
