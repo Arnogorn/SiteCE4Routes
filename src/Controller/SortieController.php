@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Service\NotificationService;
 use App\Entity\Sortie;
 use App\Entity\User;
 use App\Form\SortieType;
@@ -21,6 +22,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -28,6 +31,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/sortie')]
 final class SortieController extends AbstractController
 {
+    private NotificationService $notifier;
+
+    public function __construct(NotificationService $notifier)
+    {
+        $this->notifier = $notifier;
+    }
     #[Route(name: 'app_sortie_index', methods: ['GET'])]
     public function index(Request $request, SortieRepository $sortieRepository, EtatRepository $etatRepository, Security $security, UpdateEtatService $updateEtatService): Response
     {
@@ -243,7 +252,8 @@ final class SortieController extends AbstractController
 
         try {
             $inscriptionService->unregisterParticipant($sortie, $user);
-            $this->addFlash('success', 'Vous vous êtes désinscrit de la sortie.');
+            $this->notifier->sendDesinscriptionMail($user, null, $sortie, null);
+            $this->addFlash('success', 'Vous vous êtes désinscrit de la sortie. Un e-mail de confirmation vous a été envoyé.');
         } catch (\Exception $e) {
             $this->addFlash('danger', $e->getMessage());
         }
@@ -354,7 +364,8 @@ final class SortieController extends AbstractController
                 } elseif ($estInscrit) {
                     try {
                         $inscriptionService->unregisterParticipant($sortie, $user, $membre);
-                        $this->addFlash('success', 'Le membre de famille a bien été désinscrit et remboursé.');
+                        $this->notifier->sendDesinscriptionMail($user, $membre, $sortie, null);
+                        $this->addFlash('success', 'Le membre de famille a bien été désinscrit et remboursé. Un e-mail de confirmation a été envoyé.');
                     } catch (\Exception $e) {
                         $this->addFlash('danger', $e->getMessage());
                     }
