@@ -142,16 +142,26 @@ class InscriptionService
         User $user,
         ?MembreFamille $membre = null
     ): void {
-        // Récupération du paiement payé (dernier paiement validé)
-        $paiements = $this->em->getRepository(Paiement::class)
-            ->findBy(
-                ['sortie' => $sortie, 'utilisateur' => $user, 'statut' => Paiement::STATUT_PAYE],
-                ['createdAt' => 'DESC'],
-                1
-            );
-        $paiement = $paiements[0] ?? null;
-        if (!$paiement) {
-            throw new \RuntimeException("Aucun paiement valide trouvé.");
+        // Récupération de l’inscription correspondant à cette personne (user ou membre)
+        if ($membre) {
+            $insc = $this->em->getRepository(Inscription::class)
+                ->findOneBy([
+                    'sortie'       => $sortie,
+                    'membreFamille'=> $membre
+                ]);
+        } else {
+            $insc = $this->em->getRepository(Inscription::class)
+                ->findOneBy([
+                    'sortie'      => $sortie,
+                    'utilisateur' => $user
+                ]);
+        }
+        if (!$insc) {
+            throw new \RuntimeException("Aucune inscription trouvée pour cette personne.");
+        }
+        $paiement = $insc->getPaiement();
+        if (!$paiement || $paiement->getStatut() !== Paiement::STATUT_PAYE) {
+            throw new \RuntimeException("Aucun paiement valide trouvé pour cette inscription.");
         }
 
         // Calcul du montant par place
@@ -186,6 +196,9 @@ class InscriptionService
             ->setParticipants($totalSeats - 1)
             ->setMontant($totalAmount - $amountPerSeat);
         $this->em->persist($paiement);
+
+        // Supprimer l'entité Inscription correspondante
+        $this->em->remove($insc);
 
         // Suppression de l'inscription
         if ($membre) {

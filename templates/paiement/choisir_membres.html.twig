@@ -7,18 +7,36 @@
         <fieldset class="mb-3">
             <legend>Qui souhaitez-vous inscrire ?</legend>
 
+            {# Case “Moi-même” #}
             <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="membres[]" value="me" id="user_self">
+                <input class="form-check-input"
+                       type="checkbox"
+                       name="membres[]"
+                       value="me"
+                       id="user_self"
+                        {% if app.user in sortie.participants %} disabled {% endif %}>
                 <label class="form-check-label" for="user_self">
                     Moi-même ({{ app.user.prenom }} {{ app.user.nom }})
+                    {% if app.user in sortie.participants %}
+                        <span class="badge bg-secondary">déjà inscrit</span>
+                    {% endif %}
                 </label>
             </div>
 
+            {# Boucle sur les membres de la famille #}
             {% for membre in app.user.famille.membre %}
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="membres[]" value="{{ membre.id }}" id="membre_{{ membre.id }}">
+                    <input class="form-check-input"
+                           type="checkbox"
+                           name="membres[]"
+                           value="{{ membre.id }}"
+                           id="membre_{{ membre.id }}"
+                            {% if membre in sortie.membresFamilleInscrits %} disabled {% endif %}>
                     <label class="form-check-label" for="membre_{{ membre.id }}">
                         {{ membre.prenom }} {{ membre.nom }}
+                        {% if membre in sortie.membresFamilleInscrits %}
+                            <span class="badge bg-secondary">déjà inscrit</span>
+                        {% endif %}
                     </label>
                 </div>
             {% else %}
@@ -54,10 +72,10 @@
     {{ parent() }}
     <script>
         document.addEventListener("turbo:load", function () {
-            const checkboxes = document.querySelectorAll('.form-check-input');
-            const compteur = document.getElementById('compteur');
-            const total = document.getElementById('total');
-            const bouton = document.getElementById('btn-payer');
+            const checkboxes   = document.querySelectorAll('.form-check-input');
+            const compteur     = document.getElementById('compteur');
+            const total        = document.getElementById('total');
+            const bouton       = document.getElementById('btn-payer');
             const prixUnitaire = parseFloat("{{ sortie.prix|number_format(2, '.', '') }}");
 
             function updateTotal() {
