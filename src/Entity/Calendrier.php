@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CalendrierRepository;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Integer;
+
 
 #[ORM\Entity(repositoryClass: CalendrierRepository::class)]
 class Calendrier

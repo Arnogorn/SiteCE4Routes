@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Cheval;
+use App\Form\ChevalSearchType;
 use App\Form\ChevalType;
 use App\Repository\ChevalRepository;
 use App\Service\Uploader;
@@ -18,10 +19,32 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ChevalController extends AbstractController
 {
     #[Route(name: 'app_cheval_index', methods: ['GET'])]
-    public function index(ChevalRepository $chevalRepository): Response
+    public function index(Request $request, ChevalRepository $chevalRepository): Response
     {
+        // Récupération du terme de recherche
+        $search = $request->query->get('search');
+
+        // Formulaire de recherche
+        $searchForm = $this->createForm(ChevalSearchType::class, null, [
+            'method' => 'GET',
+            'csrf_protection' => false
+        ]);
+        $searchForm->handleRequest($request);
+
+        // Récupération des données avec une seule requête optimisée
+        $chevaux = $chevalRepository->findAllWithRelations($search);
+
+        // Récupération des statistiques en une seule requête
+        $statistics = null;
+        if ($this->isGranted('ROLE_ADMIN')) {
+            $statistics = $chevalRepository->getStatistics();
+        }
+
         return $this->render('cheval/index.html.twig', [
-            'chevaux' => $chevalRepository->findAll(),
+            'chevaux' => $chevaux,
+            'search_form' => $searchForm->createView(),
+            'statistics' => $statistics,
+            'current_search' => $search
         ]);
     }
 

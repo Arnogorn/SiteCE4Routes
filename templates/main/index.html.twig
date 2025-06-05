@@ -34,7 +34,7 @@
                                 <i class="bi bi-envelope-heart me-2"></i>Nous contacter
                             </a>
                             <a href="{{ path('app_sortie_index') }}" class="btn btn-outline-modern">
-                                <i class="bi bi-compass me-2"></i>Nos sorties
+                                <i class="bi bi-compass me-2"></i>Nos activités
                             </a>
                         </div>
                     </div>
@@ -112,12 +112,12 @@
                         <div class="row g-4 justify-content-center">
                             {% for contact in contacts %}
                                 <div class="col-lg-4 col-md-6">
-                                    <div class="card h-100" style="border: 2px solid var(--border-color); border-radius: 16px; transition: var(--transition-base); background: linear-gradient(135deg, white 0%, var(--bg-secondary) 100%);"
+                                    <div class="card-modern"
                                          onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='var(--shadow-xl)'"
                                          onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
 
 
-                                        <div style="height: 4px; background: linear-gradient(90deg, var(--primary-color) 0%, var(--accent-color) 100%); border-radius: 16px 16px 0 0;"></div>
+
 
                                         <div class="card-body text-center p-4">
 
@@ -150,7 +150,7 @@
                                                     <div class="d-flex align-items-center justify-content-center p-2"
                                                          style="background: var(--bg-tertiary); border-radius: 8px; border: 1px solid var(--border-color);">
                                                         <i class="bi bi-telephone me-2" style="color: var(--accent-color);"></i>
-                                                        <span class="text-secondary fw-bold">{{ contact.tel }}</span>
+                                                        <span class="text-primary fw-bold contact-phone-number" >{{ contact.tel }}</span>
                                                     </div>
                                                 </div>
                                             {% endif %}
@@ -269,7 +269,7 @@
                             </div>
                             <h3 class="text-primary-brand">Événements</h3>
                             <p style="color: var(--text-secondary); line-height: 1.7;">
-                                Compétitions, stages et animations tout au long de l'année.
+                                Stages et animations tout au long de l'année.
                                 Découvrez l'art équestre dans un cadre convivial et professionnel.
                             </p>
                             <div class="mt-3">
@@ -289,14 +289,16 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8 text-center">
-                    <blockquote class="blockquote" style="font-size: 1.4rem; color: var(--text-primary); font-style: italic;">
-                        <i class="bi bi-quote" style="font-size: 2.5rem; color: var(--accent-color);"></i>
-                        "Il n'y a pas de secret aussi intime que celui d'un cavalier et de son cheval."
-                        <i class="bi bi-quote" style="font-size: 2.5rem; color: var(--accent-color); transform: scaleX(-1); display: inline-block;"></i>
-                    </blockquote>
-                    <footer class="blockquote-footer mt-3" style="color: var(--text-secondary);">
-                        <cite title="Robert Smith Surtees" style="font-weight: 600;">Robert Smith Surtees</cite>
-                    </footer>
+                    <div class="quote-container fade-in-up">
+                        <blockquote class="blockquote" style="font-size: 1.4rem; color: var(--text-primary); font-style: italic;">
+                            <i class="bi bi-quote" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            "{{ dailyQuote.text }}"
+                            <i class="bi bi-quote" style="font-size: 2.5rem; color: var(--accent-color); transform: scaleX(-1); display: inline-block;"></i>
+                        </blockquote>
+                        <footer class="blockquote-footer mt-3" style="color: var(--text-secondary);">
+                            <cite title="{{ dailyQuote.author }}" style="font-weight: 600;">{{ dailyQuote.author }}</cite>
+                        </footer>
+                    </div>
                 </div>
             </div>
         </div>
@@ -338,11 +340,13 @@
                              onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
                             <i class="bi bi-telephone-fill" style="color: var(--primary-color); font-size: 2.5rem;"></i>
                             <h5 class="mt-3 mb-2 text-primary-brand">Téléphone</h5>
-                            <p class="mb-0" style="font-weight: 600; color: var(--text-primary);">
-                                <a href="tel:0698737600" style="color: var(--text-primary); text-decoration: none;">06 98 73 76 00</a>
-                            </p>
+                            <p class="mb-0" style="font-weight: 600; color: var(--text-primary);"></p>
+                                <p style="color: var(--text-primary); text-decoration: none;">06 98 73 76 00</p>
+
                         </div>
                     </div>
+
+                    {# email protégé contre le SPAM #}
                     <div class="col-md-4 text-center mb-3">
                         <div style="background: var(--bg-tertiary); padding: 1.5rem; border-radius: 16px; border: 2px solid var(--border-color); transition: var(--transition-base);"
                              onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='var(--shadow-lg)'"
@@ -350,8 +354,21 @@
                             <i class="bi bi-envelope-fill" style="color: var(--primary-color); font-size: 2.5rem;"></i>
                             <h5 class="mt-3 mb-2 text-primary-brand">Email</h5>
                             <p class="mb-0" style="font-weight: 600; color: var(--text-primary);">
-                                <a href="mailto:contact@ecuries4routes.fr" style="color: var(--text-primary); text-decoration: none;">contact@ecuries4routes.fr</a>
+{#                                <!-- Fragmentation avec spans invisibles et entités HTML pour éviter le SPAM-->#}
+                                <span>&#101;&#99;&#117;&#114;&#105;&#101;&#115;</span><!--
+            --><span style="display:none;">NOSPAM</span><!--
+            --><span>&#100;&#101;&#115;&#52;</span><!--
+            --><span style="display:none;">REMOVE</span><!--
+            --><span>&#114;&#111;&#117;&#116;&#101;&#115;</span><!--
+            --><span style="display:none;">BOT</span><!--
+            --><span>&#64;</span><!--
+            --><span style="display:none;">TRAP</span><!--
+            --><span>&#103;&#109;&#97;&#105;&#108;</span><!--
+            --><span style="display:none;">FAKE</span><!--
+            --><span>&#46;</span><!--
+            --><span>&#99;&#111;&#109;</span>
                             </p>
+
                         </div>
                     </div>
                     <div class="col-md-4 text-center mb-3">
@@ -361,7 +378,7 @@
                             <i class="bi bi-clock-fill" style="color: var(--primary-color); font-size: 2.5rem;"></i>
                             <h5 class="mt-3 mb-2 text-primary-brand">Horaires</h5>
                             <p class="mb-0" style="font-weight: 600; color: var(--text-primary);">
-                                8h - 20h<br><small style="color: var(--text-secondary);">Tous les jours</small>
+                                8h30 - 20h30<br><small style="color: var(--text-secondary);">Tous les jours</small>
                             </p>
                         </div>
                     </div>
@@ -384,7 +401,7 @@
                         {% endfor %}
                     {% endfor %}
 
-                    <form class="form-modern" method="post" action="/send-contact">
+                    <form class="form-modern" method="post" action="/send-contact" id="contact-form">
                         <div class="text-center mb-4">
                             <h2 class="text-primary-brand mb-3">
                                 <i class="bi bi-envelope-heart" style="color: var(--accent-color);"></i>
@@ -402,6 +419,10 @@
                             <label for="website">Site web</label>
                             <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" value="">
                         </div>
+
+                        {# Protection temporelle - Champ caché timestamp #}
+                        <input type="hidden" name="_token" value="{{ csrf_token('contact_form') }}">
+                        <input type="hidden" name="form_timestamp" id="form_timestamp" value="">
 
                         <div class="row">
                             <div class="col-md-6">
@@ -441,6 +462,7 @@
                                 <option value="pension">🏡 Pension pour chevaux</option>
                                 <option value="cours">🎓 Cours d'équitation</option>
                                 <option value="evenements">🎪 Événements et stages</option>
+                                <option value="anniversaire">🎂 Anniversaire & Goûters</option>
                                 <option value="visite">👁️ Visite des installations</option>
                                 <option value="autre">❓ Autre demande</option>
                             </select>
@@ -459,8 +481,9 @@
                         </div>
 
                         <div class="text-center">
-                            <button type="submit" class="btn btn-modern-primary me-3">
+                            <button type="submit" class="btn btn-modern-primary me-3" id="submit-btn">
                                 <i class="bi bi-send me-2"></i>Envoyer le message
+                                <span class="spinner-border spinner-border-sm ms-2 d-none" id="loading-spinner"></span>
                             </button>
                             <button type="reset" class="btn btn-outline-modern">
                                 <i class="bi bi-arrow-clockwise me-2"></i>Effacer
@@ -478,8 +501,64 @@
             </div>
         </div>
     </section>
+
     <script>
-        // Scripts avec effets aquatiques
+        // script formulaire contact
+        document.addEventListener('DOMContentLoaded', function() {
+            initSimpleTemporalProtection();
+        });
+
+        function initSimpleTemporalProtection() {
+            const form = document.getElementById('contact-form');
+            const submitBtn = document.getElementById('submit-btn');
+            const loadingSpinner = document.getElementById('loading-spinner');
+
+            // 1. ENREGISTRER LE TIMESTAMP DE DÉBUT
+            const startTimestamp = Date.now();
+            document.getElementById('form_timestamp').value = startTimestamp;
+
+            // 2. GESTION DE LA SOUMISSION AVEC VÉRIFICATION TEMPORELLE
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Calculer le temps écoulé depuis le chargement
+                const currentTime = Date.now();
+                const timeElapsed = currentTime - startTimestamp;
+                const minimumTime = 5000; // 5 secondes en millisecondes
+
+                // Vérifier si assez de temps s'est écoulé
+                if (timeElapsed < minimumTime) {
+                    const remainingTime = Math.ceil((minimumTime - timeElapsed) / 1000);
+                    alert(`Veuillez patienter encore ${remainingTime} seconde(s) avant d'envoyer le formulaire.`);
+                    return false;
+                }
+
+                // Vérifier le honeypot
+                if (document.getElementById('website').value !== '') {
+                    console.log('Bot détecté via honeypot');
+                    return false;
+                }
+
+                // Afficher le spinner et désactiver le bouton
+                submitBtn.disabled = true;
+                loadingSpinner.classList.remove('d-none');
+
+                // Soumettre le formulaire après un court délai
+                setTimeout(() => {
+                    form.submit();
+                }, 500);
+            });
+
+            // 3. PROTECTION CONTRE LA SOUMISSION MULTIPLE
+            let formSubmitted = false;
+            form.addEventListener('submit', function() {
+                if (formSubmitted) {
+                    return false;
+                }
+                formSubmitted = true;
+            });
+        }
+        //script navbar
         document.addEventListener('DOMContentLoaded', function() {
             // Effet au scroll pour la navbar
             window.addEventListener('scroll', function() {

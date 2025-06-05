@@ -3,8 +3,20 @@ framework:
         # The paths to make available to the asset mapper.
         paths:
             - assets/
+            - vendor/twbs/bootstrap/dist/
+            - vendor/twbs/bootstrap-icons/
         missing_import_mode: strict
         server: true
+        excluded_patterns:
+            - '*/tests/*'
+            - '*/test/*'
+            - '*/node_modules/*'
+            - 'https://cdn.jsdelivr.net/*'
+            - 'https://cdnjs.cloudflare.com/*'
+        importmap_path: '%kernel.project_dir%/importmap.php'
+
+
+
 
 
 when@prod:

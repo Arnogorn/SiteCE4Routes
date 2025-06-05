@@ -86,6 +86,32 @@
                         </div>
                     </div>
 
+                    {# Calculs spéciaux pour la catégorie forfait (34 séances) #}
+                    <div class="card-modern mt-4">
+                        <h4 class="text-primary-brand mb-4">
+                            <i class="bi bi-calculator me-2"></i>Calculateur de coûts
+                        </h4>
+
+                        {% if tarif.categorie|lower == 'forfait' %}
+
+                        <div class="row g-12">
+                            <div class="col-lg-12 col-md-6">
+                                <div class="p-3 text-center" style="background: var(--bg-tertiary); border-radius: 8px; border: 1px solid var(--border-color);">
+                                    <h6 class="text-primary-brand mb-2">Prix par séance</h6>
+                                    <span class="badge bg-secondary" style="font-size: 1rem; padding: 0.4rem 0.8rem;">
+                        {{ (tarif.prix / 34)|number_format(2) }}€
+                                    </span>
+                                    <div class="mt-2">
+                                        <small class="text-muted">Forfait ÷ 34 séances</small>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        {% endif %}
+                    </div>
+
                     {# Actions disponibles #}
                     <div class="card-modern mt-4">
                         <h5 class="text-primary-brand mb-3">

@@ -41,7 +41,7 @@ class AppFixtures extends Fixture
         $niveauLabels = [
             'Débutant', 'Intermédiaire', 'Confirmé',
             'Galop 1', 'Galop 2', 'Galop 3', 'Galop 4',
-            'Galop 5', 'Galop 6', 'Galop 7',
+            'Galop 5', 'Galop 6', 'Galop 7', 'Galop 8',
             'Tous Niveaux'
         ];
 
@@ -323,6 +323,15 @@ class AppFixtures extends Fixture
         $manager->persist($typeSortie1);
         $manager->flush();
 
+        $typeSortie2 = (new typeSortie());
+        $typeSortie2->setLibelle("Stage");
+        $manager->persist($typeSortie2);
+        $manager->flush();
+
+        $typeSortie3 = (new typeSortie());
+        $typeSortie3->setLibelle("Randonnée");
+        $manager->persist($typeSortie3);
+        $manager->flush();
     }
 
 

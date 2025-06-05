@@ -120,7 +120,9 @@
                                 {% for competition in competitions %}
                                     <tr style="border-bottom: 1px solid var(--border-color);">
                                         <td>
+                                            <a href="{{ path('app_competition_show', {'id': competition.id}) }}">
                                             <strong class="text-primary-brand">{{ competition.titre }}</strong>
+                                            </a>
                                             {% if competition.description %}
                                                 <br><small class="text-muted">
                                                 {% if competition.description|length > 50 %}
