@@ -52,6 +52,12 @@ class PaiementController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        // --- 1) Blocage si le user principal est déjà inscrit à cette sortie ---
+        if ($sortie->getParticipants()->contains($user)) {
+            $this->addFlash('warning', 'Vous êtes déjà inscrit à cette sortie.');
+            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+        }
+
         // On crée une entité Paiement pour enregistrer la transaction localement
         $paiement = new Paiement();
         $paiement->setUtilisateur($user);
@@ -62,6 +68,20 @@ class PaiementController extends AbstractController
 
         $membresIds = array_filter($idsMembres, fn($id) => $id !== 'me');
         $membres = $em->getRepository(MembreFamille::class)->findBy(['id' => $membresIds]);
+
+        // --- 2) Blocage si un membre de famille est déjà inscrit à cette sortie ---
+        foreach ($membres as $membre) {
+            if ($sortie->getMembresFamilleInscrits()->contains($membre)) {
+                $this->addFlash(
+                    'warning',
+                    sprintf(
+                        'Le membre « %s » est déjà inscrit à cette sortie.',
+                        $membre->getPrenom() . ' ' . $membre->getNom()
+                    )
+                );
+                return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+            }
+        }
 
         $participants = count($membres);
 
