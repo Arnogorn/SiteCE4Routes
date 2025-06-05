@@ -37,7 +37,6 @@ class SortieType extends AbstractType
             ->add('duree', TextType::class, [
                 'label' => 'Durée de la sortie (en minutes)',
             ])
-
             ->add('nbInscriptionMax', TextType::class, [
                 'label' => 'Nombre d\'inscriptions maximum',
             ])
@@ -58,6 +57,8 @@ class SortieType extends AbstractType
                     return $moniteur->getUser()->getNom() . ' ' . $moniteur->getUser()->getPrenom();
                 },
                 'label' => 'Moniteur',
+                'required' => false,
+                'placeholder' => 'Aucun moniteur',
             ])
             ->add('niveauxAdmis', EntityType::class, [
                 'class' => Niveau::class,

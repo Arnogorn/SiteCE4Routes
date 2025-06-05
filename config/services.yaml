@@ -38,6 +38,9 @@ services:
             - '%env(STRIPE_SECRET_KEY)%'
 
 
+    App\Service\NotificationService:
+        arguments:
+            $senderEmail: '%app.mail_from%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

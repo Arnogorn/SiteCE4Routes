@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Service\NotificationService;
 use App\Entity\Sortie;
+use App\Entity\MembreFamille;
 use App\Entity\User;
 use App\Form\SortieType;
 use App\Form\SortieFiltreType;
@@ -21,6 +23,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -28,6 +32,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/sortie')]
 final class SortieController extends AbstractController
 {
+    private NotificationService $notifier;
+
+    public function __construct(NotificationService $notifier)
+    {
+        $this->notifier = $notifier;
+    }
     #[Route(name: 'app_sortie_index', methods: ['GET'])]
     public function index(Request $request, SortieRepository $sortieRepository, EtatRepository $etatRepository, Security $security, UpdateEtatService $updateEtatService): Response
     {
@@ -214,6 +224,7 @@ final class SortieController extends AbstractController
         // Vérifie si déjà inscrit
         if ($sortie->getParticipants()->contains($user)) {
             $this->addFlash('warning', 'Vous êtes déjà inscrit à cette sortie.');
+            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
         } elseif ($sortie->getNombreInscritsTotal() >= $sortie->getNbInscriptionMax()) {
             $this->addFlash('danger', 'Cette sortie est complète, vous ne pouvez pas vous inscrire.');
         } elseif ($sortie->getDateLimiteInscription() < new \DateTime()) {
@@ -243,7 +254,34 @@ final class SortieController extends AbstractController
 
         try {
             $inscriptionService->unregisterParticipant($sortie, $user);
-            $this->addFlash('success', 'Vous vous êtes désinscrit de la sortie.');
+            $this->notifier->sendDesinscriptionMail($user, null, $sortie, null);
+            $this->addFlash('success', 'Vous vous êtes désinscrit de la sortie. Un e-mail de confirmation vous a été envoyé.');
+        } catch (\Exception $e) {
+            $this->addFlash('danger', $e->getMessage());
+        }
+
+        return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+    }
+
+    #[Route('/{id}/desinscription-membre/{membreId}', name: 'sortie_desinscription_membre', methods: ['POST'])]
+    public function desinscriptionMembre(
+        Sortie $sortie,
+        MembreFamille $membre,
+        Security $security,
+        InscriptionService $inscriptionService
+    ): Response
+    {
+        /** @var User $user */
+        $user = $security->getUser();
+
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour désinscrire un membre.');
+        }
+
+        try {
+            $inscriptionService->unregisterParticipant($sortie, $user, $membre);
+            $this->notifier->sendDesinscriptionMail($user, $membre, $sortie, null);
+            $this->addFlash('success', 'Le membre a bien été désinscrit de la sortie et remboursé. Un e-mail de confirmation a été envoyé.');
         } catch (\Exception $e) {
             $this->addFlash('danger', $e->getMessage());
         }
@@ -354,7 +392,8 @@ final class SortieController extends AbstractController
                 } elseif ($estInscrit) {
                     try {
                         $inscriptionService->unregisterParticipant($sortie, $user, $membre);
-                        $this->addFlash('success', 'Le membre de famille a bien été désinscrit et remboursé.');
+                        $this->notifier->sendDesinscriptionMail($user, $membre, $sortie, null);
+                        $this->addFlash('success', 'Le membre de famille a bien été désinscrit et remboursé. Un e-mail de confirmation a été envoyé.');
                     } catch (\Exception $e) {
                         $this->addFlash('danger', $e->getMessage());
                     }
@@ -424,6 +463,11 @@ final class SortieController extends AbstractController
             // Handle user registration/unregistration
             $isUserSelected = in_array($user->getId(), $selected, true);
             $isUserEnrolled = $sortie->getParticipants()->contains($user);
+            // Si l'utilisateur est déjà inscrit et que son ID est dans la sélection, on empêche une nouvelle inscription
+            if ($isUserSelected && $isUserEnrolled) {
+                $this->addFlash('warning', 'Vous êtes déjà inscrit à cette sortie.');
+                return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+            }
             if ($isUserSelected && !$isUserEnrolled) {
                 return $this->redirect($inscriptionService->startCheckout($sortie, $user, [], true));
             } elseif (!$isUserSelected && $isUserEnrolled) {
@@ -435,6 +479,11 @@ final class SortieController extends AbstractController
             foreach ($famille as $membre) {
                 $selectedMember = in_array($membre->getId(), $selected, true);
                 $isMemberEnrolled = $sortie->getMembresFamilleInscrits()->contains($membre);
+                // Si le membre est déjà inscrit et est toujours sélectionné, on empêche une nouvelle inscription
+                if ($selectedMember && $isMemberEnrolled) {
+                    $this->addFlash('warning', sprintf('Le membre « %s » est déjà inscrit à cette sortie.', $membre->getPrenom()));
+                    return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+                }
                 if ($selectedMember && !$isMemberEnrolled) {
                     $toRegister[] = $membre;
                 } elseif (!$selectedMember && $isMemberEnrolled) {

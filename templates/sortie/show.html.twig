@@ -7,53 +7,53 @@
 
     <table class="table">
         <tbody>
-            <tr>
-                <th>Titre</th>
-                <td>{{ sortie.titre }}</td>
-            </tr>
-            {% if sortie.moniteur is not null %}
+        <tr>
+            <th>Titre</th>
+            <td>{{ sortie.titre }}</td>
+        </tr>
+        {% if sortie.moniteur is not null %}
             <tr>
                 <th>Moniteur</th>
                 <td>{{ sortie.moniteur.user.prenom }} {{ sortie.moniteur.user.nom }}</td>
             </tr>
-            {% endif %}
-            <tr>
-                <th>Date</th>
-                <td>{{ sortie.date ? sortie.date|date('d-m-Y H:i:s') : ''  }}</td>
-            </tr>
-            <tr>
-                <th>Durée</th>
-                <td>{{ sortie.duree }}</td>
-            </tr>
-            <tr>
-                <th>Date limite d'inscription</th>
-                <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d-m-Y H:i:s') : ''  }}</td>
-            </tr>
-            <tr>
-                <th>Nombre maximum d'inscriptions</th>
-{#                <td>{{ sortie.participants|length + sortie.membresFamilleInscrits|length }}/{{ sortie.nbInscriptionMax }}</td>#}
-                <td>{{ sortie.inscriptions|length }}/{{ sortie.nbInscriptionMax }}</td>
-            </tr>
-            <th>Niveaux admis</th>
+        {% endif %}
+        <tr>
+            <th>Date</th>
+            <td>{{ sortie.date ? sortie.date|date('d-m-Y H:i:s') : ''  }}</td>
+        </tr>
+        <tr>
+            <th>Durée</th>
+            <td>{{ sortie.duree }}</td>
+        </tr>
+        <tr>
+            <th>Date limite d'inscription</th>
+            <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d-m-Y H:i:s') : ''  }}</td>
+        </tr>
+        <tr>
+            <th>Nombre maximum d'inscriptions</th>
+            <td>{{ sortie.inscriptions|length }}/{{ sortie.nbInscriptionMax }}</td>
+        </tr>
+        <th>Niveaux admis</th>
+        <td>
+            {% for niveau in sortie.niveauxAdmis %}
+                {{ niveau.libelle }}{% if not loop.last %}, {% endif %}
+            {% else %}
+                Aucun niveau spécifié.
+            {% endfor %}
+        </td>
+        <tr>
+        <tr>
+            <th>Prix</th>
+            <td>{{ sortie.prix }} €</td>
+        </tr>
+        <tr>
+            <th>Informations</th>
+            <td>{{ sortie.infos }}</td>
+        </tr>
+        <tr>
+            <th>État de la sortie</th>
             <td>
-                {% for niveau in sortie.niveauxAdmis %}
-                    {{ niveau.libelle }}{% if not loop.last %}, {% endif %}
-                {% else %}
-                    Aucun niveau spécifié.
-                {% endfor %}
-            </td>
-            <tr>
-            <tr>
-                <th>Prix</th>
-                <td>{{ sortie.prix }} €</td>
-            </tr>
-            <tr>
-                <th>Informations</th>
-                <td>{{ sortie.infos }}</td>
-            </tr>
-            <tr>
-                <th>État de la sortie</th>
-                <td><p class="border rounded
+                <p class="border rounded
                         {% if sortie.etat.libelle == 'Créée' %}
                             border-warning
                         {% elseif sortie.etat.libelle == 'Ouverte' %}
@@ -66,69 +66,115 @@
                             border-secondary
                         {% else %}
                             border-danger
-                        {% endif %}">{{ sortie.etat.libelle }}</p></td>
-            </tr>
-            {% if is_granted('ROLE_ADMIN') %}
+                        {% endif %}"
+                >
+                    {{ sortie.etat.libelle }}
+                </p>
+            </td>
+        </tr>
+
+        {#… affichage ADMIN inchangé …#}
+        {% if is_granted('ROLE_ADMIN') %}
             <tr>
-                <th>Sortie publié</th>
-                <td>{{ sortie.isPublished ? 'Oui' : 'Non' }}</td>
+                <th>Participants</th>
+                <td>
+                    {% if sortie.participants is empty and sortie.membresFamilleInscrits is empty %}
+                        Aucun participant inscrit pour le moment.
+                    {% else %}
+                        {% for participant in sortie.participants %}
+                            <a href="{{ path('app_user_show', {id: participant.id}) }}">
+                                {{ participant.prenom }} {{ participant.nom }}
+                            </a> (Utilisateur)<br>
+                        {% endfor %}
+                        {% for membre in sortie.membresFamilleInscrits %}
+                            <div style="margin-bottom: 4px;">
+                                <a href="{{ path('app_user_show', {id: membre.famille.user.id}) }}">
+                                    {{ membre.prenom }} {{ membre.nom }}
+                                </a>
+                                (Membre de la famille de
+                                <a href="{{ path('app_user_show', {id: membre.famille.user.id}) }}">
+                                    {{ membre.famille.user.prenom }} {{ membre.famille.user.nom }}
+                                </a>
+                                )
+
+                                {# Formulaire de désinscription du membre #}
+                                <form action="{{ path('sortie_desinscription_membre', {id: sortie.id, membreId: membre.id}) }}"
+                                      method="post" style="display: inline;">
+                                    <input type="hidden" name="_token"
+                                           value="{{ csrf_token('desinscription_membre' ~ sortie.id ~ membre.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-danger">Désinscrire</button>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </td>
             </tr>
 
-                <tr>
-                    <th>Participants</th>
-                    <td>
-                        {% if sortie.participants is empty and sortie.membresFamilleInscrits is empty %}
-                            Aucun participant inscrit pour le moment.
-                        {% else %}
-                            {% for participant in sortie.participants %}
-                                {{ participant.prenom }} {{ participant.nom }} (Utilisateur)<br>
-                            {% endfor %}
-
-                            {% for membre in sortie.membresFamilleInscrits %}
-                                {{ membre.prenom }} {{ membre.nom }} (Membre de famille)<br>
-                            {% endfor %}
+            {# POUR LES “ROLE_USER” : on affiche uniquement les propres inscriptions + celles de ses membres #}
+        {% elseif is_granted('ROLE_USER') %}
+            <tr>
+                <th>Vos inscriptions</th>
+                <td>
+                    {% set found = false %}
+                    <ul>
+                        {# Si l’utilisateur est lui-même inscrit #}
+                        {% if sortie.participants.contains(app.user) %}
+                            <li>
+                                <a href="{{ path('app_user_show', {id: app.user.id}) }}">
+                                    {{ app.user.prenom }} {{ app.user.nom }}
+                                </a>
+                                (Vous)
+                                <form action="{{ path('sortie_desinscription', {id: sortie.id}) }}"
+                                      method="post" style="display: inline;">
+                                    <input type="hidden" name="_token"
+                                           value="{{ csrf_token('desinscription_utilisateur' ~ sortie.id) }}">
+                                    <button type="submit" class="btn btn-sm btn-warning">Se désinscrire</button>
+                                </form>
+                            </li>
+                            {% set found = true %}
                         {% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>Inscrits</th>
-                    <td>
-                        <ul>
-                            {% for inscrit in sortie.inscriptions %}
-                                <li>{{ inscrit.nom }} {{ inscrit.prenom }}</li>
-                            {% endfor %}
-                        </ul>
 
-                    </td>
-                </tr>
-            {% endif %}
+                        {# Parcourt les membres de famille inscrits et affiche ceux appartenant à la même famille #}
+                        {% for membre in sortie.membresFamilleInscrits %}
+                            {% if app.user.famille is not null and membre.famille == app.user.famille %}
+                                <li>
+                                    <a href="{{ path('app_user_show', {id: membre.famille.user.id}) }}">
+                                        {{ membre.prenom }} {{ membre.nom }}
+                                    </a>
+                                    (Membre de la famille de
+                                    <a href="{{ path('app_user_show', {id: membre.famille.user.id}) }}">
+                                        {{ membre.famille.user.prenom }} {{ membre.famille.user.nom }}
+                                    </a>
+                                    )
+                                    <form action="{{ path('sortie_desinscription_membre', {id: sortie.id, membreId: membre.id}) }}"
+                                          method="post" style="display: inline;">
+                                        <input type="hidden" name="_token"
+                                               value="{{ csrf_token('desinscription_membre' ~ sortie.id ~ membre.id) }}">
+                                        <button type="submit" class="btn btn-sm btn-danger">Désinscrire</button>
+                                    </form>
+                                </li>
+                                {% set found = true %}
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                    {% if not found %}
+                        Vous et vos membres ne vous êtes pas inscrits à cette sortie.
+                    {% endif %}
+                </td>
+            </tr>
+        {% endif %}
 
         </tbody>
     </table>
 
-    <a href="{{ path('paiement_choisir_membres', {'id': sortie.id}) }}">Inscrire ma famille</a>
-    <a href="{{ path('sortie_gestion_inscriptions', { id: sortie.id }) }}" class="btn btn-primary">Gérer les inscriptions</a>
-
-
     <a href="{{ path('app_sortie_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+
+    <a href="{{ path('paiement_choisir_membres', {'id': sortie.id}) }}">Inscrire ma famille</a>
 
     {% if is_granted('ROLE_ADMIN') %}
         <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">Modifier</a>
     {% endif %}
 
-    {% if is_granted('ROLE_USER') %}
-        {% if not sortie.participants.contains(app.user) %}
-            <a href="{{ path('sortie_inscription', { id: sortie.id }) }}" class="btn btn-primary">S'inscrire</a>
-        {% else %}
-            <a href="{{ path('sortie_desinscription', { id: sortie.id }) }}" class="btn btn-warning">Se désinscrire</a>
-        {% endif %}
-    {% endif %}
-
-    {% if app.user and app.user.famille is not null and app.user.famille.membre|length > 0 %}
-        <a href="{{ path('sortie_inscription_famille', { id: sortie.id }) }}" class="btn btn-outline-primary mt-2">
-            Inscrire/Désinscrire un membre de ma famille
-        </a>
-    {% endif %}
 
     {% if is_granted('ROLE_ADMIN') %}
         {{ include('sortie/_delete_form.html.twig') }}
