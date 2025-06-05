@@ -186,7 +186,7 @@ class PaiementController extends AbstractController
         $user = $this->getUser();
         if ($user instanceof \App\Entity\User) {
             $email = (new Email())
-                ->from('noreply@ecurie4routes.fr') // À adapter si nécessaire
+                ->from('noreply-ecuriesdes4routes@gmail.com')
                 ->to($user->getEmail())
                 ->subject('Confirmation de votre inscription')
                 ->text(sprintf(

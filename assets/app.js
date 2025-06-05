@@ -235,3 +235,9 @@ window.addEventListener('resize', () => {
         main.style.paddingBottom = (footer.offsetHeight + 20) + 'px';
     }
 });
+
+
+//===================================
+// PAIEMENT FAMILLE
+//===================================
+
