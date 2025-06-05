@@ -266,9 +266,10 @@ final class SortieController extends AbstractController
     #[Route('/{id}/desinscription-membre/{membreId}', name: 'sortie_desinscription_membre', methods: ['POST'])]
     public function desinscriptionMembre(
         Sortie $sortie,
-        MembreFamille $membre,
+        int $membreId,
         Security $security,
-        InscriptionService $inscriptionService
+        InscriptionService $inscriptionService,
+        EntityManagerInterface $entityManager
     ): Response
     {
         /** @var User $user */
@@ -277,6 +278,7 @@ final class SortieController extends AbstractController
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour désinscrire un membre.');
         }
+        $membre = $entityManager->getRepository(MembreFamille::class)->find($membreId);
 
         try {
             $inscriptionService->unregisterParticipant($sortie, $user, $membre);

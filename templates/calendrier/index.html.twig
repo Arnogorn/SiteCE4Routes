@@ -1,171 +1,123 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Planning Hebdomadaire{% endblock %}
-
-{% block stylesheets %}
-    {{ parent() }}
-    <style>
-        .planning-page {
-            background-color: #a8dadc;
-            padding: 20px;
-        }
-        .planning-container {
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .calendrier {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-        }
-        .calendrier th, .calendrier td {
-            border: 1px solid #bbdefb;
-            text-align: center;
-            padding: 10px;
-            height: 80px;
-            position: relative;
-            vertical-align: top;
-        }
-        .calendrier th {
-            background-color: #1e88e5;
-            color: white;
-            font-weight: bold;
-            height: auto;
-        }
-        .calendrier th:first-child {
-            width: 150px;
-            background-color: #1565c0;
-        }
-        .event {
-            background-color: #bbdefb;
-            padding: 10px;
-            cursor: pointer;
-            height: 100%;
-            border-left: 4px solid #1565c0;
-            text-align: left;
-            font-size: 0.9em;
-            border-radius: 4px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 100%; /* Assure que l'élément prend toute la largeur disponible */
-        }
-
-        /* Styles pour les cellules vides en mode lecture seule */
-        .empty-cell-readonly {
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-            font-size: 1.2em;
-            color: #eee; /* Couleur très légère pour indiquer qu'elle est inactive */
-        }
-        .event-time {
-            font-size: 0.75em;
-            color: #1565c0;
-            display: block;
-            border-top: 1px dashed #1e88e5;
-            padding-top: 3px;
-            margin-top: 4px;
-        }
-        .event:hover {
-            background-color: #90caf9;
-            transform: scale(1.02);
-        }
-        .empty-cell {
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f9f9f9;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: all 0.2s;
-            font-size: 1.2em;
-            color: #aaa;
-        }
-        .empty-cell:hover {
-            background-color: #e3f2fd;
-            color: #1565c0;
-        }
-        .time-label {
-            font-weight: bold;
-            background-color: #e3f2fd;
-            color: #1565c0;
-        }
-    </style>
-{% endblock %}
+{% block title %}Planning Hebdomadaire - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <div class="planning-page">
-    <div class="planning-container">
-        <h1 class="mb-4">Planning Hebdomadaire</h1>
+    <section class="py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-calendar-week" style="color: var(--accent-color);"></i>
+                    Planning Hebdomadaire
+                    <i class="bi bi-calendar-week" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Consultez et gérez le planning des activités
+                </p>
+            </div>
 
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endfor %}
-
-        <div class="table-responsive">
-            <table class="calendrier">
-                <thead>
-                <tr>
-                    <th>Heure</th>
-                    {% for jour in jours %}
-                        <th>{{ jour }}</th>
-                    {% endfor %}
-                </tr>
-                </thead>
-                <tbody>
-                {% for heure in heures %}
-                    <tr>
-                        {% set heureEntiere = heure|split(':')[0] %}
-                        {% set heureFinEntiere = heureEntiere|number_format + 1 %}
-                        <td class="time-label">{{ heureEntiere }}h30 - {{ heureFinEntiere }}h30</td>
-
-                        {% for jour in jours %}
-                            {% if not grille[jour][heure].skip %}
-                                {% if grille[jour][heure].type == 'debut' %}
-                                    <td {% if grille[jour][heure].rowspan > 1 %}rowspan="{{ grille[jour][heure].rowspan }}"{% endif %}>
-                                        <div class="event" {% if app.user and 'ROLE_ADMIN' in app.user.roles %}onclick="window.location='{{ path('app_calendrier_edit', {'id': grille[jour][heure].evenement.id}) }}'"{% endif %}>
-                                            <div class="event-content">
-                                                {{ grille[jour][heure].evenement.contenu|nl2br }}
-                                            </div>
-                                            <div>
-                                                <small class="event-time">
-                                                    {{ grille[jour][heure].evenement.heureDebut }} - {{ grille[jour][heure].evenement.heureFin }}
-                                                </small>
-                                            </div>
-                                        </div>
-                                    </td>
-                                {% else %}
-                                    <td>
-                                        {% if app.user and  'ROLE_ADMIN' in app.user.roles %}
-                                            <div class="empty-cell" onclick="window.location='{{ path('app_calendrier_new') }}?jour={{ jour }}&heure={{ heure }}'">
-                                                +
-                                            </div>
-                                        {% else %}
-                                            <div class="empty-cell-readonly"></div>
-                                        {% endif %}
-                                    </td>
-                                {% endif %}
-                            {% endif %}
-                        {% endfor %}
-                    </tr>
+            {# Messages flash #}
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'success' ? 'success' : 'danger' }} alert-dismissible fade show mb-4" role="alert">
+                        <i class="bi bi-{{ label == 'success' ? 'check-circle' : 'exclamation-triangle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
                 {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-    </div>
+            {% endfor %}
 
+            <div class="card-modern">
+                <div class="table-responsive">
+                    <table class="planning-table">
+                        <thead>
+                        <tr>
+                            <th class="planning-header-time">
+                                <i class="bi bi-clock me-2"></i>Heure
+                            </th>
+                            {% for jour in jours %}
+                                <th class="planning-header-day">
+                                    <i class="bi bi-calendar-day me-1"></i>{{ jour }}
+                                </th>
+                            {% endfor %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for heure in heures %}
+                            <tr>
+                                {% set heureEntiere = heure|split(':')[0] %}
+                                {% set heureFinEntiere = heureEntiere|number_format + 1 %}
+                                <td class="planning-time-label">
+                                    <strong>{{ heureEntiere }}h30</strong>
+                                    <div class="planning-time-range">{{ heureFinEntiere }}h30</div>
+                                </td>
+
+                                {% for jour in jours %}
+                                    {% if not grille[jour][heure].skip %}
+                                        {% if grille[jour][heure].type == 'debut' %}
+                                            <td class="planning-cell" {% if grille[jour][heure].rowspan > 1 %}rowspan="{{ grille[jour][heure].rowspan }}"{% endif %}>
+                                                <div class="planning-event"
+                                                        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                                                    onclick="window.location='{{ path('app_calendrier_edit', {'id': grille[jour][heure].evenement.id}) }}'"
+                                                    title="Cliquer pour modifier"
+                                                        {% endif %}>
+                                                    <div class="planning-event-content">
+                                                        {{ grille[jour][heure].evenement.contenu|nl2br }}
+                                                    </div>
+                                                    <div class="planning-event-time">
+                                                        <i class="bi bi-clock me-1"></i>
+                                                        {{ grille[jour][heure].evenement.heureDebut }} - {{ grille[jour][heure].evenement.heureFin }}
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        {% else %}
+                                            <td class="planning-cell">
+                                                {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                                                    <div class="planning-empty-cell"
+                                                         onclick="window.location='{{ path('app_calendrier_new') }}?jour={{ jour }}&heure={{ heure }}'"
+                                                         title="Cliquer pour ajouter un événement">
+                                                        <i class="bi bi-plus-circle"></i>
+                                                        <span class="planning-add-text">Ajouter</span>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="planning-empty-readonly">
+                                                        <i class="bi bi-dash" style="opacity: 0.3;"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </td>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {# Légende pour les utilisateurs #}
+                {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                    <div class="mt-4 p-3" style="background: var(--bg-tertiary); border-radius: 12px; border-left: 4px solid var(--accent-color);">
+                        <h6 class="text-primary-brand mb-2">
+                            <i class="bi bi-info-circle me-2"></i>Actions disponibles
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="text-secondary">
+                                    <i class="bi bi-mouse me-1" style="color: var(--accent-color);"></i>
+                                    Cliquez sur un événement pour le modifier
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <small class="text-secondary">
+                                    <i class="bi bi-plus-circle me-1" style="color: var(--accent-color);"></i>
+                                    Cliquez sur une case vide pour ajouter un événement
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
 {% endblock %}

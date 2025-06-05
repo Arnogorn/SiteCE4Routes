@@ -60,7 +60,9 @@
                                         </div>
                                         <div>
                                             <h3 class="text-primary-brand mb-0">{{ categorie_nom }}</h3>
-                                            <small class="text-muted">{{ tarifs_par_categorie[categorie_key]|length }} tarif(s)</small>
+                                            {% if categorie_key == 'forfait' %}
+                                            <i style="font-size: 1rem;">Une majoration de 5% est applicable sur tous les montants si règlement en chèque vacances</i>
+                                            {% endif %}
                                         </div>
                                     </div>
 
@@ -97,6 +99,12 @@
                                                                     Gratuit
                                                                 {% else %}
                                                                     {{ tarif.prix }}€
+                                                                        {% if categorie_key=='forfait' %}
+                                                                            <h6 class="text-primary-brand mb-2">Prix par séance</h6>
+                                                                            <span class="badge bg-secondary" style="font-size: 1rem; padding: 0.4rem 0.8rem;">
+                                                                                {{ (tarif.prix / 34)|number_format(2) }}€
+                                                                            </span>
+                                                                        {% endif%}
                                                                 {% endif %}
                                                             </span>
                                                         </td>
@@ -128,19 +136,27 @@
                                                 <div class="col-12 col-md-6">
                                                     <div class="card h-100" style="border: 2px solid var(--border-color); border-radius: 12px;">
                                                         <div class="card-body">
+
+                                                            {% if tarif.description %}
+                                                                <p class="text-muted mb-3">{{ tarif.description }}</p>
+                                                            {% endif %}
                                                             <div class="d-flex justify-content-between align-items-start mb-3">
                                                                 <span class="fw-bold text-success fs-4">
                                                                     {% if tarif.prix == '0' %}
                                                                         Gratuit
                                                                     {% else %}
                                                                         {{ tarif.prix }}€
+                                                                            {% if categorie_key=='forfait' %}
+                                                                                <h6 class="text-primary-brand mb-2">Prix par séance</h6>
+                                                                                <span class="badge bg-secondary" style="font-size: 1rem; padding: 0.4rem 0.8rem;">
+                                                                                    {{ (tarif.prix / 34)|number_format(2) }}€
+                                                                                </span>
+                                                                            {% endif%}
                                                                     {% endif %}
                                                                 </span>
                                                             </div>
 
-                                                            {% if tarif.description %}
-                                                                <p class="text-muted mb-3">{{ tarif.description }}</p>
-                                                            {% endif %}
+
 
                                                             {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
                                                                 <div class="d-flex gap-2 mt-auto">
@@ -178,6 +194,7 @@
                     </div>
                 </div>
             {% endif %}
+
         </div>
     </section>
 {% endblock %}

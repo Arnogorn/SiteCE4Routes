@@ -93,7 +93,9 @@
                                 {% for ecurie_proprietaire in ecurie_proprietaires %}
                                     <tr style="border-bottom: 1px solid var(--border-color);">
                                         <td>
+                                            <a href="{{ path('app_ecurie_proprietaire_show', {'id': ecurie_proprietaire.id}) }}">
                                             <strong class="text-primary-brand">{{ ecurie_proprietaire.prestation }}</strong>
+                                            </a>
                                         </td>
                                         <td>
                                             {% if ecurie_proprietaire.description %}
