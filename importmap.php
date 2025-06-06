@@ -28,5 +28,22 @@ return [
 
     'styles/sortie-inscription.css' => [
         'path' => './assets/styles/sortie-inscription.css',
+        'type' => 'css',
+        'entrypoint' => true,
     ],
+    'styles/planning.css' => [
+        'path' => './assets/styles/planning.css',
+        'type' => 'css',
+        'entrypoint' => true,
+    ],
+    'styles/birthday.css' => [
+        'path' => './assets/styles/birthday.css',
+        'type' => 'css',
+        'entrypoint' => true,
+    ],
+    'styles/darkTheme.css' => [
+        'path' => './assets/styles/darkTheme.css',
+        'type' => 'css',
+        'entrypoint' => true,
+    ]
 ];

@@ -43,7 +43,8 @@
 
         {# Asset Mapper - importe automatiquement vos CSS et JS #}
         {% block importmap %}
-            {{ importmap('app') }}
+            {{ importmap(['app', 'styles/sortie-inscription.css', 'styles/planning.css', 'styles/birthday.css', 'styles/darkTheme.css']) }}
+
         {% endblock %}
     {% endblock %}
     {# Bootstrap JS - Reste en CDN pour éviter les conflits #}
