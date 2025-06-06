@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ status_code }} – {{ status_text }}
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>{{ status_code }} – {{ status_text }}</h1>
+        <p>Une erreur est survenue…</p>
+        <a href="{{ path('index') }}" class="btn btn-secondary">← Retour</a>
+    </div>
+{% endblock %}
