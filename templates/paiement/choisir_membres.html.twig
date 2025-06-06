@@ -107,10 +107,17 @@
                             </button>
                         </div>
 
+                        <div class="d-grid mt-3 mb-4">
+                            <a href="{{ path('app_sortie_show', { id: sortie.id }) }}" class="btn btn-outline-secondary">
+                                ← Retour à la sortie
+                            </a>
+                        </div>
+
                         <p class="text-muted text-center mt-3 small">
                             <i class="bi bi-shield-check me-1"></i>
                             Paiement sécurisé via Stripe
                         </p>
+
                     </form>
                 </div>
             </div>
