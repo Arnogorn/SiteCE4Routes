@@ -101,7 +101,7 @@
                 {% endif %}
                 <td>
                     <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}">Voir</a>
-                    <a href="{{ path('paiement_choisir_membres', {'id': sortie.id}) }}">Inscrire ma famille</a>
+
 
                     {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">Modifier</a>

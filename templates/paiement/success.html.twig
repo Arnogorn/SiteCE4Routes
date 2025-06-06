@@ -15,5 +15,10 @@
         <a href="{{ path('app_sortie_index') }}" class="btn btn-primary mt-3">
             Retour aux sorties
         </a>
+
+        <a href="{{ path('app_sortie_show', { id: sortie.id }) }}" class="btn btn-outline-secondary mt-2">
+            ← Retour à la sortie
+        </a>
+
     </div>
 {% endblock %}
