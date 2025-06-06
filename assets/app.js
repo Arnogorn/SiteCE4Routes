@@ -5,8 +5,8 @@
  * which should already be in your base.html.twig.
  */
 import './styles/app.css';
-
-import './bootstrap.js';
+//
+// import './bootstrap.js';
 
 
 
@@ -240,4 +240,198 @@ window.addEventListener('resize', () => {
 //===================================
 // PAIEMENT FAMILLE
 //===================================
+
+
+
+
+// Variables globales pour éviter les conflits
+let inscriptionInitialized = false;
+
+function initInscriptionScript() {
+    // Éviter la double initialisation
+    if (inscriptionInitialized) {
+
+        return true;
+    }
+
+
+
+    // Vérifier qu'on est sur la bonne page
+    const form = document.querySelector('form[data-prix-unitaire]');
+    if (!form) {
+
+        return false;
+    }
+
+    const checkboxes = document.querySelectorAll('.form-check-input');
+    const compteur = document.getElementById('compteur');
+    const total = document.getElementById('total');
+    const bouton = document.getElementById('btn-payer');
+    const recap = document.getElementById('recapitulatif');
+
+    // Vérification stricte de tous les éléments
+    if (!checkboxes.length || !compteur || !total || !bouton || !recap) {
+
+        return false;
+    }
+
+
+
+    const prixUnitaire = parseFloat(form.dataset.prixUnitaire) || 0;
+
+
+    function updateTotal() {
+
+
+        // Nettoyer le récapitulatif
+        recap.innerHTML = '';
+
+        // Compter les cases cochées (non désactivées)
+        const selectedCheckboxes = Array.from(checkboxes).filter(function(cb) {
+            return cb.checked && !cb.disabled;
+        });
+        const count = selectedCheckboxes.length;
+
+
+
+        // Mettre à jour l'affichage
+        compteur.textContent = count;
+        total.textContent = (count * prixUnitaire).toFixed(2);
+
+        // Gérer le bouton
+        bouton.disabled = count === 0;
+
+        if (count === 0) {
+            bouton.textContent = 'Sélectionnez au moins une personne';
+            bouton.className = 'btn btn-secondary btn-lg';
+        } else {
+            bouton.innerHTML =
+                '<i class="bi bi-credit-card me-2"></i>' +
+                'Payer ' + (count * prixUnitaire).toFixed(2) + ' € et inscrire';
+            bouton.className = 'btn btn-primary btn-lg';
+        }
+
+        // Construire le récapitulatif
+        selectedCheckboxes.forEach(function(checkbox) {
+            const formCheck = checkbox.closest('.form-check');
+            const label = formCheck ? formCheck.querySelector('label') : null;
+
+            if (label) {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center';
+
+                const nom = label.textContent.replace(/\s*déjà inscrit.*/, '').trim();
+                li.innerHTML =
+                    '<span>' +
+                    '<i class="bi bi-person-check me-2"></i>' + nom +
+                    '</span>' +
+                    '<span class="badge bg-primary rounded-pill">' + prixUnitaire.toFixed(2) + ' €</span>';
+
+                recap.appendChild(li);
+            }
+        });
+
+        // Ajouter le total
+        if (count > 0) {
+            const totalLi = document.createElement('li');
+            totalLi.className = 'list-group-item d-flex justify-content-between align-items-center fw-bold bg-light';
+            totalLi.innerHTML =
+                '<span>' +
+                '<i class="bi bi-calculator me-2"></i>Total' +
+                '</span>' +
+                '<span class="badge bg-success rounded-pill">' + (count * prixUnitaire).toFixed(2) + ' €</span>';
+            recap.appendChild(totalLi);
+        }
+    }
+
+    // Attacher les événements
+    checkboxes.forEach(function(checkbox, index) {
+        checkbox.addEventListener('change', function() {
+
+            updateTotal();
+        });
+    });
+
+    // Validation du formulaire
+    form.addEventListener('submit', function(e) {
+
+        const count = Array.from(checkboxes).filter(function(cb) {
+            return cb.checked && !cb.disabled;
+        }).length;
+
+        if (count === 0) {
+            e.preventDefault();
+            alert('Veuillez sélectionner au moins une personne à inscrire.');
+            return false;
+        }
+    });
+
+    // Initialiser l'affichage
+    updateTotal();
+
+    // Marquer comme initialisé
+    inscriptionInitialized = true;
+
+
+    return true;
+}
+
+// Fonction de vérification
+function checkElements() {
+    const form = document.querySelector('form[data-prix-unitaire]');
+    if (!form) return false;
+
+    const checkboxes = document.querySelectorAll('.form-check-input');
+    const compteur = document.getElementById('compteur');
+    const total = document.getElementById('total');
+    const bouton = document.getElementById('btn-payer');
+    const recap = document.getElementById('recapitulatif');
+
+    const allPresent = checkboxes.length > 0 && compteur && total && bouton && recap;
+
+    if (allPresent) {
+
+        return initInscriptionScript();
+    }
+
+    return false;
+}
+
+// === GESTION DES ÉVÉNEMENTS ===
+
+// 1. DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+
+    checkElements();
+});
+
+// 2. Si déjà prêt
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+
+    checkElements();
+}
+
+// 3. Polling de sécurité
+let attempts = 0;
+const pollInterval = setInterval(function() {
+    attempts++;
+
+    if (inscriptionInitialized) {
+
+        clearInterval(pollInterval);
+        return;
+    }
+
+    if (attempts > 10) {
+
+        clearInterval(pollInterval);
+        return;
+    }
+
+
+
+    if (checkElements()) {
+        clearInterval(pollInterval);
+    }
+}, 500);
 

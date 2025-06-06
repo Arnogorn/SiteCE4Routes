@@ -25,4 +25,8 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
+
+    'styles/sortie-inscription.css' => [
+        'path' => './assets/styles/sortie-inscription.css',
+    ],
 ];
