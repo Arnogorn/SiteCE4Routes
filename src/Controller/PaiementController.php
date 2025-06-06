@@ -199,7 +199,8 @@ class PaiementController extends AbstractController
         }
 
         return $this->render('paiement/success.html.twig', [
-            'paiement' => $paiement
+            'paiement' => $paiement,
+            'sortie' => $paiement->getSortie(),
         ]);
     }
 
