@@ -172,30 +172,37 @@ class InscriptionService
         $totalAmount   = $paiement->getMontant();
         $amountPerSeat = intdiv($totalAmount, $totalSeats);
 
-        // Récupération du chargeId si absent
-        $chargeId = $paiement->getStripeChargeId() ?: null;
-        if (!$chargeId && $paiement->getStripePaymentIntentId()) {
-            $pi = $this->stripe->paymentIntents->retrieve(
-                $paiement->getStripePaymentIntentId(),
-                ['expand' => ['charges']]
-            );
-            $chargeId = $pi->charges->data[0]->id ?? null;
-        }
+        // Détermination si le remboursement est autorisé (avant -48h du début)
+        $now = new \DateTimeImmutable();
+        $refundDeadline = (clone $sortie->getDate())->sub(new \DateInterval('P2D'));
+        $shouldRefund = $now < $refundDeadline;
 
-        // Paramètres de remboursement partiel
-        $params = ['amount' => $amountPerSeat];
-        if ($chargeId) {
-            $params['charge'] = $chargeId;
-        } else {
-            $params['payment_intent'] = $paiement->getStripePaymentIntentId();
-        }
-        $this->stripe->refunds->create($params);
+        if ($shouldRefund) {
+            // Récupération du chargeId si absent
+            $chargeId = $paiement->getStripeChargeId() ?: null;
+            if (!$chargeId && $paiement->getStripePaymentIntentId()) {
+                $pi = $this->stripe->paymentIntents->retrieve(
+                    $paiement->getStripePaymentIntentId(),
+                    ['expand' => ['charges']]
+                );
+                $chargeId = $pi->charges->data[0]->id ?? null;
+            }
 
-        // Mise à jour du Paiement
-        $paiement
-            ->setParticipants($totalSeats - 1)
-            ->setMontant($totalAmount - $amountPerSeat);
-        $this->em->persist($paiement);
+            // Paramètres de remboursement partiel
+            $params = ['amount' => $amountPerSeat];
+            if ($chargeId) {
+                $params['charge'] = $chargeId;
+            } else {
+                $params['payment_intent'] = $paiement->getStripePaymentIntentId();
+            }
+            $this->stripe->refunds->create($params);
+
+            // Mise à jour du Paiement
+            $paiement
+                ->setParticipants($totalSeats - 1)
+                ->setMontant($totalAmount - $amountPerSeat);
+            $this->em->persist($paiement);
+        }
 
         // Supprimer l'entité Inscription correspondante
         $this->em->remove($insc);
@@ -207,18 +214,20 @@ class InscriptionService
             $sortie->removeParticipant($user);
         }
 
-        // Journal du remboursement partiel
-        $log = (new HistoriquePaiement())
-            ->setType('remboursement_partiel')
-            ->setDate(new \DateTimeImmutable())
-            ->setMessage(sprintf(
-                "Remboursement partiel de %.2f € pour %s.",
-                $amountPerSeat / 100,
-                $membre ? $membre->getPrenom() : $user->getPrenom()
-            ))
-            ->setUtilisateur($user)
-            ->setSortie($sortie);
-        $this->em->persist($log);
+        // Journal du remboursement partiel (uniquement si remboursement effectué)
+        if ($shouldRefund) {
+            $log = (new HistoriquePaiement())
+                ->setType('remboursement_partiel')
+                ->setDate(new \DateTimeImmutable())
+                ->setMessage(sprintf(
+                    "Remboursement partiel de %.2f € pour %s.",
+                    $amountPerSeat / 100,
+                    $membre ? $membre->getPrenom() : $user->getPrenom()
+                ))
+                ->setUtilisateur($user)
+                ->setSortie($sortie);
+            $this->em->persist($log);
+        }
 
         $this->em->flush();
     }
