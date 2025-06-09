@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\CompetitionRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
@@ -15,6 +16,15 @@ class Competition
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le titre est obligatoire.')]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s\'\-]+$/u',
+        message: 'Le titre ne peut contenir que des lettres, chiffres, espaces, tirets et apostrophes.'
+    )]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Le titre ne peut dépasser {{ limit }} caractères.'
+    )]
     private ?string $titre = null;
 
     #[ORM\Column]
@@ -24,12 +34,24 @@ class Competition
     private ?\DateTimeImmutable $dateFin = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^\d+$/',
+        message: 'Le prix du transport ne peut contenir que des chiffres.'
+    )]
     private ?int $prixTransport = null;
 
     #[ORM\Column(nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^\d+$/',
+        message: 'Le prix de l\'épreuve ne peut contenir que des chiffres.'
+    )]
     private ?int $prixEpreuve = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[\s\S]{0,500}$/',
+        message: 'La description ne peut dépasser 500 caractères.'
+    )]
     private ?string $description = null;
 
     public function getId(): ?int

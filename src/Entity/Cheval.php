@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ChevalRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ChevalRepository::class)]
 class Cheval
@@ -15,27 +16,64 @@ class Cheval
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-zÀ-ÖØ-öø-ÿ\s\'\-]+$/u',
+        message: 'Le nom ne peut contenir que des lettres, espaces, tirets et apostrophes.'
+    )]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Le nom ne peut dépasser {{ limit }} caractères.'
+    )]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-zÀ-ÖØ-öø-ÿ\s\'\-]*$/u',
+        message: 'Le nom du père ne peut contenir que des lettres, espaces, tirets et apostrophes.'
+    )]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Le nom du père ne peut dépasser {{ limit }} caractères.'
+    )]
     private ?string $nomPere = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-zÀ-ÖØ-öø-ÿ\s\'\-]*$/u',
+        message: 'Le nom de la mère ne peut contenir que des lettres, espaces, tirets et apostrophes.'
+    )]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Le nom de la mère ne peut dépasser {{ limit }} caractères.'
+    )]
     private ?string $nomMere = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
     private ?\DateTimeImmutable $dateNaissance = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s\'\-]*$/u',
+        message: 'Le lieu de naissance ne peut contenir que des lettres, chiffres, espaces, apostrophes et tirets.'
+    )]
     private ?string $lieuNaissance = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[\s\S]{0,255}$/',
+        message: 'Le nom de la photo ne peut dépasser 255 caractères.'
+    )]
     private ?string $photo = null;
 
     #[ORM\Column]
     private ?bool $appartientEcurie = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[\s\S]{0,500}$/',
+        message: 'Les informations ne peuvent dépasser 500 caractères.'
+    )]
     private ?string $infos = null;
 
     #[ORM\Column]

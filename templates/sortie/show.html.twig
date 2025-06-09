@@ -99,7 +99,8 @@
 
                                 {# Formulaire de désinscription du membre #}
                                 <form action="{{ path('sortie_desinscription_membre', {id: sortie.id, membreId: membre.id}) }}"
-                                      method="post" style="display: inline;">
+                                      method="post" style="display: inline;"
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir désinscrire ce membre ?');">
                                     <input type="hidden" name="_token"
                                            value="{{ csrf_token('desinscription_membre' ~ sortie.id ~ membre.id) }}">
                                     <button type="submit" class="btn btn-sm btn-danger">Désinscrire</button>
@@ -125,7 +126,8 @@
                                 </a>
                                 (Vous)
                                 <form action="{{ path('sortie_desinscription', {id: sortie.id}) }}"
-                                      method="post" style="display: inline;">
+                                      method="post" style="display: inline;"
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir vous désinscrire ?');">
                                     <input type="hidden" name="_token"
                                            value="{{ csrf_token('desinscription_utilisateur' ~ sortie.id) }}">
                                     <button type="submit" class="btn btn-sm btn-warning">Se désinscrire</button>
@@ -147,7 +149,8 @@
                                     </a>
                                     )
                                     <form action="{{ path('sortie_desinscription_membre', {id: sortie.id, membreId: membre.id}) }}"
-                                          method="post" style="display: inline;">
+                                          method="post" style="display: inline;"
+                                          onsubmit="return confirm('Êtes-vous sûr de vouloir désinscrire ce membre ?');">
                                         <input type="hidden" name="_token"
                                                value="{{ csrf_token('desinscription_membre' ~ sortie.id ~ membre.id) }}">
                                         <button type="submit" class="btn btn-sm btn-danger">Désinscrire</button>
