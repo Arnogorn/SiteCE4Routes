@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\CalendrierRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 
 #[ORM\Entity(repositoryClass: CalendrierRepository::class)]
@@ -15,15 +16,23 @@ class Calendrier
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le contenu est obligatoire.')]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Le contenu ne peut dépasser {{ limit }} caractères.'
+    )]
     private ?string $contenu = null;
 
     #[ORM\Column(length: 15)]
+    #[Assert\NotBlank(message: 'Le jour est obligatoire.')]
     private ?string $jour = null;
 
     #[ORM\Column(length:5)]
+    #[Assert\NotBlank(message: 'L\'heure de début est obligatoire.')]
     private ?string $heureDebut = null;
 
     #[ORM\Column(length:5)]
+    #[Assert\NotBlank(message: 'L\'heure de fin est obligatoire.')]
     private ?string $heureFin = null;
 
     public function getId(): ?int

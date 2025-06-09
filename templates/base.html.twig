@@ -47,6 +47,23 @@
 
         {% endblock %}
     {% endblock %}
+    <style>
+      @media (max-width: 767.98px) {
+          body.d-flex {
+              display: block !important;
+          }
+          .footer-sticky {
+              position: static !important;
+          }
+          main {
+              flex: none !important;
+          }
+          main .container {
+              padding-bottom: 0 !important;
+              margin-bottom: 0 !important;
+          }
+      }
+    </style>
     {# Bootstrap JS - Reste en CDN pour éviter les conflits #}
     <script
             src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

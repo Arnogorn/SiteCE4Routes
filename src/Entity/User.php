@@ -66,6 +66,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeImmutable $dateNaissance = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'L\'adresse est obligatoire.')]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-z0-9À-ÖØ-öø-ÿ\s\',\-]+$/u',
+        message: 'L\'adresse ne peut contenir que des lettres, chiffres, espaces, virgules, apostrophes et tirets.'
+    )]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'L\'adresse ne peut dépasser {{ limit }} caractères.'
+    )]
     private ?string $adresse = null;
 
     #[ORM\Column(length: 20)]
@@ -77,18 +86,38 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $telephone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[\s\S]{0,255}$/',
+        message: 'Le nom de la photo ne peut dépasser 255 caractères.'
+    )]
     private ?string $photo = null;
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[\d+\s\-]+$/',
+        message: 'Le numéro de téléphone de la personne de contact ne peut contenir que des chiffres, espaces, + et tirets.'
+    )]
     private ?string $telPersContact = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[\s\S]{0,255}$/',
+        message: 'Les allergies ne peuvent dépasser 255 caractères.'
+    )]
     private ?string $allergies = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-zÀ-ÖØ-öø-ÿ\s\'\-]*$/u',
+        message: 'Le nom du médecin ne peut contenir que des lettres, espaces, tirets et apostrophes.'
+    )]
     private ?string $medecinTraitant = null;
 
     #[ORM\Column(length: 20, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[\d+\s\-]+$/',
+        message: 'Le numéro de téléphone du médecin ne peut contenir que des chiffres, espaces, + et tirets.'
+    )]
     private ?string $telMedecin = null;
 
     #[ORM\Column]
@@ -98,6 +127,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?bool $actif = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[\s\S]{0,500}$/',
+        message: 'Les informations de l\'utilisateur ne peuvent dépasser 500 caractères.'
+    )]
     private ?string $infos = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]

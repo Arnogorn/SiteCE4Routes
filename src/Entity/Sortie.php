@@ -19,6 +19,11 @@ class Sortie
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'Le titre est obligatoire.')]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-zÀ-ÖØ-öø-ÿ0-9\s\'\-]+$/u',
+        message: 'Le titre ne peut contenir que des lettres, chiffres, espaces, tirets et apostrophes.'
+    )]
     private ?string $titre = null;
 
     #[ORM\ManyToOne(inversedBy: 'sorties')]
@@ -29,16 +34,27 @@ class Sortie
     private ?\DateTimeImmutable $date = null;
 
     #[ORM\Column]
-
+    #[Assert\Regex(
+        pattern: '/^\d+$/',
+        message: 'La durée ne peut contenir que des chiffres.'
+    )]
     private ?int $duree = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $dateLimiteInscription = null;
 
     #[ORM\Column]
+    #[Assert\Regex(
+        pattern: '/^\d+$/',
+        message: 'Le nombre maximum d\'inscriptions ne peut contenir que des chiffres.'
+    )]
     private ?int $nbInscriptionMax = null;
 
     #[ORM\Column]
+    #[Assert\Regex(
+        pattern: '/^\d+$/',
+        message: 'Le prix ne peut contenir que des chiffres.'
+    )]
     private ?int $prix = null;
 
     /**
@@ -48,6 +64,10 @@ class Sortie
     private Collection $niveauxAdmis;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
+    #[Assert\Regex(
+        pattern: '/^[\s\S]{0,500}$/',
+        message: 'Les informations ne peuvent dépasser 500 caractères.'
+    )]
     private ?string $infos = null;
 
     #[ORM\Column]

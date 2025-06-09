@@ -16,6 +16,10 @@ class TypeSortie
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\Length(
+        max: 50,
+        maxMessage: 'Le libellé ne peut dépasser {{ limit }} caractères.'
+    )]
     private ?string $libelle = null;
 
     /**

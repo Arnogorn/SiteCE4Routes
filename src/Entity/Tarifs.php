@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\TarifsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TarifsRepository::class)]
 class Tarifs
@@ -14,12 +15,35 @@ class Tarifs
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: 'La catégorie est obligatoire.')]
+    #[Assert\Regex(
+        pattern: '/^[A-Za-zÀ-ÖØ-öø-ÿ0-9_\-]+$/u',
+        message: 'La catégorie ne peut contenir que des lettres, chiffres, underscores et tirets.'
+    )]
+    #[Assert\Length(
+        max: 100,
+        maxMessage: 'La catégorie ne peut dépasser {{ limit }} caractères.'
+    )]
     private ?string $categorie = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'La description est obligatoire.')]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'La description ne peut dépasser {{ limit }} caractères.'
+    )]
     private ?string $description = null;
 
     #[ORM\Column(length: 10)]
+    #[Assert\NotBlank(message: 'Le prix est obligatoire.')]
+    #[Assert\Regex(
+        pattern: '/^\d+$/',
+        message: 'Le prix ne peut contenir que des chiffres.'
+    )]
+    #[Assert\Length(
+        max: 10,
+        maxMessage: 'Le prix ne peut dépasser {{ limit }} caractères.'
+    )]
     private ?string $prix = null;
 
     public function getId(): ?int
