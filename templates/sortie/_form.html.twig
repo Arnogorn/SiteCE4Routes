@@ -1,4 +1,158 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Enregistrer') }}</button>
-{{ form_end(form) }}
+<div class="sortie-form-container">
+    {{ form_start(form, {'attr': {'id': 'sortie-form', 'novalidate': 'novalidate'}}) }}
+
+    {% if form.vars.errors|length > 0 %}
+        <div class="alert alert-danger">
+            <h6><i class="bi bi-exclamation-triangle me-2"></i>Erreurs dans le formulaire :</h6>
+            <ul class="form-error-list">
+                {% for error in form.vars.errors %}
+                    <li>{{ error.message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        {{ form_row(form._token) }}
+
+        {{ form_rest(form) }}
+    </div>
+
+    {{ form_end(form, {'render_rest': false}) }}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fonction pour afficher les notifications
+        function showNotification(message, type = 'success') {
+            const existingNotifications = document.querySelectorAll('.notification-toast');
+            existingNotifications.forEach(notification => notification.remove());
+
+            const notification = document.createElement('div');
+            notification.className = `notification-toast alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                max-width: 500px;
+                animation: slideInRight 0.3s ease-out;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            `;
+
+            notification.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    <span>${message}</span>
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+
+            if (!document.getElementById('notification-styles')) {
+                const style = document.createElement('style');
+                style.id = 'notification-styles';
+                style.textContent = `
+                    @keyframes slideInRight {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOutRight {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                    .notification-toast.hide {
+                        animation: slideOutRight 0.3s ease-in;
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.classList.add('hide');
+                    setTimeout(() => notification.remove(), 300);
+                }
+            }, 5000);
+
+            const closeBtn = notification.querySelector('.btn-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    notification.classList.add('hide');
+                    setTimeout(() => notification.remove(), 300);
+                });
+            }
+        }
+
+        const form = document.getElementById('sortie-form');
+
+        // Gestion de la soumission du formulaire
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Traitement en cours...';
+                submitBtn.disabled = true;
+
+                // Rétablir le bouton en cas d'erreur (si la page se recharge avec des erreurs)
+                setTimeout(() => {
+                    if (document.querySelector('.alert-danger')) {
+                        submitBtn.innerHTML = originalText;
+                        submitBtn.disabled = false;
+                    }
+                }, 2000);
+            }
+            showNotification('Formulaire en cours de traitement...', 'info');
+        });
+
+        // Auto-resize pour les textareas
+        const textareas = form.querySelectorAll('textarea');
+        textareas.forEach(textarea => {
+            function adjustHeight() {
+                textarea.style.height = 'auto';
+                textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+            }
+
+            textarea.addEventListener('input', adjustHeight);
+
+            // Ajustement initial si le textarea a déjà du contenu
+            if (textarea.value) {
+                adjustHeight();
+            }
+        });
+
+        // Synchronisation avec les sliders de durée (si présents)
+        const durationSlider = document.getElementById('duration-slider');
+        const durationInput = form.querySelector('input[name="sortie[duree]"]');
+
+        if (durationSlider && durationInput) {
+            durationSlider.addEventListener('input', function() {
+                durationInput.value = this.value;
+            });
+        }
+
+        // Amélioration UX : suppression visuelle des erreurs au focus
+        const inputsWithErrors = form.querySelectorAll('.is-invalid');
+        inputsWithErrors.forEach(input => {
+            ['focus', 'input'].forEach(event => {
+                input.addEventListener(event, function() {
+                    this.classList.remove('is-invalid');
+                    const errorMsg = this.parentNode.querySelector('.invalid-feedback');
+                    if (errorMsg) {
+                        errorMsg.style.opacity = '0.5';
+                        setTimeout(() => {
+                            if (errorMsg.parentNode) errorMsg.remove();
+                        }, 1000);
+                    }
+                });
+            });
+        });
+
+        // Affichage d'une notification si des erreurs sont présentes au chargement
+        if (document.querySelector('.alert-danger')) {
+            showNotification('Veuillez corriger les erreurs dans le formulaire.', 'error');
+        }
+    });
+</script>

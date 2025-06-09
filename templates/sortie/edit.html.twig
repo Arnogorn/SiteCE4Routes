@@ -1,13 +1,409 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier sortie{% endblock %}
+{% block title %}Modifier {{ sortie.titre }} - Écuries des 4 Routes{% endblock %}
+
 
 {% block body %}
-    <h1>Modifier la sortie {{ sortie.titre }}</h1>
+    <section class="py-5">
+        <div class="container">
+            {#            <!-- Breadcrumb -->#}
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_sortie_index') }}" class="text-accent-brand">
+                            <i class="bi bi-list-ul me-1"></i>Sorties
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}" class="text-accent-brand">
+                            {{ sortie.titre }}
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Modifier</li>
+                </ol>
+            </nav>
 
-    {{ include('sortie/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+            {#            <!-- En-tête -->#}
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-pencil-square" style="color: var(--accent-color);"></i>
+                    Modifier la Sortie
+                    <i class="bi bi-gear-fill" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    <strong>{{ sortie.titre }}</strong> - {{ sortie.date ? sortie.date|date('d/m/Y à H:i') : 'Date non définie' }}
+                </p>
+            </div>
 
-    <a href="{{ path('app_sortie_index') }}" class="btn btn-secondary mt-3">Retour à la liste des sortie</a>
+            {#            <!-- Informations sur l'état actuel -->#}
+            <div class="sortie-status-info {% if sortie.etat.libelle == 'Créée' %}sortie-status-warning{% endif %} mb-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <i class="bi bi-info-circle fs-4"></i>
+                    <strong>État actuel : {{ sortie.etat.libelle }}</strong>
+                </div>
+                {% if sortie.etat.libelle == 'Créée' %}
+                    <p class="mb-0 small">Cette sortie n'est pas encore publiée. Vous pouvez la modifier librement.</p>
+                {% elseif sortie.etat.libelle == 'Ouverte' %}
+                    <p class="mb-0 small">Cette sortie est ouverte aux inscriptions. Soyez prudent avec les modifications importantes.</p>
+                {% else %}
+                    <p class="mb-0 small">Cette sortie a un état avancé. Certaines modifications peuvent avoir des impacts.</p>
+                {% endif %}
+            </div>
 
-    {{ include('sortie/_delete_form.html.twig') }}
+            {#            <!-- Informations sur les participants actuels -->#}
+            {% set totalParticipants = sortie.participants|length + sortie.membresFamilleInscrits|length %}
+            {% if totalParticipants > 0 %}
+                <div class="participants-count-info mb-4">
+                    <div class="text-center">
+                        <i class="bi bi-people-fill fs-4 text-primary-brand"></i>
+                        <div class="fw-bold">{{ totalParticipants }}/{{ sortie.nbInscriptionMax }} participants</div>
+                    </div>
+                    <div class="participants-progress">
+                        {% set progressPercentage = (totalParticipants / sortie.nbInscriptionMax * 100) %}
+                        <div class="progress">
+                            <div class="progress-bar" style="width: {{ progressPercentage }}%"></div>
+                        </div>
+                    </div>
+                    <div class="text-muted small">
+                        {{ sortie.participants|length }} membres + {{ sortie.membresFamilleInscrits|length }} famille
+                    </div>
+                </div>
+            {% endif %}
+
+            {{ form_start(form, {'attr': {'id': 'sortie-form', 'novalidate': 'novalidate'}}) }}
+
+            {#            <!-- Section Informations de base -->#}
+            <div class="form-modern mb-4">
+                <h3 class="text-primary-brand mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Informations de base
+                </h3>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <div class="form-group-modern">
+                            {{ form_label(form.titre, 'Titre de la sortie', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                            {{ form_widget(form.titre, {'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Randonnée découverte en forêt'}}) }}
+                            {{ form_errors(form.titre) }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group-modern">
+                            {{ form_label(form.typeSortie, 'Type de sortie', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                            {{ form_widget(form.typeSortie, {'attr': {'class': 'form-control-modern form-select-modern'}}) }}
+                            {{ form_errors(form.typeSortie) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_label(form.date, 'Date et heure de la sortie', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                            {{ form_widget(form.date, {'attr': {'class': 'form-control-modern'}}) }}
+                            {{ form_errors(form.date) }}
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Date limite d'inscription : automatiquement fixée à 48h avant la sortie
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                {#                    <!-- Barre de durée interactive -->#}
+                <div class="form-group-modern mt-4">
+                    {{ form_label(form.duree, 'Durée de la sortie', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                    <div class="duration-slider-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">30 min</span>
+                            <span class="text-primary-brand fw-bold">Durée</span>
+                            <span class="text-muted">8h</span>
+                        </div>
+
+                        <label for="duration-slider" class="visually-hidden">Sélectionner la durée avec le curseur</label>
+                        <input type="range"
+                               id="duration-slider"
+                               class="duration-slider"
+                               min="30"
+                               max="480"
+                               step="15"
+                               value="{{ sortie.duree }}"
+                               aria-label="Sélectionner la durée de la sortie">
+
+                        <div class="duration-display" id="duration-display">
+                            {# Affichage initial basé sur la valeur de la sortie #}
+                            {% set initial_duration = sortie.duree %}
+                            {% set hours = (initial_duration / 60)|round(0, 'floor') %}
+                            {% set minutes = initial_duration % 60 %}
+                            {% if hours > 0 %}{{ hours }}h {% endif %}{% if minutes > 0 or hours == 0 %}{{ minutes|number_format(0) }}min{% endif %}
+                        </div>
+
+                        <div class="duration-presets">
+                            <button type="button" class="duration-preset" data-duration="30">30min</button>
+                            <button type="button" class="duration-preset" data-duration="60">1h</button>
+                            <button type="button" class="duration-preset" data-duration="90">1h30</button>
+                            <button type="button" class="duration-preset" data-duration="120">2h</button>
+                            <button type="button" class="duration-preset" data-duration="180">3h</button>
+                            <button type="button" class="duration-preset" data-duration="240">4h</button>
+                        </div>
+                    </div>
+
+                    {# Le champ Symfony normal, simplement masqué visuellement mais accessible aux lecteurs d'écran #}
+                    <div class="visually-hidden">
+                        {{ form_widget(form.duree, {'attr': {'aria-hidden': 'true', 'tabindex': '-1'}}) }}
+                    </div>
+
+                    {{ form_errors(form.duree) }}
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_label(form.nbInscriptionMax, 'Nombre maximum de participants', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                            {{ form_widget(form.nbInscriptionMax, {'attr': {'class': 'form-control-modern', 'type': 'number', 'min': totalParticipants > 0 ? totalParticipants : 1, 'max': '50'}}) }}
+                            {{ form_errors(form.nbInscriptionMax) }}
+                            {% if totalParticipants > 0 %}
+                                <small class="text-muted">Minimum {{ totalParticipants }} (participants déjà inscrits)</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-modern price-input-container">
+                            {{ form_label(form.prix, 'Prix de la sortie', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                            {{ form_widget(form.prix, {'attr': {'class': 'form-control-modern', 'type': 'number', 'min': '0', 'step': '0.01'}}) }}
+                            {{ form_errors(form.prix) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group-modern mt-3">
+                    {{ form_label(form.moniteur, 'Moniteur encadrant', {'label_attr': {'class': 'form-label-modern'}}) }}
+                    {{ form_widget(form.moniteur, {'attr': {'class': 'form-control-modern form-select-modern'}}) }}
+                    {{ form_errors(form.moniteur) }}
+                </div>
+            </div>
+
+            {#            <!-- Section Niveaux admis -->#}
+            <div class="form-modern mb-4">
+                <h3 class="text-primary-brand mb-0">
+                    <i class="bi bi-award me-2"></i>Niveaux requis
+                </h3>
+                <small class="text-muted">Sélectionnez les niveaux autorisés pour cette sortie</small>
+                <div class="checkbox-group">
+                    {% for niveau in form.niveauxAdmis %}
+                        <div class="checkbox-item">
+                            {{ form_widget(niveau) }}
+                            {{ form_label(niveau) }}
+                        </div>
+                    {% endfor %}
+                </div>
+                {{ form_errors(form.niveauxAdmis) }}
+            </div>
+
+            {#            <!-- Section Participants -->#}
+            <div class="form-modern mb-4">
+                <h3 class="text-primary-brand mb-0">
+                    <i class="bi bi-people me-2"></i>Ajouter des participants
+                </h3>
+                <small class="text-muted">Ajoutez directement des participants à cette sortie</small>
+                <div class="form-group-modern mb-3">
+                    <label for="participant-search" class="form-label-modern">Rechercher un participant</label>
+                    <input type="text"
+                           id="participant-search"
+                           class="participants-search form-control-modern"
+                           placeholder="Tapez le nom ou prénom d'un participant..."
+                           aria-describedby="participant-search-help">
+                    <small id="participant-search-help" class="form-text text-muted">
+                        Utilisez ce champ pour filtrer la liste des participants ci-dessous
+                    </small>
+                </div>
+
+                <div class="participants-list" id="participants-list">
+                    {% for participant in form.participants %}
+                        <div class="participant-item">
+                            <div class="participant-avatar">
+                                {{ participant.vars.label|slice(0,1)|upper }}
+                            </div>
+                            <div class="flex-grow-1">
+                                {{ form_widget(participant) }}
+                                {{ form_label(participant) }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {{ form_errors(form.participants) }}
+            </div>
+
+            {#            <!-- Section Informations complémentaires -->#}
+            <div class="form-modern mb-4">
+                <h3 class="text-primary-brand mb-0">
+                    <i class="bi bi-chat-text me-2"></i>Informations complémentaires
+                </h3>
+                <div class="form-group-modern">
+                    {{ form_label(form.infos, 'Description et informations pratiques', {'label_attr': {'class': 'form-label-modern'}}) }}
+                    {{ form_widget(form.infos, {'attr': {'class': 'form-control-modern', 'rows': '5', 'placeholder': 'Décrivez la sortie, les équipements nécessaires, le point de rendez-vous...'}}) }}
+                    {{ form_errors(form.infos) }}
+                </div>
+
+                <div class="form-check form-switch mt-3">
+                    {{ form_widget(form.isPublished, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                    {{ form_label(form.isPublished, 'Sortie publiée', {'label_attr': {'class': 'form-check-label'}}) }}
+                    {{ form_errors(form.isPublished) }}
+                </div>
+            </div>
+
+            {#            <!-- Boutons d'action -->#}
+            <div class="action-buttons">
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <button type="submit" class="btn-save">
+                        <i class="bi bi-check-circle me-2"></i>Mettre à jour
+                    </button>
+                    <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}" class="btn btn-outline-modern">
+                        <i class="bi bi-arrow-left me-2"></i>Retour
+                    </a>
+                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <i class="bi bi-trash me-2"></i>Supprimer
+                    </button>
+                </div>
+            </div>
+
+            {{ form_end(form) }}
+
+            {#            <!-- Modal de suppression -->#}
+            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title text-danger" id="deleteModalLabel">
+                                <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Êtes-vous sûr de vouloir supprimer la sortie <strong>"{{ sortie.titre }}"</strong> ?</p>
+                            {% if totalParticipants > 0 %}
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <strong>Attention :</strong> {{ totalParticipants }} participant(s) sont déjà inscrit(s) à cette sortie.
+                                </div>
+                            {% endif %}
+                            <p class="text-muted">Cette action est irréversible.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-modern" data-bs-dismiss="modal">Annuler</button>
+                            <form method="post" action="{{ path('app_sortie_delete', {'id': sortie.id}) }}" style="display: inline;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ sortie.id) }}">
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash me-2"></i>Supprimer définitivement
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion de la barre de durée - Version simplifiée
+            const slider = document.getElementById('duration-slider');
+            const display = document.getElementById('duration-display');
+            const input = document.querySelector('input[name="sortie[duree]"]');
+            const presets = document.querySelectorAll('.duration-preset');
+
+            function updateDuration(minutes) {
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+
+                let displayText = '';
+                if (hours > 0) {
+                    displayText += hours + 'h ';
+                }
+                if (mins > 0 || hours === 0) {
+                    displayText += mins + 'min';
+                }
+
+                display.textContent = displayText.trim();
+                input.value = minutes;
+                slider.value = minutes;
+
+                // Mise à jour des presets actifs
+                presets.forEach(preset => {
+                    preset.classList.toggle('active', parseInt(preset.dataset.duration) === minutes);
+                });
+            }
+
+            // Événements
+            slider.addEventListener('input', () => updateDuration(parseInt(slider.value)));
+
+            presets.forEach(preset => {
+                preset.addEventListener('click', function() {
+                    updateDuration(parseInt(this.dataset.duration));
+
+                    // Animation du bouton
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+
+            // Initialisation avec la valeur actuelle de la sortie
+            const currentDuration = {{ sortie.duree }};
+            updateDuration(currentDuration);
+
+            // Gestion des checkboxes de niveaux
+            const checkboxItems = document.querySelectorAll('.checkbox-item input[type="checkbox"]');
+            checkboxItems.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const item = this.closest('.checkbox-item');
+                    if (this.checked) {
+                        item.classList.add('checked');
+                    } else {
+                        item.classList.remove('checked');
+                    }
+                });
+
+                // État initial
+                if (checkbox.checked) {
+                    checkbox.closest('.checkbox-item').classList.add('checked');
+                }
+            });
+
+            // Recherche de participants
+            const searchInput = document.getElementById('participant-search');
+            const participantItems = document.querySelectorAll('.participant-item');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const query = this.value.toLowerCase();
+
+                    participantItems.forEach(item => {
+                        const label = item.querySelector('label').textContent.toLowerCase();
+                        if (label.includes(query)) {
+                            item.style.display = 'flex';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Auto-resize pour les textareas
+            const textareas = document.querySelectorAll('textarea');
+            textareas.forEach(textarea => {
+                function adjustHeight() {
+                    textarea.style.height = 'auto';
+                    textarea.style.height = Math.min(textarea.scrollHeight, 200) + 'px';
+                }
+
+                textarea.addEventListener('input', adjustHeight);
+
+                // Ajustement initial si le textarea a déjà du contenu
+                if (textarea.value) {
+                    adjustHeight();
+                }
+            });
+        });
+    </script>
 {% endblock %}

@@ -23,7 +23,7 @@ class Contact
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $photo = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 20, nullable:true)]
     private ?string $tel = null;
 
     #[ORM\Column(type: Types::TEXT)]

@@ -52,12 +52,6 @@ class PaiementController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // --- 1) Blocage si le user principal est déjà inscrit à cette sortie ---
-        if ($sortie->getParticipants()->contains($user)) {
-            $this->addFlash('warning', 'Vous êtes déjà inscrit à cette sortie.');
-            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
-        }
-
         // On crée une entité Paiement pour enregistrer la transaction localement
         $paiement = new Paiement();
         $paiement->setUtilisateur($user);
@@ -69,7 +63,14 @@ class PaiementController extends AbstractController
         $membresIds = array_filter($idsMembres, fn($id) => $id !== 'me');
         $membres = $em->getRepository(MembreFamille::class)->findBy(['id' => $membresIds]);
 
-        // --- 2) Blocage si un membre de famille est déjà inscrit à cette sortie ---
+        // CORRECTION : Vérifier seulement si on essaie d'inscrire l'utilisateur
+        $inscrireUtilisateur = in_array('me', $idsMembres);
+        if ($inscrireUtilisateur && $sortie->getParticipants()->contains($user)) {
+            $this->addFlash('warning', 'Vous êtes déjà inscrit à cette sortie.');
+            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+        }
+
+        // CORRECTION : Vérifier seulement les membres qu'on essaie d'inscrire
         foreach ($membres as $membre) {
             if ($sortie->getMembresFamilleInscrits()->contains($membre)) {
                 $this->addFlash(
@@ -85,7 +86,7 @@ class PaiementController extends AbstractController
 
         $participants = count($membres);
 
-        if (in_array('me', $idsMembres)) {
+        if ($inscrireUtilisateur) {
             $participants++;
         }
 
@@ -100,11 +101,8 @@ class PaiementController extends AbstractController
         $paiement->setParticipants($participants);
         $em->persist($paiement);
 
-
         $successUrl = $this->generateUrl('paiement_success', [], UrlGeneratorInterface::ABSOLUTE_URL) . '?session_id={CHECKOUT_SESSION_ID}';
         $cancelUrl = $this->generateUrl('paiement_cancel', ['sortie' => $sortie->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-
-        // dump($successUrl, $cancelUrl);
 
         try {
             $session = $stripe->checkout->sessions->create([
@@ -124,7 +122,7 @@ class PaiementController extends AbstractController
                 'cancel_url' => $cancelUrl,
                 'metadata' => [
                     'idsMembres'     => implode(',', $membresIds),
-                    'inscription_me' => in_array('me', $idsMembres) ? '1' : '0',
+                    'inscription_me' => $inscrireUtilisateur ? '1' : '0',
                 ],
             ]);
         } catch (ApiErrorException $e) {
@@ -185,15 +183,51 @@ class PaiementController extends AbstractController
 
         $user = $this->getUser();
         if ($user instanceof \App\Entity\User) {
+            // Formatage de la date de la sortie avec jour et mois en toutes lettres
+            if ($sortie->getDate()) {
+                // Utilise IntlDateFormatter pour formater en français avec jour et mois en toutes lettres
+                $dateFormatter = new \IntlDateFormatter(
+                    'fr_FR',
+                    \IntlDateFormatter::FULL,
+                    \IntlDateFormatter::NONE,
+                    'Europe/Paris'
+                );
+                $dateComplete = $dateFormatter->format($sortie->getDate());
+                $heure = $sortie->getDate()->format('H:i');
+                $dateSortie = $dateComplete . ' à ' . $heure;
+            } else {
+                $dateSortie = 'Date non définie';
+            }
+
+            // Formatage du montant payé
+            $montantEnEuros = $paiement->getMontant() / 100;
+            $montantPaye = number_format($montantEnEuros, 2, ',', ' ') . ' €';
+
+            // Construction du message avec les nouvelles informations
+            $messageText = sprintf(
+                "Bonjour %s,\n\n" .
+                "Nous vous confirmons que votre paiement pour l'activité « %s » a bien été enregistré.\n\n" .
+                "DÉTAILS DE VOTRE INSCRIPTION :\n" .
+                "• Activité : %s\n" .
+                "• Date : %s\n" .
+                "• Montant payé : %s\n" .
+                "• Date de confirmation : %s\n\n" .
+                "Votre inscription est maintenant confirmée. N'hésitez pas à consulter les détails de l'activité sur notre site pour toute information complémentaire.\n\n" .
+                "En cas de question, n'hésitez pas à nous contacter.\n\n" .
+                "Merci pour votre inscription et à bientôt aux Écuries des 4 Routes !",
+                $user->getPrenom(),
+                $sortie->getTitre(),
+                $sortie->getTitre(),
+                $dateSortie,
+                $montantPaye,
+                $paiement->getConfirmedAt()->format('d/m/Y à H:i')
+            );
+
             $email = (new Email())
-                ->from('noreply-ecuriesdes4routes@gmail.com')
+                ->from('ecuriesdes4routes@gmail.com')
                 ->to($user->getEmail())
-                ->subject('Confirmation de votre inscription')
-                ->text(sprintf(
-                    "Bonjour %s,\n\nNous vous confirmons que votre paiement pour l'activité « %s » a bien été enregistré.\n\nMerci pour votre inscription et à bientôt aux Écuries des 4 Routes.",
-                    $user->getPrenom(),
-                    $paiement->getSortie()->getTitre()
-                ));
+                ->subject('Confirmation de votre inscription - ' . $sortie->getTitre())
+                ->text($messageText);
 
             $mailer->send($email);
         }
@@ -215,12 +249,12 @@ class PaiementController extends AbstractController
         $sortie = $em->getRepository(Sortie::class)->find($sortieId);
         if ($user && $user instanceof \App\Entity\User) {
             $email = (new Email())
-                // TODO : utiliser la vraie adresse email de l'écurie
-                ->from('noreply@ecurie4routes.fr')
+
+                ->from('ecurie4routes@gmail.com')
                 ->to($user->getEmail())
                 ->subject('Paiement non finalisé')
                 ->text(sprintf(
-                    "Bonjour %s,\n\nVous avez interrompu votre inscription à une activité. Aucun paiement n’a été effectué, et aucune inscription n’a été enregistrée.\n\nVous pouvez reprendre le processus à tout moment depuis votre espace membre.\n\nMerci,\nLes Écuries des 4 Routes",
+                    "Bonjour %s,\n\nVous avez interrompu votre inscription à une activité. Aucun paiement n’a été effectué, et aucune inscription n’a été enregistrée.\n\nMerci,\nLes Écuries des 4 Routes",
                     $user->getPrenom()
                 ));
 

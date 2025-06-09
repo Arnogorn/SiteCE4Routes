@@ -1,11 +1,399 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ajouter sortie{% endblock %}
+{% block title %}Créer une nouvelle sortie - Écuries des 4 Routes{% endblock %}
+
 
 {% block body %}
-    <h1>Ajouter une sortie</h1>
+    <section class="py-5">
+        <div class="container">
+            {#            <!-- Breadcrumb -->#}
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a href="{{ path('app_sortie_index') }}" class="text-accent-brand">
+                            <i class="bi bi-list-ul me-1"></i>Sorties
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active">Créer une sortie</li>
+                </ol>
+            </nav>
 
-    {{ include('sortie/_form.html.twig') }}
+            {#            <!-- En-tête -->#}
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-plus-circle-fill" style="color: var(--accent-color);"></i>
+                    Créer une Nouvelle Sortie
+                    <i class="bi bi-calendar-event-fill" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Organisez une nouvelle activité équestre pour vos membres
+                </p>
+            </div>
 
-    <a href="{{ path('app_sortie_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+            {{ form_start(form, {'attr': {'id': 'sortie-form', 'novalidate': 'novalidate'}}) }}
+
+            {#            <!-- Section Informations de base -->#}
+            <div class="form-modern mb-4">
+                <h3 class="text-primary-brand mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Informations de base
+                </h3>
+                <div class="row g-3">
+                    <div class="col-md-8">
+                        <div class="form-group-modern">
+                            {{ form_label(form.titre, 'Titre de la sortie', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                            {{ form_widget(form.titre, {'attr': {'class': 'form-control-modern', 'placeholder': 'Ex: Randonnée découverte en forêt'}}) }}
+                            {{ form_errors(form.titre) }}
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group-modern">
+                            {{ form_label(form.typeSortie, 'Type de sortie', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                            {{ form_widget(form.typeSortie, {'attr': {'class': 'form-control-modern form-select-modern'}}) }}
+                            {{ form_errors(form.typeSortie) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_label(form.date, 'Date et heure de la sortie', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                            {{ form_widget(form.date, {'attr': {'class': 'form-control-modern'}}) }}
+                            {{ form_errors(form.date) }}
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Date limite d'inscription : automatiquement fixée à 48h avant la sortie
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                {#                    <!-- Barre de durée interactive -->#}
+                <div class="form-group-modern mt-4">
+                    {{ form_label(form.duree, 'Durée de la sortie', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                    <div class="duration-slider-container">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <span class="text-muted">30 min</span>
+                            <span class="text-primary-brand fw-bold">Durée</span>
+                            <span class="text-muted">8h</span>
+                        </div>
+
+                        <label for="duration-slider" class="visually-hidden">Sélectionner la durée avec le curseur</label>
+                        <input type="range"
+                               id="duration-slider"
+                               class="duration-slider"
+                               min="30"
+                               max="480"
+                               step="15"
+                               value="{{ form.duree.vars.data|default(60) }}"
+                               aria-label="Sélectionner la durée de la sortie">
+
+                        <div class="duration-display" id="duration-display">
+                            {# Affichage initial basé sur la valeur du formulaire #}
+                            {% set initial_duration = form.duree.vars.data|default(60) %}
+                            {% set hours = (initial_duration / 60)|round(0, 'floor') %}
+                            {% set minutes = initial_duration % 60 %}
+                            {% if hours > 0 %}{{ hours }}h {% endif %}{% if minutes > 0 or hours == 0 %}{{ minutes|number_format(0) }}min{% endif %}
+                        </div>
+
+                        <div class="duration-presets">
+                            <button type="button" class="duration-preset" data-duration="30">30min</button>
+                            <button type="button" class="duration-preset" data-duration="60">1h</button>
+                            <button type="button" class="duration-preset" data-duration="90">1h30</button>
+                            <button type="button" class="duration-preset" data-duration="120">2h</button>
+                            <button type="button" class="duration-preset" data-duration="180">3h</button>
+                            <button type="button" class="duration-preset" data-duration="240">4h</button>
+                        </div>
+                    </div>
+
+                    {# Le champ Symfony normal, simplement masqué visuellement mais accessible aux lecteurs d'écran #}
+                    <div class="visually-hidden">
+                        {{ form_widget(form.duree, {'attr': {'aria-hidden': 'true', 'tabindex': '-1'}}) }}
+                    </div>
+
+                    {{ form_errors(form.duree) }}
+                </div>
+
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <div class="form-group-modern">
+                            {{ form_label(form.nbInscriptionMax, 'Nombre maximum de participants', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                            {{ form_widget(form.nbInscriptionMax, {'attr': {'class': 'form-control-modern', 'type': 'number', 'min': '1', 'max': '50'}}) }}
+                            {{ form_errors(form.nbInscriptionMax) }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group-modern price-input-container">
+                            {{ form_label(form.prix, 'Prix de la sortie', {'label_attr': {'class': 'form-label-modern required'}}) }}
+                            {{ form_widget(form.prix, {'attr': {'class': 'form-control-modern', 'type': 'number', 'min': '0', 'step': '0.01'}}) }}
+                            {{ form_errors(form.prix) }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group-modern mt-3">
+                    {{ form_label(form.moniteur, 'Moniteur encadrant', {'label_attr': {'class': 'form-label-modern'}}) }}
+                    {{ form_widget(form.moniteur, {'attr': {'class': 'form-control-modern form-select-modern'}}) }}
+                    {{ form_errors(form.moniteur) }}
+                </div>
+            </div>
+
+            {#            <!-- Section Niveaux admis -->#}
+            <div class="form-modern mb-4">
+                <h3 class="text-primary-brand mb-0">
+                    <i class="bi bi-award me-2"></i>Niveaux requis
+                </h3>
+                <small class="text-muted">Sélectionnez les niveaux autorisés pour cette sortie</small>
+
+                <div class="form-section-body">
+                    <div class="checkbox-group">
+                        {% for niveau in form.niveauxAdmis %}
+                            <div class="checkbox-item">
+                                {{ form_widget(niveau) }}
+                                {{ form_label(niveau) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.niveauxAdmis) }}
+                </div>
+            </div>
+
+            {#            <!-- Section Participants -->#}
+            <div class="form-modern mb-4">
+                <h3 class="text-primary-brand mb-0">
+                    <i class="bi bi-people me-2"></i>Participants pré-inscrits
+                </h3>
+                <small class="text-muted">Optionnel : ajoutez des participants directement</small>
+
+                <div class="form-section-body">
+                    <div class="form-group-modern mb-3">
+                        <label for="participant-search" class="form-label-modern">Rechercher un participant</label>
+                        <input type="text"
+                               id="participant-search"
+                               class="participants-search form-control-modern"
+                               placeholder="Tapez le nom ou prénom d'un participant..."
+                               aria-describedby="participant-search-help">
+                        <small id="participant-search-help" class="form-text text-muted">
+                            Utilisez ce champ pour filtrer la liste des participants ci-dessous
+                        </small>
+                    </div>
+
+                    <div class="participants-list" id="participants-list">
+                        {% for participant in form.participants %}
+                            <div class="participant-item">
+                                <div class="participant-avatar">
+                                    {{ participant.vars.label|slice(0,1)|upper }}
+                                </div>
+                                <div class="flex-grow-1">
+                                    {{ form_widget(participant) }}
+                                    {{ form_label(participant) }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {{ form_errors(form.participants) }}
+                </div>
+            </div>
+
+            {#            <!-- Section Informations complémentaires -->#}
+            <div class="form-modern mb-4">
+                <h3 class="text-primary-brand mb-0">
+                    <i class="bi bi-chat-text me-2"></i>Informations complémentaires
+                </h3>
+
+                <div class="form-section-body">
+                    <div class="form-group-modern">
+                        {{ form_label(form.infos, 'Description et informations pratiques', {'label_attr': {'class': 'form-label-modern'}}) }}
+                        {{ form_widget(form.infos, {'attr': {'class': 'form-control-modern', 'rows': '5', 'placeholder': 'Décrivez la sortie, les équipements nécessaires, le point de rendez-vous...'}}) }}
+                        {{ form_errors(form.infos) }}
+                    </div>
+
+                    <div class="form-check form-switch mt-3">
+                        {{ form_widget(form.isPublished, {'attr': {'class': 'form-check-input', 'role': 'switch'}}) }}
+                        {{ form_label(form.isPublished, 'Publier immédiatement cette sortie', {'label_attr': {'class': 'form-check-label'}}) }}
+                        {{ form_errors(form.isPublished) }}
+                    </div>
+                </div>
+            </div>
+
+            {#            <!-- Boutons d'action -->#}
+            <div class="action-buttons">
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <button type="submit" class="btn-save">
+                        <i class="bi bi-check-circle me-2"></i>Créer la sortie
+                    </button>
+                    <a href="{{ path('app_sortie_index') }}" class="btn btn-outline-modern">
+                        <i class="bi bi-arrow-left me-2"></i>Annuler
+                    </a>
+                </div>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Gestion de la barre de durée - Version simplifiée
+            const slider = document.getElementById('duration-slider');
+            const display = document.getElementById('duration-display');
+            const input = document.querySelector('input[name="sortie[duree]"]');
+            const presets = document.querySelectorAll('.duration-preset');
+
+            function updateDuration(minutes) {
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+
+                let displayText = '';
+                if (hours > 0) {
+                    displayText += hours + 'h ';
+                }
+                if (mins > 0 || hours === 0) {
+                    displayText += mins + 'min';
+                }
+
+                display.textContent = displayText.trim();
+                input.value = minutes;
+                slider.value = minutes;
+
+                // Mise à jour des presets actifs
+                presets.forEach(preset => {
+                    preset.classList.toggle('active', parseInt(preset.dataset.duration) === minutes);
+                });
+            }
+
+            // Événements
+            slider.addEventListener('input', () => updateDuration(parseInt(slider.value)));
+
+            presets.forEach(preset => {
+                preset.addEventListener('click', function() {
+                    updateDuration(parseInt(this.dataset.duration));
+
+                    // Animation du bouton
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 150);
+                });
+            });
+
+            // Initialisation avec la valeur actuelle
+            const currentValue = parseInt(input.value) || 60;
+            updateDuration(currentValue);
+
+            // Gestion des checkboxes de niveaux
+            const checkboxItems = document.querySelectorAll('.checkbox-item input[type="checkbox"]');
+            checkboxItems.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const item = this.closest('.checkbox-item');
+                    if (this.checked) {
+                        item.classList.add('checked');
+                    } else {
+                        item.classList.remove('checked');
+                    }
+                });
+
+                // État initial
+                if (checkbox.checked) {
+                    checkbox.closest('.checkbox-item').classList.add('checked');
+                }
+            });
+
+            // Recherche de participants
+            const searchInput = document.getElementById('participant-search');
+            const participantItems = document.querySelectorAll('.participant-item');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const query = this.value.toLowerCase();
+
+                    participantItems.forEach(item => {
+                        const label = item.querySelector('label').textContent.toLowerCase();
+                        if (label.includes(query)) {
+                            item.style.display = 'flex';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            }
+
+            // Animation de validation du formulaire avec notification
+            const form = document.getElementById('sortie-form');
+            form.addEventListener('submit', function(e) {
+                // Vérification finale que la durée est bien définie
+                if (!input.value) {
+                    input.value = 60; // Valeur par défaut si vide
+                }
+
+                const saveBtn = document.querySelector('.btn-save');
+                if (saveBtn) {
+                    saveBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Création en cours...';
+                    saveBtn.disabled = true;
+                }
+
+                // Notification de succès (sera affichée après redirection si le formulaire est valide)
+                showNotification('Sortie en cours de création...', 'info');
+            });
+
+            // Fonction pour afficher les notifications
+            function showNotification(message, type = 'success') {
+                // Supprimer les notifications existantes
+                const existingNotifications = document.querySelectorAll('.notification-toast');
+                existingNotifications.forEach(notification => notification.remove());
+
+                // Créer la nouvelle notification
+                const notification = document.createElement('div');
+                notification.className = `notification-toast alert alert-${type === 'success' ? 'success' : type === 'error' ? 'danger' : 'info'} alert-dismissible fade show`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 9999;
+                    min-width: 300px;
+                    max-width: 500px;
+                    animation: slideInRight 0.3s ease-out;
+                `;
+
+                notification.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                        <span>${message}</span>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+
+                // Ajouter les styles CSS pour l'animation
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes slideInRight {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+
+                // Ajouter au DOM
+                document.body.appendChild(notification);
+
+                // Auto-suppression après 5 secondes
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.classList.remove('show');
+                        setTimeout(() => notification.remove(), 150);
+                    }
+                }, 5000);
+            }
+
+            // Test de la notification au chargement (à supprimer en production)
+            // showNotification('Page chargée avec succès !', 'success');
+        });
+    </script>
 {% endblock %}

@@ -7,6 +7,10 @@
         --bg-tertiary: #2D2E3F;
         --bg-accent: #3C3D4E;
 
+        --text-primary: #FFFFFF;
+        --text-secondary: #E8E9EA;
+        --text-light: #B8B9BA;
+
         /* Textes adaptés mode sombre */
         --text-primary-dark: #FFFFFF;
         --text-secondary-dark: #E8E9EA;
@@ -162,6 +166,244 @@
         height: 1.5rem !important;
     }
 
+    /* === NAVIGATION MOBILE SPÉCIFIQUE === */
+    @media (max-width: 991px) {
+        /* Container de navigation mobile en mode sombre */
+        .navbar-nav {
+            background: rgba(36, 37, 48, 0.98) !important;
+            border: 1px solid var(--border-color-dark) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            padding: 1rem 0.5rem !important; /* Padding uniforme */
+            display: grid !important; /* Grid pour contrôle total */
+            grid-template-columns: 1fr !important; /* Une colonne */
+            gap: 0.5rem !important; /* Espacement uniforme */
+            width: 100% !important;
+        }
+
+        .nav-item {
+            width: 100% !important;
+            margin: 0 !important; /* Reset des marges */
+        }
+
+        /* Liens de navigation mobile - Visibilité améliorée */
+        .nav-link-modern {
+            color: var(--text-primary-dark) !important; /* Blanc */
+            background: rgba(255, 255, 255, 0.05) !important; /* Fond légèrement visible */
+            border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Bordure subtile */
+            border-radius: 12px !important;
+            transition: var(--transition-base) !important;
+            width: 100% !important;
+            min-height: 50px !important; /* Hauteur minimum uniforme */
+            max-height: 50px !important; /* Hauteur maximum uniforme */
+            height: 50px !important; /* Hauteur fixe */
+
+            /* Flexbox pour centrage parfait */
+            display: flex !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+
+            /* Padding uniforme */
+            padding: 0.75rem 1rem !important;
+            margin: 0 !important; /* Reset des marges */
+
+            /* Texte */
+            font-size: 0.95rem !important;
+            font-weight: 500 !important;
+            text-decoration: none !important;
+
+            /* Évite les débordements */
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+
+        /* Icônes des liens - Couleur bleu clair pour contraste */
+        .nav-link-modern i {
+            color: var(--primary-ultra-light) !important;
+            text-shadow: 0 0 3px rgba(119, 149, 201, 0.3) !important;
+
+            /* UNIFORMISATION : Taille d'icône fixe */
+            font-size: 1.1rem !important;
+            width: 24px !important; /* Largeur fixe pour alignement */
+            height: 24px !important; /* Hauteur fixe */
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important; /* Empêche la compression */
+            margin-right: 0.75rem !important; /* Espacement fixe avec le texte */
+        }
+
+        /* État hover des liens mobiles */
+        .nav-link-modern:hover {
+            color: var(--text-primary-dark) !important; /* Reste blanc */
+            background: linear-gradient(135deg, rgba(119, 149, 201, 0.2) 0%, rgba(180, 197, 228, 0.2) 100%) !important;
+            border-color: rgba(119, 149, 201, 0.4) !important;
+            box-shadow: 0 2px 8px rgba(119, 149, 201, 0.3) !important;
+            transform: translateY(-1px) !important;
+        }
+
+        .nav-link-modern:hover i {
+            color: #ffffff !important; /* Icônes blanches au hover */
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.4) !important;
+        }
+
+        /* État actif des liens mobiles */
+        .nav-link-modern.active {
+            color: var(--text-primary-dark) !important; /* Blanc */
+            background: linear-gradient(135deg, var(--primary-ultra-light) 0%, var(--accent-light) 100%) !important;
+            border-color: var(--accent-light) !important;
+            box-shadow: 0 4px 12px rgba(119, 149, 201, 0.4) !important;
+            font-weight: 600 !important;
+        }
+
+        .nav-link-modern.active i {
+            color: #ffffff !important; /* Icônes blanches pour l'état actif */
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5) !important;
+        }
+
+        /* Dropdown toggle en mobile */
+        .nav-link-modern.dropdown-toggle {
+            color: var(--text-primary-dark) !important;
+        }
+
+        .nav-link-modern.dropdown-toggle:hover {
+            color: var(--text-primary-dark) !important;
+        }
+
+        /* Menu dropdown mobile en mode sombre */
+        .dropdown-menu-modern {
+            background: rgba(29, 30, 38, 0.98) !important;
+            border: 1px solid var(--border-color-dark) !important;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5) !important;
+            margin-top: 0.5rem !important;
+        }
+
+        .dropdown-item {
+            color: var(--text-secondary-dark) !important;
+            border-radius: 8px !important;
+            margin: 0.25rem 0 !important;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%) !important;
+            color: #ffffff !important;
+            transform: translateX(4px) !important;
+        }
+
+        .dropdown-item i {
+            color: var(--primary-ultra-light) !important;
+        }
+
+        .dropdown-item:hover i {
+            color: #ffffff !important;
+        }
+
+        .dropdown-header {
+            color: var(--primary-ultra-light) !important;
+            background: rgba(119, 149, 201, 0.1) !important;
+            border-radius: 8px !important;
+        }
+
+        .dropdown-divider {
+            border-color: var(--border-color-dark) !important;
+            opacity: 0.3 !important;
+        }
+
+        /* Section utilisateur mobile */
+        .navbar-user-section {
+            padding: 1rem 0.5rem !important;
+            border-top: 1px solid var(--border-color-dark) !important;
+            margin-top: 0.5rem !important;
+        }
+
+        .btn-user-modern {
+            background: linear-gradient(135deg, rgba(119, 149, 201, 0.2) 0%, rgba(180, 197, 228, 0.2) 100%) !important;
+            color: var(--text-primary-dark) !important;
+            border: 1px solid rgba(119, 149, 201, 0.3) !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .btn-user-modern:hover {
+            background: linear-gradient(135deg, var(--accent-light) 0%, var(--primary-ultra-light) 100%) !important;
+            color: var(--primary-color) !important;
+            border-color: var(--accent-light) !important;
+            transform: scale(1.02) !important;
+        }
+
+        .btn-user-modern i {
+            color: var(--primary-ultra-light) !important;
+        }
+
+        .btn-user-modern:hover i {
+            color: var(--primary-color) !important;
+        }
+
+        /* Boutons connexion/inscription mobile */
+        .btn-outline-modern {
+            border: 2px solid var(--primary-ultra-light) !important;
+            color: var(--text-primary-dark) !important;
+            background: rgba(119, 149, 201, 0.1) !important;
+        }
+
+        .btn-outline-modern:hover {
+            background: var(--primary-ultra-light) !important;
+            color: var(--primary-color) !important;
+            border-color: var(--primary-ultra-light) !important;
+        }
+
+        .btn-modern-primary {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-color) 100%) !important;
+            color: #ffffff !important;
+            border: none !important;
+        }
+
+        .btn-modern-primary:hover {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-hover) 100%) !important;
+            color: #ffffff !important;
+        }
+
+        /* Info utilisateur mobile */
+        .user-info-mobile {
+            color: var(--primary-ultra-light) !important;
+        }
+
+        .user-info-mobile i {
+            color: var(--accent-light) !important;
+        }
+
+        /* Amélioration du contraste pour les spans */
+        .nav-link-modern span {
+            color: inherit !important;
+            font-weight: 500 !important;
+        }
+
+        /* Headers du dropdown utilisateur mobile */
+        .dropdown-header .text-primary-brand {
+            color: var(--primary-ultra-light) !important;
+        }
+
+        .dropdown-header small {
+            color: var(--text-light-dark) !important;
+        }
+
+        /* Nom et email utilisateur dans dropdown */
+        .dropdown-header .fw-bold {
+            color: var(--text-primary-dark) !important;
+        }
+
+        .dropdown-header .text-muted {
+            color: var(--text-light-dark) !important;
+        }
+
+        /* Info bar mobile en mode sombre */
+        .info-bar-modern {
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%) !important;
+            border-color: var(--border-color-dark) !important;
+        }
+    }
+
     /* === DROPDOWNS === */
     .dropdown-menu-modern {
         background: rgba(36, 37, 48, 0.95);
@@ -234,6 +476,19 @@
         color: white !important;
     }
 
+    .btn-outline-modern {
+        border: 2px solid var(--primary-color);
+        color: var(--text-primary);
+        background: transparent;
+        padding: 0.5rem 1.25rem;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: var(--transition-base);
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+    }
+
     /* === FORMULAIRES === */
     .form-label-modern {
         color: var(--text-primary-dark) !important;
@@ -281,7 +536,7 @@
 
     .table th {
         background-color: var(--bg-tertiary);
-        color: var(--text-primary-dark);
+        color: var(--primary-light) !important;
         border-bottom: 2px solid var(--border-dark);
     }
 
@@ -503,6 +758,30 @@
     .birthday-subtitle,
     .birthday-description {
         /* Styles préservés selon vos variables --birthday-* */
+    }
+
+    /* ===== CARDS MOBILE POUR SORTIES INDEX ===== */
+    .sortie-card-mobile {
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+        border-radius: 16px;
+        border: 2px solid var(--border-color);
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition-base);
+        overflow: hidden;
+        position: relative;
+        animation: sortieCardAppear 0.5s ease-out;
+    }
+
+    .sortie-card-header {
+        padding: 1.25rem 1.25rem 0.75rem 1.25rem;
+        border-bottom: 1px solid var(--border-color);
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+    }
+
+    .sortie-card-footer {
+        padding: 0.75rem 1.25rem 1.25rem 1.25rem;
+        border-top: 1px solid var(--border-color);
+        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
     }
 }
 

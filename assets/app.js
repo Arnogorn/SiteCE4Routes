@@ -5,6 +5,8 @@
  * which should already be in your base.html.twig.
  */
 import './styles/app.css';
+
+import './styles/sorties.css'
 //
 // import './bootstrap.js';
 

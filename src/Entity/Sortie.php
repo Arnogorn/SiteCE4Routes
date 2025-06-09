@@ -29,6 +29,7 @@ class Sortie
     private ?\DateTimeImmutable $date = null;
 
     #[ORM\Column]
+
     private ?int $duree = null;
 
     #[ORM\Column]

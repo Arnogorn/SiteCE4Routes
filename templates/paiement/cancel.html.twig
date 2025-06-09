@@ -1,26 +1,200 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Paiement annulé{% if sortie is defined %} - {{ sortie.titre }}{% endif %}{% endblock %}
+
 {% block body %}
-    <div class="container mt-5">
-        <div class="alert alert-warning">
-            <h1 class="h3">❌ Paiement annulé</h1>
-            <p>Le processus de paiement a été interrompu ou annulé.</p>
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    {# En-tête avec navigation #}
+                    <div class="mb-4">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a href="{{ path('app_sortie_index') }}" class="text-decoration-none">
+                                        <i class="bi bi-calendar-event me-1"></i>Nos Sorties
+                                    </a>
+                                </li>
+                                {% if sortie is defined %}
+                                    <li class="breadcrumb-item">
+                                        <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}" class="text-decoration-none">
+                                            {{ sortie.titre }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                <li class="breadcrumb-item active" aria-current="page">Paiement annulé</li>
+                            </ol>
+                        </nav>
+                    </div>
+
+                    {# Card principale d'annulation #}
+                    <div class="card-modern mb-4">
+                        <div class="text-center mb-4">
+                            <div class="feature-icon mx-auto mb-3" style="background: linear-gradient(135deg, var(--warning-color) 0%, #e0a800 100%); color: white;">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </div>
+                            <h1 class="text-primary-brand mb-2">
+                                <i class="bi bi-exclamation-triangle-fill me-2" style="color: var(--warning-color);"></i>
+                                Paiement annulé
+                            </h1>
+                            <p class="text-muted lead">Le processus de paiement a été interrompu</p>
+                        </div>
+
+                        {# Informations de la sortie si disponible #}
+                        {% if sortie is defined %}
+                            <div class="inscription-sortie-header mb-4">
+                                <h2 class="text-accent-brand mb-2">{{ sortie.titre }}</h2>
+                                <div class="sortie-meta">
+                                    <span class="sortie-date">
+                                        <i class="bi bi-calendar-event"></i>
+                                        {{ sortie.date ? sortie.date|format_datetime('full', 'short', locale='fr') : 'Date non définie' }}
+                                    </span>
+                                    <span class="sortie-prix">
+                                        <i class="bi bi-currency-euro"></i>
+                                        {{ sortie.prix }} € par personne
+                                    </span>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {# Détails de l'annulation #}
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <div class="sortie-detail-item">
+                                    <div class="sortie-detail-icon">
+                                        <i class="bi bi-x-circle text-warning"></i>
+                                    </div>
+                                    <div class="sortie-detail-content">
+                                        <span class="sortie-detail-label">Statut du paiement</span>
+                                        <span class="sortie-detail-value" style="color: var(--warning-color);">
+                                            <i class="bi bi-x-circle-fill me-1"></i>
+                                            Annulé
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="sortie-detail-item">
+                                    <div class="sortie-detail-icon">
+                                        <i class="bi bi-shield-check text-success"></i>
+                                    </div>
+                                    <div class="sortie-detail-content">
+                                        <span class="sortie-detail-label">Sécurité</span>
+                                        <span class="sortie-detail-value" style="color: var(--success-color);">
+                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                            Aucun prélèvement
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Message d'explication #}
+                        <div class="sortie-description-content mb-4">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="flex-shrink-0">
+                                    <i class="bi bi-info-circle-fill" style="color: var(--accent-color); font-size: 1.5rem;"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-primary-brand mb-2">Que s'est-il passé ?</h4>
+                                    <p class="mb-2">
+                                        Le processus de paiement a été interrompu ou annulé avant sa finalisation.
+                                        Aucune inscription n'a été enregistrée et aucun montant n'a été prélevé.
+                                    </p>
+                                    <p class="mb-0">
+                                        <strong>Vous pouvez :</strong>
+                                    </p>
+                                    <ul class="mb-0 mt-2">
+                                        <li>Reprendre le processus d'inscription à tout moment</li>
+                                        <li>Consulter à nouveau les détails de la sortie</li>
+                                        <li>Parcourir d'autres sorties disponibles</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Alerte informative #}
+                        <div class="date-limite-info mb-4">
+                            <div class="alert alert-warning">
+                                <div class="d-flex align-items-start gap-2">
+                                    <i class="bi bi-exclamation-triangle flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <strong>Aucune inscription enregistrée</strong><br>
+                                        <span class="small">
+                                            Votre place n'a pas été réservée pour cette sortie. Si vous souhaitez toujours participer,
+                                            veuillez relancer le processus d'inscription.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Boutons d'action #}
+                        <div class="action-buttons">
+                            <div class="row g-3">
+                                {% if sortie is defined %}
+                                    <div class="col-md-6">
+                                        <a href="{{ path('paiement_choisir_membres', {'id': sortie.id}) }}" class="btn btn-modern-primary w-100">
+                                            <i class="bi bi-arrow-clockwise me-2"></i>
+                                            Reprendre l'inscription
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <a href="{{ path('app_sortie_show', { id: sortie.id }) }}" class="btn btn-outline-modern w-100">
+                                            <i class="bi bi-eye me-2"></i>
+                                            Voir la sortie
+                                        </a>
+                                    </div>
+                                {% else %}
+                                    <div class="col-md-12">
+                                        <a href="{{ path('app_sortie_index') }}" class="btn btn-modern-primary w-100">
+                                            <i class="bi bi-calendar-event me-2"></i>
+                                            Voir toutes les sorties
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            {# Bouton secondaire pour retourner aux sorties #}
+                            <div class="mt-3">
+                                <a href="{{ path('app_sortie_index') }}" class="btn btn-outline-modern w-100">
+                                    <i class="bi bi-house me-2"></i>
+                                    Retour à l'accueil des sorties
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Card d'aide supplémentaire #}
+                    <div class="card-modern">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="section-icon me-3">
+                                <i class="bi bi-question-circle text-accent-brand"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-primary-brand mb-1">Besoin d'aide ?</h4>
+                                <p class="text-muted mb-0">Notre équipe est là pour vous accompagner</p>
+                            </div>
+                        </div>
+
+                        <div class="date-limite-info">
+                            <div class="alert alert-info mb-0">
+                                <div class="d-flex align-items-start gap-2">
+                                    <i class="bi bi-info-circle flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <strong>Problème technique ?</strong><br>
+                                        <span class="small">
+                                            Si vous rencontrez des difficultés lors du processus de paiement,
+                                            n'hésitez pas à nous contacter. Nous sommes là pour vous aider à finaliser votre inscription.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <p>Aucune inscription ni paiement n’a été enregistré. Vous pouvez reprendre le processus d’inscription à tout moment.</p>
-
-        {% if sortie is defined %}
-            <a href="{{ path('paiement_choisir_membres', {'id': sortie.id}) }}" class="btn btn-outline-primary mt-2">
-                Revenir à l’inscription pour {{ sortie.titre }}
-            </a>
-        {% endif %}
-
-        <a href="{{ path('app_sortie_index') }}" class="btn btn-secondary mt-3">
-            Retour aux sorties
-        </a>
-
-        <a href="{{ path('app_sortie_show', { id: sortie.id }) }}" class="btn btn-outline-secondary mt-2">
-            ← Retour à la sortie
-        </a>
-    </div>
+    </section>
 {% endblock %}

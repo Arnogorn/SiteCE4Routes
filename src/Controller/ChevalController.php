@@ -51,16 +51,18 @@ final class ChevalController extends AbstractController
 
 
     #[Route('/{id}', name: 'app_cheval_show', methods: ['GET'])]
-    public function show(Cheval $cheval): Response
+    public function show(Cheval $cheval, Request $request): Response
     {
         $hasPhoto = false;
         if ($cheval->getPhoto() !== null && file_exists($this->getParameter('cheval_picture_dir') . '/' . $cheval->getPhoto())) {
             $hasPhoto = true;
         }
+        $referer = $request->query->get('from');
 
         return $this->render('cheval/show.html.twig', [
             'cheval' => $cheval,
-            'hasPhoto' => $hasPhoto
+            'hasPhoto' => $hasPhoto,
+            'referer' => $referer
         ]);
     }
 

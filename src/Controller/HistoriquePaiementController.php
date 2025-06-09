@@ -6,20 +6,20 @@ use App\Repository\HistoriquePaiementRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/historique', name: 'historique_')]
 class HistoriquePaiementController extends AbstractController
 {
     #[IsGranted('ROLE_USER')]
-    #[Route('/', name: 'index')]
+    #[Route('/historique', name: 'historique_index')]
     public function index(HistoriquePaiementRepository $repository): Response
     {
         $user = $this->getUser();
 
         // On récupère tous les historiques de paiements de l'utilisateur connecté
-        $logs = $repository->findBy(['utilisateur' => $user], ['date' => 'DESC']);
+        $logs = $repository->findByUser($user);
 
         return $this->render('historique_paiement/index.html.twig', [
             'logs' => $logs,
@@ -27,73 +27,111 @@ class HistoriquePaiementController extends AbstractController
     }
 
     #[IsGranted('ROLE_ADMIN')]
-    #[Route('/admin', name: 'admin_index')]
+    #[Route('/admin/paiement', name: 'admin_index_paiement')]
     public function admin(Request $request, HistoriquePaiementRepository $repository): Response
     {
-        $filters = [];
-        $utilisateurId = $request->query->get('utilisateur');
-        $type = $request->query->get('type');
+        // Récupération des filtres avec valeurs par défaut
+        $filters = [
+            'email' => $request->query->get('email', ''),
+            'nom' => $request->query->get('nom', ''),
+            'type' => $request->query->get('type', ''),
+            'sortie' => $request->query->get('sortie', ''),
+            'date_debut' => $request->query->get('date_debut', ''),
+            'date_fin' => $request->query->get('date_fin', ''),
+        ];
 
-        if ($utilisateurId) {
-            $filters['utilisateur'] = $utilisateurId;
-        }
+        // Suppression des filtres vides pour la requête
+        $filtersForQuery = array_filter($filters, function($value) {
+            return $value !== null && $value !== '';
+        });
 
-        if ($type) {
-            $filters['type'] = $type;
-        }
+        // Recherche avec les filtres
+        $logs = $repository->findByFilters($filtersForQuery);
 
-        $logs = $repository->findBy($filters, ['date' => 'DESC']);
+        // Statistiques
+        $statistiques = $repository->getStatistiques();
 
         return $this->render('historique_paiement/admin.html.twig', [
             'logs' => $logs,
-            'filters' => [
-                'utilisateur' => $utilisateurId,
-                'type' => $type,
-            ],
+            'filters' => $filters, // On passe le tableau complet avec toutes les clés
+            'statistiques' => $statistiques,
         ]);
     }
+
     #[IsGranted('ROLE_ADMIN')]
-    #[Route('/admin/export', name: 'export_csv')]
-    public function exportCsv(Request $request, HistoriquePaiementRepository $repository): Response
+    #[Route('/historique/admin/export', name: 'historique_export_csv')]
+    public function exportCsv(Request $request, HistoriquePaiementRepository $repository): StreamedResponse
     {
-        $filters = [];
-        $utilisateurId = $request->query->get('utilisateur');
-        $type = $request->query->get('type');
+        // Récupération des filtres identiques à la méthode admin
+        $filters = [
+            'email' => $request->query->get('email'),
+            'nom' => $request->query->get('nom'),
+            'type' => $request->query->get('type'),
+            'sortie' => $request->query->get('sortie'),
+            'date_debut' => $request->query->get('date_debut'),
+            'date_fin' => $request->query->get('date_fin'),
+        ];
 
-        if ($utilisateurId) {
-            $filters['utilisateur'] = $utilisateurId;
-        }
+        $filters = array_filter($filters, function($value) {
+            return $value !== null && $value !== '';
+        });
 
-        if ($type) {
-            $filters['type'] = $type;
-        }
+        $logs = $repository->findByFilters($filters);
 
-        $logs = $repository->findBy($filters, ['date' => 'DESC']);
+        $response = new StreamedResponse();
+        $response->setCallback(function() use ($logs) {
+            $handle = fopen('php://output', 'w+');
 
-        $csvData = [];
-        $csvData[] = ['Date', 'Utilisateur', 'Type', 'Sortie', 'Message'];
+            // En-têtes CSV avec BOM UTF-8 pour Excel
+            fwrite($handle, "\xEF\xBB\xBF");
 
-        foreach ($logs as $log) {
-            $csvData[] = [
-                $log->getDate()->format('Y-m-d H:i:s'),
-                $log->getUtilisateur()?->getEmail(),
-                $log->getType(),
-                $log->getSortie()?->getTitre() ?? '',
-                $log->getMessage(),
-            ];
-        }
+            // En-têtes des colonnes
+            fputcsv($handle, [
+                'Date',
+                'Email utilisateur',
+                'Nom',
+                'Prénom',
+                'Type de paiement',
+                'Sortie',
+                'Message'
+            ], ';');
 
-        $handle = fopen('php://temp', 'r+');
-        foreach ($csvData as $row) {
-            fputcsv($handle, $row);
-        }
-        rewind($handle);
-        $content = stream_get_contents($handle);
-        fclose($handle);
+            // Données
+            foreach ($logs as $log) {
+                fputcsv($handle, [
+                    $log->getDate()->format('d/m/Y H:i:s'),
+                    $log->getUtilisateur() ? $log->getUtilisateur()->getEmail() : 'N/A',
+                    $log->getUtilisateur() ? $log->getUtilisateur()->getNom() : 'N/A',
+                    $log->getUtilisateur() ? $log->getUtilisateur()->getPrenom() : 'N/A',
+                    $log->getType(),
+                    $log->getSortie() ? $log->getSortie()->getTitre() : 'N/A',
+                    $log->getMessage() ?? 'Aucun message'
+                ], ';');
+            }
 
-        return new Response($content, 200, [
-            'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="historique_paiements.csv"',
+            fclose($handle);
+        });
+
+        $filename = 'historique_paiements_' . date('Y-m-d_H-i-s') . '.csv';
+
+        $response->headers->set('Content-Type', 'text/csv; charset=utf-8');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $filename . '"');
+
+        return $response;
+    }
+
+    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/historique/admin/stats', name: 'historique_admin_stats')]
+    public function stats(HistoriquePaiementRepository $repository): Response
+    {
+        $statistiques = $repository->getStatistiques();
+        $statsParType = $repository->getStatistiquesByType();
+        $paiementsRecents = $repository->findRecent(5);
+
+        return $this->render('historique_paiement/stats.html.twig', [
+            'statistiques' => $statistiques,
+            'stats_par_type' => $statsParType,
+            'paiements_recents' => $paiementsRecents,
         ]);
     }
 }
