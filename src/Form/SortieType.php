@@ -11,6 +11,8 @@ use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -24,31 +26,74 @@ class SortieType extends AbstractType
         $builder
             ->add('titre', TextType::class, [
                 'label' => 'Titre',
+                'attr' => [
+                    'class' => 'form-control-modern',
+                    'placeholder' => 'Ex: Randonnée découverte en forêt'
+                ],
+                'required' => true,
             ])
             ->add('typeSortie', EntityType::class, [
                 'class' => TypeSortie::class,
                 'choice_label' => 'libelle',
-                'label' => 'Type de sortie : ',
+                'label' => 'Type de sortie',
+                'attr' => [
+                    'class' => 'form-control-modern form-select-modern'
+                ],
+                'required' => true,
             ])
-            ->add('date', null, [
+            ->add('date', DateTimeType::class, [
                 'widget' => 'single_text',
                 'label' => 'Date de la sortie',
+                'attr' => [
+                    'class' => 'form-control-modern'
+                ],
+                'required' => true,
             ])
-            ->add('duree', TextType::class, [
+            ->add('duree', IntegerType::class, [
                 'label' => 'Durée de la sortie (en minutes)',
+                'attr' => [
+                    'class' => 'form-control-modern d-none',
+                    'min' => 30,
+                    'max' => 480,
+                    'step' => 15,
+                    'id' => 'duree-input'
+                ],
+                'required' => true,
+                'data' => 60,
             ])
-            ->add('nbInscriptionMax', TextType::class, [
+            ->add('nbInscriptionMax', IntegerType::class, [
                 'label' => 'Nombre d\'inscriptions maximum',
+                'attr' => [
+                    'class' => 'form-control-modern',
+                    'min' => 1,
+                    'max' => 50
+                ],
+                'required' => true,
             ])
-            ->add('prix', TextType::class, [
+            ->add('prix', NumberType::class, [
                 'label' => 'Prix',
+                'attr' => [
+                    'class' => 'form-control-modern',
+                    'min' => 0,
+                    'step' => 0.01
+                ],
+                'required' => true,
             ])
             ->add('infos', TextareaType::class, [
                 'label' => 'Informations complémentaires',
+                'attr' => [
+                    'class' => 'form-control-modern',
+                    'rows' => 5,
+                    'placeholder' => 'Décrivez la sortie, les équipements nécessaires, le point de rendez-vous...'
+                ],
                 'required' => false,
             ])
             ->add('isPublished', CheckboxType::class, [
                 'label' => 'Publier la sortie',
+                'attr' => [
+                    'class' => 'form-check-input',
+                    'role' => 'switch'
+                ],
                 'required' => false,
             ])
             ->add('moniteur', EntityType::class, [
@@ -57,6 +102,9 @@ class SortieType extends AbstractType
                     return $moniteur->getUser()->getNom() . ' ' . $moniteur->getUser()->getPrenom();
                 },
                 'label' => 'Moniteur',
+                'attr' => [
+                    'class' => 'form-control-modern form-select-modern'
+                ],
                 'required' => false,
                 'placeholder' => 'Aucun moniteur',
             ])
@@ -65,20 +113,32 @@ class SortieType extends AbstractType
                 'choice_label' => 'libelle',
                 'multiple' => true,
                 'expanded' => true,
-                'label' => 'Niveau(x) admis pour la sortie ',
+                'label' => 'Niveau(x) admis pour la sortie',
                 'attr' => [
-                    'class' => 'checkbox-group', // Classe CSS personnalisée pour le styling
+                    'class' => 'checkbox-group-container',
                 ],
                 'label_attr' => [
                     'class' => 'checkbox-group-label',
                 ],
+                'choice_attr' => function() {
+                    return ['class' => 'form-check-input'];
+                },
             ])
             ->add('participants', EntityType::class, [
                 'class' => User::class,
                 'multiple' => true,
-                'expanded' => true, // ou false pour une liste déroulante
-                'choice_label' => 'nom', // ou 'email', ou une méthode comme getFullName()
-                'label' => 'Rajouter des participants',
+                'expanded' => true,
+                'choice_label' => function (User $user) {
+                    return $user->getPrenom() . ' ' . $user->getNom();
+                },
+                'label' => 'Ajouter des participants',
+                'attr' => [
+                    'class' => 'participants-list-container',
+                ],
+                'choice_attr' => function() {
+                    return ['class' => 'form-check-input'];
+                },
+                'required' => false,
             ]);
     }
 

@@ -249,9 +249,15 @@
             <div class="card-modern mt-4">
                 <div class="d-flex flex-wrap gap-3 justify-content-center">
 
-                    <a href="{{ path('app_cheval_index') }}" class="btn btn-outline-modern">
-                        <i class="bi bi-arrow-left me-2"></i>Retour à la liste
-                    </a>
+                    {% if referer == 'commerce' %}
+                        <a href="{{ path('commerce') }}" class="btn btn-outline-modern">
+                            <i class="bi bi-arrow-left me-1"></i>Retour au Commerce
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_cheval_index') }}" class="btn btn-outline-modern">
+                            <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+                        </a>
+                    {% endif %}
 
 
                     {% if (app.user and cheval.user and app.user.id == cheval.user.id) or (app.user and 'ROLE_ADMIN' in app.user.roles) %}

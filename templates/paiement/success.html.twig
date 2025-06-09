@@ -1,24 +1,170 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Paiement réussi - {{ sortie.titre }}{% endblock %}
+
 {% block body %}
-    <div class="container mt-5">
-        <div class="alert alert-success">
-            <h1 class="h3">✅ Paiement réussi</h1>
-            <p>Merci pour votre inscription à l'activité. Votre paiement a bien été enregistré.</p>
-            {% if paiement.confirmedAt %}
-                <p class="text-muted">Confirmé le {{ paiement.confirmedAt|date('d/m/Y à H:i') }}</p>
-            {% endif %}
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    {# En-tête avec navigation #}
+                    <div class="mb-4">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a href="{{ path('app_sortie_index') }}" class="text-decoration-none">
+                                        <i class="bi bi-calendar-event me-1"></i>Nos Sorties
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}" class="text-decoration-none">
+                                        {{ sortie.titre }}
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">Paiement confirmé</li>
+                            </ol>
+                        </nav>
+                    </div>
+
+                    {# Card principale de confirmation #}
+                    <div class="card-modern mb-4">
+                        <div class="text-center mb-4">
+                            <div class="feature-icon mx-auto mb-3" style="background: linear-gradient(135deg, var(--success-color) 0%, #20c997 100%); color: white;">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <h1 class="text-primary-brand mb-2">
+                                <i class="bi bi-credit-card-fill me-2" style="color: var(--success-color);"></i>
+                                Paiement réussi !
+                            </h1>
+                            <p class="text-muted lead">Votre inscription a été confirmée avec succès</p>
+                        </div>
+
+                        {# Informations de la sortie #}
+                        <div class="inscription-sortie-header mb-4">
+                            <h2 class="text-accent-brand mb-2">{{ sortie.titre }}</h2>
+                            <div class="sortie-meta">
+                                <span class="sortie-date">
+                                    <i class="bi bi-calendar-event"></i>
+                                    {{ sortie.date ? sortie.date|format_datetime('full', 'short', locale='fr') : 'Date non définie' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        {# Détails du paiement #}
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <div class="sortie-detail-item">
+                                    <div class="sortie-detail-icon">
+                                        <i class="bi bi-credit-card text-success"></i>
+                                    </div>
+                                    <div class="sortie-detail-content">
+                                        <span class="sortie-detail-label">Statut du paiement</span>
+                                        <span class="sortie-detail-value" style="color: var(--success-color);">
+                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                            Confirmé
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="sortie-detail-item">
+                                    <div class="sortie-detail-icon">
+                                        <i class="bi bi-calendar-check text-accent-brand"></i>
+                                    </div>
+                                    <div class="sortie-detail-content">
+                                        <span class="sortie-detail-label">Date de confirmation</span>
+                                        <span class="sortie-detail-value">
+                                            {% if paiement.confirmedAt %}
+                                                {{ paiement.confirmedAt|date('d/m/Y à H:i') }}
+                                            {% else %}
+                                                {{ "now"|date('d/m/Y à H:i') }}
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Message de confirmation et informations #}
+                        <div class="sortie-description-content mb-4">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="flex-shrink-0">
+                                    <i class="bi bi-info-circle-fill" style="color: var(--accent-color); font-size: 1.5rem;"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-primary-brand mb-2">Votre inscription est confirmée</h4>
+                                    <p class="mb-2">
+                                        Merci pour votre inscription à cette sortie. Votre paiement a été traité avec succès
+                                        et votre place est maintenant réservée.
+                                    </p>
+                                    <p class="mb-0">
+                                        <strong>Prochaines étapes :</strong>
+                                    </p>
+                                    <ul class="mb-0 mt-2">
+                                        <li>Vous recevrez un e-mail de confirmation sous peu</li>
+                                        <li>Consultez les détails de la sortie pour toute information complémentaire</li>
+                                        <li>En cas de question, n'hésitez pas à nous contacter</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Info sécurité paiement #}
+                        <div class="security-info mb-4">
+                            <div class="d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-shield-check"></i>
+                                <span>Paiement sécurisé traité via Stripe</span>
+                            </div>
+                        </div>
+
+                        {# Boutons d'action #}
+                        <div class="action-buttons">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <a href="{{ path('app_sortie_show', { id: sortie.id }) }}" class="btn btn-modern-primary w-100">
+                                        <i class="bi bi-eye me-2"></i>
+                                        Voir les détails de la sortie
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <a href="{{ path('app_sortie_index') }}" class="btn btn-outline-modern w-100">
+                                        <i class="bi bi-calendar-event me-2"></i>
+                                        Retour aux sorties
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Card d'information supplémentaire #}
+                    <div class="card-modern">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="section-icon me-3">
+                                <i class="bi bi-envelope text-accent-brand"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-primary-brand mb-1">Confirmation par e-mail</h4>
+                                <p class="text-muted mb-0">Gardez un œil sur votre boîte de réception</p>
+                            </div>
+                        </div>
+
+                        <div class="date-limite-info">
+                            <div class="alert alert-info mb-0">
+                                <div class="d-flex align-items-start gap-2">
+                                    <i class="bi bi-info-circle flex-shrink-0 mt-1"></i>
+                                    <div>
+                                        <strong>E-mail de confirmation en cours d'envoi</strong><br>
+                                        <span class="small">
+                                            Vous devriez recevoir un e-mail de confirmation dans les prochaines minutes.
+                                            Vérifiez également votre dossier de courriers indésirables si vous ne le trouvez pas.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <p>Vous recevrez une confirmation par e-mail si nécessaire.</p>
-
-        <a href="{{ path('app_sortie_index') }}" class="btn btn-primary mt-3">
-            Retour aux sorties
-        </a>
-
-        <a href="{{ path('app_sortie_show', { id: sortie.id }) }}" class="btn btn-outline-secondary mt-2">
-            ← Retour à la sortie
-        </a>
-
-    </div>
+    </section>
 {% endblock %}

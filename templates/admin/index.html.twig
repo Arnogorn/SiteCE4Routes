@@ -89,7 +89,7 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <a href="{{ path('app_user_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
-                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
                                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
                                     <i class="bi bi-person-gear" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);"></i>
@@ -100,12 +100,23 @@
 
                             <div class="col-md-6">
                                 <a href="{{ path('app_contact_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
-                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
                                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
-                                    <i class="bi bi-envelope-at" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-color);"></i>
-                                    <strong>Messages</strong>
-                                    <small class="text-muted">Gérer les contacts</small>
+                                    <i class="bi bi-people" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-color);"></i>
+                                    <strong>Équipe</strong>
+                                    <small class="text-muted">Gérer les membres de l'équipe</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-6">
+                                <a href="{{ path('admin_index_paiement') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-credit-card-2-front" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-color);"></i>
+                                    <strong>Historique Paiements</strong>
+                                    <small class="text-muted">Voir l'historique des paiements</small>
                                 </a>
                             </div>
                         </div>
@@ -123,7 +134,7 @@
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <a href="{{ path('app_niveau_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
-                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
                                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
                                     <i class="bi bi-bar-chart-steps" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);"></i>
@@ -134,7 +145,7 @@
 
                             <div class="col-md-3">
                                 <a href="{{ path('app_type_sortie_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
-                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
                                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
                                     <i class="bi bi-tags" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-color);"></i>
@@ -145,7 +156,7 @@
 
                             <div class="col-md-3">
                                 <a href="{{ path('app_ecurie_proprietaire_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
-                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
                                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
                                     <i class="bi bi-house-gear" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);"></i>
@@ -156,7 +167,7 @@
 
                             <div class="col-md-3">
                                 <a href="{{ path('app_tarifs_index') }}" title="Tarifs" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
-                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
                                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
                                     <i class="bi bi-heart-fill" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);"></i>
@@ -167,7 +178,7 @@
 
                             <div class="col-md-3">
                                 <a href="{{ path('app_moniteur_index') }}" title="Moniteurs" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
-                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
                                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
                                     <i class="bi-person-workspace" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--primary-color);"></i>
@@ -178,7 +189,7 @@
 
                             <div class="col-md-3">
                                 <a href="{{ path('app_cheval_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
-                                   style="background: linear-gradient(135deg, var(--secondary-light) 0%, var(--bg-tertiary) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); transition: var(--transition-base);"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
                                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
                                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
                                     <i class="bi bi-arrow-return-left" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-color);"></i>

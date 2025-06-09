@@ -167,7 +167,7 @@ class InscriptionService
         // Calcul du montant par place
         $totalSeats    = $paiement->getParticipants();
         if ($totalSeats < 1) {
-            throw new \RuntimeException('Impossible de calculer le montant du remboursement : aucun siège payé.');
+            throw new \RuntimeException('Impossible de calculer le montant du remboursement : aucune place payé.');
         }
         $totalAmount   = $paiement->getMontant();
         $amountPerSeat = intdiv($totalAmount, $totalSeats);

@@ -38,7 +38,7 @@ class Contact
     )]
     private ?string $photo = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 20, nullable:true)]
     #[Assert\Regex(
         pattern: '/^[\d+\s\-]+$/',
         message: 'Le numéro de téléphone ne peut contenir que des chiffres, espaces, + et tirets.'

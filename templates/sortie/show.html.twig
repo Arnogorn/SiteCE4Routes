@@ -1,185 +1,384 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Sortie {{ sortie.titre }}{% endblock %}
+{% block title %}{{ sortie.titre }} - Détails de la sortie{% endblock %}
 
 {% block body %}
-    <h1>Sortie {{ sortie.titre }}</h1>
+    <section class="py-5">
+        <div class="container">
 
-    <table class="table">
-        <tbody>
-        <tr>
-            <th>Titre</th>
-            <td>{{ sortie.titre }}</td>
-        </tr>
-        {% if sortie.moniteur is not null %}
-            <tr>
-                <th>Moniteur</th>
-                <td>{{ sortie.moniteur.user.prenom }} {{ sortie.moniteur.user.nom }}</td>
-            </tr>
-        {% endif %}
-        <tr>
-            <th>Date</th>
-            <td>{{ sortie.date ? sortie.date|date('d-m-Y H:i:s') : ''  }}</td>
-        </tr>
-        <tr>
-            <th>Durée</th>
-            <td>{{ sortie.duree }}</td>
-        </tr>
-        <tr>
-            <th>Date limite d'inscription</th>
-            <td>{{ sortie.dateLimiteInscription ? sortie.dateLimiteInscription|date('d-m-Y H:i:s') : ''  }}</td>
-        </tr>
-        <tr>
-            <th>Nombre maximum d'inscriptions</th>
-            <td>{{ sortie.inscriptions|length }}/{{ sortie.nbInscriptionMax }}</td>
-        </tr>
-        <th>Niveaux admis</th>
-        <td>
-            {% for niveau in sortie.niveauxAdmis %}
-                {{ niveau.libelle }}{% if not loop.last %}, {% endif %}
-            {% else %}
-                Aucun niveau spécifié.
-            {% endfor %}
-        </td>
-        <tr>
-        <tr>
-            <th>Prix</th>
-            <td>{{ sortie.prix }} €</td>
-        </tr>
-        <tr>
-            <th>Informations</th>
-            <td>{{ sortie.infos }}</td>
-        </tr>
-        <tr>
-            <th>État de la sortie</th>
-            <td>
-                <p class="border rounded
-                        {% if sortie.etat.libelle == 'Créée' %}
-                            border-warning
-                        {% elseif sortie.etat.libelle == 'Ouverte' %}
-                            border-success
-                        {% elseif sortie.etat.libelle == 'Clôturée' %}
-                            border-info
-                        {% elseif sortie.etat.libelle == 'En cours' %}
-                            border-primary
-                        {% elseif sortie.etat.libelle == 'Passée' %}
-                            border-secondary
-                        {% else %}
-                            border-danger
-                        {% endif %}"
-                >
-                    {{ sortie.etat.libelle }}
-                </p>
-            </td>
-        </tr>
-
-        {#… affichage ADMIN inchangé …#}
-        {% if is_granted('ROLE_ADMIN') %}
-            <tr>
-                <th>Participants</th>
-                <td>
-                    {% if sortie.participants is empty and sortie.membresFamilleInscrits is empty %}
-                        Aucun participant inscrit pour le moment.
-                    {% else %}
-                        {% for participant in sortie.participants %}
-                            <a href="{{ path('app_user_show', {id: participant.id}) }}">
-                                {{ participant.prenom }} {{ participant.nom }}
-                            </a> (Utilisateur)<br>
-                        {% endfor %}
-                        {% for membre in sortie.membresFamilleInscrits %}
-                            <div style="margin-bottom: 4px;">
-                                <a href="{{ path('app_user_show', {id: membre.famille.user.id}) }}">
-                                    {{ membre.prenom }} {{ membre.nom }}
+            {# En-tête avec titre et navigation + petit fil d'ariane #}
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ path('app_sortie_index') }}" class="text-decoration-none">
+                                    <i class="bi bi-calendar-event me-1"></i>Nos Sorties
                                 </a>
-                                (Membre de la famille de
-                                <a href="{{ path('app_user_show', {id: membre.famille.user.id}) }}">
-                                    {{ membre.famille.user.prenom }} {{ membre.famille.user.nom }}
-                                </a>
-                                )
-
-                                {# Formulaire de désinscription du membre #}
-                                <form action="{{ path('sortie_desinscription_membre', {id: sortie.id, membreId: membre.id}) }}"
-                                      method="post" style="display: inline;"
-                                      onsubmit="return confirm('Êtes-vous sûr de vouloir désinscrire ce membre ?');">
-                                    <input type="hidden" name="_token"
-                                           value="{{ csrf_token('desinscription_membre' ~ sortie.id ~ membre.id) }}">
-                                    <button type="submit" class="btn btn-sm btn-danger">Désinscrire</button>
-                                </form>
-                            </div>
-                        {% endfor %}
-                    {% endif %}
-                </td>
-            </tr>
-
-            {# POUR LES “ROLE_USER” : on affiche uniquement les propres inscriptions + celles de ses membres #}
-        {% elseif is_granted('ROLE_USER') %}
-            <tr>
-                <th>Vos inscriptions</th>
-                <td>
-                    {% set found = false %}
-                    <ul>
-                        {# Si l’utilisateur est lui-même inscrit #}
-                        {% if sortie.participants.contains(app.user) %}
-                            <li>
-                                <a href="{{ path('app_user_show', {id: app.user.id}) }}">
-                                    {{ app.user.prenom }} {{ app.user.nom }}
-                                </a>
-                                (Vous)
-                                <form action="{{ path('sortie_desinscription', {id: sortie.id}) }}"
-                                      method="post" style="display: inline;"
-                                      onsubmit="return confirm('Êtes-vous sûr de vouloir vous désinscrire ?');">
-                                    <input type="hidden" name="_token"
-                                           value="{{ csrf_token('desinscription_utilisateur' ~ sortie.id) }}">
-                                    <button type="submit" class="btn btn-sm btn-warning">Se désinscrire</button>
-                                </form>
                             </li>
-                            {% set found = true %}
+                            <li class="breadcrumb-item active" aria-current="page">{{ sortie.titre }}</li>
+                        </ol>
+                    </nav>
+                    <h1 class="text-primary-brand mb-2">
+                        <i class="bi bi-calendar-check-fill" style="color: var(--accent-color);"></i>
+                        {{ sortie.titre }}
+                    </h1>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="{{ path('app_sortie_index') }}" class="btn btn-outline-modern">
+                        <i class="bi bi-arrow-left me-1"></i>Retour à la liste
+                    </a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}" class="btn btn-modern-primary">
+                            <i class="bi bi-pencil me-1"></i>Modifier
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="row g-4">
+                {# Colonne principale - Informations de la sortie #}
+                <div class="col-lg-8">
+                    <div class="card-modern">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h3 class="text-primary-brand mb-0">
+                                <i class="bi bi-info-circle me-2"></i>Informations de la sortie
+                            </h3>
+                            <span class="badge sortie-status-{{ sortie.etat.libelle|lower|replace({' ': '-'}) }} fs-6">
+                                <i class="bi bi-flag-fill me-1"></i>{{ sortie.etat.libelle }}
+                            </span>
+                        </div>
+
+                        {# Grille d'informations principales #}
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <div class="sortie-detail-item">
+                                    <div class="sortie-detail-icon">
+                                        <i class="bi bi-calendar-event text-accent-brand"></i>
+                                    </div>
+                                    <div class="sortie-detail-content">
+                                        <span class="sortie-detail-label">Date et heure</span>
+                                        <span class="sortie-detail-value">
+                                            {% if sortie.date %}
+                                                {{ sortie.date|format_datetime('full', 'none', locale='fr') }}<br>
+                                                <small class="text-muted">à {{ sortie.date|date('H:i') }}</small>
+                                            {% else %}
+                                                <span class="text-muted">Date non définie</span>
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="sortie-detail-item">
+                                    <div class="sortie-detail-icon">
+                                        <i class="bi bi-clock text-accent-brand"></i>
+                                    </div>
+                                    <div class="sortie-detail-content">
+                                        <span class="sortie-detail-label">Durée</span>
+                                        <span class="sortie-detail-value">
+                                            {% set hours = (sortie.duree / 60)|round(0, 'floor') %}
+                                            {% set minutes = sortie.duree % 60 %}
+                                            {% if hours > 0 %}{{ hours }}h{% endif %}{% if minutes > 0 or hours == 0 %}{% if hours > 0 %} {% endif %}{{ minutes }}min{% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="sortie-detail-item">
+                                    <div class="sortie-detail-icon">
+                                        <i class="bi bi-currency-euro text-accent-brand"></i>
+                                    </div>
+                                    <div class="sortie-detail-content">
+                                        <span class="sortie-detail-label">Prix</span>
+                                        <span class="sortie-detail-value prix-highlight">{{ sortie.prix }} €</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if sortie.moniteur is not null %}
+                                <div class="col-md-6">
+                                    <div class="sortie-detail-item">
+                                        <div class="sortie-detail-icon">
+                                            <i class="bi bi-person-badge text-accent-brand"></i>
+                                        </div>
+                                        <div class="sortie-detail-content">
+                                            <span class="sortie-detail-label">Moniteur</span>
+                                            <span class="sortie-detail-value">{{ sortie.moniteur.user.prenom }} {{ sortie.moniteur.user.nom }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        {# Niveaux admis #}
+                        {% if sortie.niveauxAdmis|length > 0 %}
+                            <div class="mb-4">
+                                <h5 class="text-primary-brand mb-3">
+                                    <i class="bi bi-award me-2"></i>Niveaux admis
+                                </h5>
+                                <div class="d-flex flex-wrap gap-2">
+                                    {% for niveau in sortie.niveauxAdmis %}
+                                        <span class="badge bg-light-brand text-primary-brand fs-6 px-3 py-2">
+                                        <i class="bi bi-star-fill me-1"></i>{{ niveau.libelle }}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         {% endif %}
 
-                        {# Parcourt les membres de famille inscrits et affiche ceux appartenant à la même famille #}
-                        {% for membre in sortie.membresFamilleInscrits %}
-                            {% if app.user.famille is not null and membre.famille == app.user.famille %}
-                                <li>
-                                    <a href="{{ path('app_user_show', {id: membre.famille.user.id}) }}">
-                                        {{ membre.prenom }} {{ membre.nom }}
-                                    </a>
-                                    (Membre de la famille de
-                                    <a href="{{ path('app_user_show', {id: membre.famille.user.id}) }}">
-                                        {{ membre.famille.user.prenom }} {{ membre.famille.user.nom }}
-                                    </a>
-                                    )
-                                    <form action="{{ path('sortie_desinscription_membre', {id: sortie.id, membreId: membre.id}) }}"
-                                          method="post" style="display: inline;"
-                                          onsubmit="return confirm('Êtes-vous sûr de vouloir désinscrire ce membre ?');">
-                                        <input type="hidden" name="_token"
-                                               value="{{ csrf_token('desinscription_membre' ~ sortie.id ~ membre.id) }}">
-                                        <button type="submit" class="btn btn-sm btn-danger">Désinscrire</button>
-                                    </form>
-                                </li>
-                                {% set found = true %}
+                        {# Description de la sortie #}
+                        {% if sortie.infos %}
+                            <div class="mb-4">
+                                <h5 class="text-primary-brand mb-3">
+                                    <i class="bi bi-card-text me-2"></i>Description
+                                </h5>
+                                <div class="sortie-description-content">
+                                    <p class="mb-0">{{ sortie.infos|nl2br }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {# Colonne latérale - Inscription et participants #}
+                <div class="col-lg-4">
+                    {# Widget d'inscription #}
+                    <div class="card-modern mb-4 sortie-inscription-widget">
+                        <div class="text-center mb-3">
+                            <h4 class="text-primary-brand mb-2">
+                                <i class="bi bi-person-plus me-2"></i>Inscription
+                            </h4>
+                            <div class="participants-progress mb-3">
+                                {% set totalParticipants = sortie.participants|length + sortie.membresFamilleInscrits|length %}
+                                {% set participationRate = (totalParticipants / sortie.nbInscriptionMax * 100)|round %}
+                                <div class="progress sortie-progress mb-2">
+                                    <div class="progress-bar" style="width: {{ participationRate }}%"></div>
+                                </div>
+                                <span class="participants-counter fs-5 fw-bold">
+                                    {{ totalParticipants }}/{{ sortie.nbInscriptionMax }}
+                                </span>
+                                <small class="d-block text-muted">participants inscrits</small>
+                            </div>
+                        </div>
+
+                        {# Date limite d'inscription et info remboursement #}
+                        {% if sortie.dateLimiteInscription %}
+                            <div class="date-limite-info mb-3">
+                                <div class="alert alert-warning mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-hourglass-split me-2"></i>
+                                        <div>
+                                            <strong>Date limite d'inscription :</strong><br>
+                                            <span class="fw-bold">{{ sortie.dateLimiteInscription|date('d/m/Y à H:i') }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info mb-0">
+                                    <div class="d-flex align-items-start">
+                                        <i class="bi bi-info-circle me-2 mt-1"></i>
+                                        <div>
+                                            <small>
+                                                <strong>Important :</strong> Cette date est également la limite pour être remboursé en cas de désinscription.
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {# Bouton d'inscription #}
+                        {% if sortie.etat.libelle == 'Ouverte' and totalParticipants < sortie.nbInscriptionMax %}
+                            <div class="text-center">
+                                <a href="{{ path('paiement_choisir_membres', {'id': sortie.id}) }}" class="btn btn-modern-primary w-100 mb-2">
+                                    <i class="bi bi-credit-card me-2"></i>S'inscrire à cette sortie
+                                </a>
+                                <small class="text-muted">Paiement sécurisé via Stripe</small>
+                            </div>
+                        {% elseif totalParticipants >= sortie.nbInscriptionMax %}
+                            <div class="text-center">
+                                <button class="btn btn-outline-secondary w-100" disabled>
+                                    <i class="bi bi-x-circle me-2"></i>Sortie complète
+                                </button>
+                            </div>
+                        {% else %}
+                            <div class="text-center">
+                                <button class="btn btn-outline-secondary w-100" disabled>
+                                    <i class="bi bi-lock me-2"></i>Inscriptions fermées
+                                </button>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {# Liste des participants #}
+                    <div class="card-modern">
+                        <h4 class="text-primary-brand mb-3">
+                            <i class="bi bi-people me-2"></i>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                Participants
+                            {% else %}
+                                Vos inscriptions
                             {% endif %}
-                        {% endfor %}
-                    </ul>
-                    {% if not found %}
-                        Vous et vos membres de famille n'êtes pas inscrits à cette sortie.
-                    {% endif %}
-                </td>
-            </tr>
-        {% endif %}
+                        </h4>
 
-        </tbody>
-    </table>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            {# Vue admin - Tous les participants #}
+                            {% if sortie.participants is empty and sortie.membresFamilleInscrits is empty %}
+                                <div class="text-center py-3">
+                                    <i class="bi bi-person-x" style="font-size: 2rem; color: var(--text-light);"></i>
+                                    <p class="text-muted mt-2 mb-0">Aucun participant inscrit pour le moment.</p>
+                                </div>
+                            {% else %}
+                                <div class="participants-list">
+                                    {% for participant in sortie.participants %}
+                                        <div class="participant-item">
+                                            <div class="participant-info">
+                                                <i class="bi bi-person-circle text-primary-brand"></i>
+                                                <div>
+                                                    <a href="{{ path('app_user_show', {id: participant.id}) }}" class="participant-name">
+                                                        {{ participant.prenom }} {{ participant.nom }}
+                                                    </a>
+                                                    <small class="participant-type">Utilisateur principal</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                    {% for membre in sortie.membresFamilleInscrits %}
+                                        <div class="participant-item">
+                                            <div class="participant-info">
+                                                <i class="bi bi-people-fill text-accent-brand"></i>
+                                                <div>
+                                                    <span class="participant-name">{{ membre.prenom }} {{ membre.nom }}</span>
+                                                    <small class="participant-type">
+                                                        Membre de la famille de
+                                                        <a href="{{ path('app_user_show', {id: membre.famille.user.id}) }}">
+                                                            {{ membre.famille.user.prenom }} {{ membre.famille.user.nom }}
+                                                        </a>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
 
-    <a href="{{ path('app_sortie_index') }}" class="btn btn-secondary mt-3">Retour à la liste</a>
+                        {% elseif is_granted('ROLE_USER') %}
+                            {# Vue utilisateur - Ses propres inscriptions #}
+                            {% set found = false %}
+                            <div class="participants-list">
+                                {# Si l'utilisateur est lui-même inscrit #}
+                                {% if sortie.participants.contains(app.user) %}
+                                    <div class="participant-item">
+                                        <div class="participant-info">
+                                            <i class="bi bi-person-check-fill text-success"></i>
+                                            <div>
+                                                <span class="participant-name">{{ app.user.prenom }} {{ app.user.nom }}</span>
+                                                <small class="participant-type">Vous êtes inscrit(e)</small>
+                                            </div>
+                                        </div>
+                                        <div class="participant-actions">
+                                            <form action="{{ path('sortie_desinscription', {id: sortie.id}) }}"
+                                                  method="post" class="d-inline">
+                                                <input type="hidden" name="_token"
+                                                       value="{{ csrf_token('desinscription_utilisateur' ~ sortie.id) }}">
+                                                <button type="submit" class="btn btn-outline-warning btn-sm"
+                                                        onclick="return confirm('Êtes-vous sûr de vouloir vous désinscrire ? (vous serez remboursé automatiquement)')">
+                                                    <i class="bi bi-person-dash"></i> Se désinscrire
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    {% set found = true %}
+                                {% endif %}
 
-    <a href="{{ path('paiement_choisir_membres', {'id': sortie.id}) }}">Inscrire ma famille</a>
+                                {# Membres de famille inscrits #}
+                                {% for membre in sortie.membresFamilleInscrits %}
+                                    {% if app.user.famille is not null and membre.famille == app.user.famille %}
+                                        <div class="participant-item">
+                                            <div class="participant-info">
+                                                <i class="bi bi-people-fill text-accent-brand"></i>
+                                                <div>
+                                                    <span class="participant-name">{{ membre.prenom }} {{ membre.nom }}</span>
+                                                    <small class="participant-type">Membre de votre famille</small>
+                                                </div>
+                                            </div>
+                                            <div class="participant-actions">
+                                                <form action="{{ path('sortie_desinscription_membre', {id: sortie.id, membreId: membre.id}) }}"
+                                                      method="post" class="d-inline">
+                                                    <input type="hidden" name="_token"
+                                                           value="{{ csrf_token('desinscription_membre' ~ sortie.id ~ membre.id) }}">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm"
+                                                            onclick="return confirm('Êtes-vous sûr de vouloir désinscrire ce membre ? (vous serez remboursé automatiquement)')">
+                                                        <i class="bi bi-person-dash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        {% set found = true %}
+                                    {% endif %}
+                                {% endfor %}
 
-    {% if is_granted('ROLE_ADMIN') %}
-        <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}">Modifier</a>
-    {% endif %}
+                                {% if not found %}
+                                    <div class="text-center py-3">
+                                        <i class="bi bi-person-x" style="font-size: 2rem; color: var(--text-light);"></i>
+                                        <p class="text-muted mt-2 mb-0">Vous et vos membres de famille n'êtes pas inscrits à cette sortie.</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-
-    {% if is_granted('ROLE_ADMIN') %}
-        {{ include('sortie/_delete_form.html.twig') }}
-    {% endif %}
+            {# Actions administrateur #}
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card-modern">
+                            <h4 class="text-primary-brand mb-3">
+                                <i class="bi bi-gear me-2"></i>Actions administrateur
+                            </h4>
+                            <div class="d-flex gap-2">
+                                <a href="{{ path('app_sortie_edit', {'id': sortie.id}) }}" class="btn btn-modern-primary">
+                                    <i class="bi bi-pencil me-1"></i>Modifier la sortie
+                                </a>
+                                {% if sortie.etat.libelle == 'Créée' %}
+                                    <a href="{{ path('sortie_publier', {'id': sortie.id}) }}" class="btn btn-outline-modern">
+                                        <i class="bi bi-upload me-1"></i>Publier la sortie
+                                    </a>
+                                {% endif %}
+                                <div class="ms-auto">
+                                    {{ include('sortie/_delete_form.html.twig') }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if is_granted('ROLE_USER') and not is_granted('ROLE_ADMIN') %}
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="alert alert-info d-flex align-items-start">
+                            <i class="bi bi-info-circle-fill me-3 mt-1" style="font-size: 1.2rem;"></i>
+                            <div>
+                                <h6 class="alert-heading mb-2">
+                                    <i class="bi bi-people me-1"></i>Inscription des membres de famille
+                                </h6>
+                                <p class="mb-2">
+                                    Pour inscrire un membre de votre famille à cette sortie, vous devez d'abord l'ajouter à votre profil familial.
+                                </p>
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="{{ path('app_user_show', {'id': app.user.id}) }}" class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-person-gear me-1"></i>Aller à mon profil
+                                    </a>
+                                    <small class="text-muted align-self-center">
+                                        Puis sélectionnez "Voir les membres de ma famille"
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </section>
 {% endblock %}

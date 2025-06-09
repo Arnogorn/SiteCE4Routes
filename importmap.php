@@ -25,12 +25,6 @@ return [
     '@hotwired/turbo' => [
         'version' => '7.3.0',
     ],
-
-    'styles/sortie-inscription.css' => [
-        'path' => './assets/styles/sortie-inscription.css',
-        'type' => 'css',
-        'entrypoint' => true,
-    ],
     'styles/planning.css' => [
         'path' => './assets/styles/planning.css',
         'type' => 'css',
@@ -45,5 +39,10 @@ return [
         'path' => './assets/styles/darkTheme.css',
         'type' => 'css',
         'entrypoint' => true,
-    ]
+    ],
+    'styles/sorties.css' => [
+        'path' => './assets/styles/sorties.css',
+        'type' => 'css',
+        'entrypoint' => true,
+]
 ];

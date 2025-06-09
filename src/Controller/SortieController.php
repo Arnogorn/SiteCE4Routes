@@ -203,7 +203,7 @@ final class SortieController extends AbstractController
     public function inscription(Sortie $sortie, EntityManagerInterface $em, Security $security): Response
     {
 
-        //TODO gérer les conditions d'inscription aux sorties (en fonction de l'état)
+
         /** @var User $user */
         $user = $security->getUser();
 

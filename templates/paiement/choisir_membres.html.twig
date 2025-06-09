@@ -1,129 +1,192 @@
 {% extends 'base.html.twig' %}
 
-{% block body %}
+{% block title %}Inscription - {{ sortie.titre }}{% endblock %}
 
-        <div class="container sortie-inscription">
+{% block body %}
+    <section class="py-5">
+        <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-8">
-                    <h1 class="mb-4">
-                        <i class="bi bi-calendar-event me-2"></i>
-                        Inscription à la sortie : {{ sortie.titre }}
-                    </h1>
+                    {# En-tête avec navigation #}
+                    <div class="mb-4">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a href="{{ path('app_sortie_index') }}" class="text-decoration-none">
+                                        <i class="bi bi-calendar-event me-1"></i>Nos Sorties
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item">
+                                    <a href="{{ path('app_sortie_show', {'id': sortie.id}) }}" class="text-decoration-none">
+                                        {{ sortie.titre }}
+                                    </a>
+                                </li>
+                                <li class="breadcrumb-item active" aria-current="page">Inscription</li>
+                            </ol>
+                        </nav>
+                        <h1 class="text-primary-brand mb-3">
+                            <i class="bi bi-person-plus-fill" style="color: var(--accent-color);"></i>
+                            Inscription à la sortie
+                        </h1>
+                        <div class="inscription-sortie-header">
+                            <h2 class="text-accent-brand mb-0">{{ sortie.titre }}</h2>
+                            <div class="sortie-meta">
+                                <span class="sortie-date">
+                                    <i class="bi bi-calendar-event"></i>
+                                    {{ sortie.date ? sortie.date|format_datetime('full', 'short', locale='fr') : 'Date non définie' }}
+                                </span>
+                                <span class="sortie-prix">
+                                    <i class="bi bi-currency-euro"></i>
+                                    {{ sortie.prix }} € par personne
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
+                    {# Formulaire d'inscription #}
                     <form action="{{ path('paiement_checkout', {id: sortie.id}) }}"
                           method="post"
-                          data-prix-unitaire="{{ sortie.prix|number_format(2, '.', '') }}">
+                          data-prix-unitaire="{{ sortie.prix|number_format(2, '.', '') }}"
+                          class="inscription-form">
 
-                        <fieldset class="mb-4">
-                            <legend class="h4 mb-3">
-                                <i class="bi bi-people me-2"></i>
-                                Qui souhaitez-vous inscrire ?
-                            </legend>
-
-                            {# Case "Moi-même" #}
-                            <div class="form-check">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       name="membres[]"
-                                       value="me"
-                                       id="user_self"
-                                        {% if app.user in sortie.participants %} disabled {% endif %}>
-                                <label class="form-check-label" for="user_self">
-                                    <strong>Moi-même</strong> ({{ app.user.prenom }} {{ app.user.nom }})
-                                    {% if app.user in sortie.participants %}
-                                        <span class="badge bg-secondary ms-2">déjà inscrit</span>
-                                    {% endif %}
-                                </label>
+                        {# Section sélection des participants #}
+                        <div class="card-modern mb-4">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="section-icon">
+                                    <i class="bi bi-people-fill text-accent-brand"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-primary-brand mb-1">Sélection des participants</h3>
+                                    <p class="text-muted mb-0">Choisissez qui vous souhaitez inscrire à cette sortie</p>
+                                </div>
                             </div>
 
-                            {# Boucle sur les membres de la famille #}
-                            {% for membre in app.user.famille.membre %}
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           name="membres[]"
-                                           value="{{ membre.id }}"
-                                           id="membre_{{ membre.id }}"
-                                            {% if membre in sortie.membresFamilleInscrits %} disabled {% endif %}>
-                                    <label class="form-check-label" for="membre_{{ membre.id }}">
-                                        <strong>{{ membre.prenom }} {{ membre.nom }}</strong>
-                                        {% if membre in sortie.membresFamilleInscrits %}
-                                            <span class="badge bg-secondary ms-2">déjà inscrit</span>
-                                        {% endif %}
-                                    </label>
+                            <div class="participants-selection">
+                                {# Case "Moi-même" #}
+                                <div class="participant-option-modern {% if app.user in sortie.participants %}participant-disabled{% endif %}">
+                                    <div class="form-check participant-form-check">
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="membres[]"
+                                               value="me"
+                                               id="user_self"
+                                                {% if app.user in sortie.participants %} disabled {% endif %}>
+                                        <label class="form-check-label participant-label-modern" for="user_self">
+                                            <div class="participant-info-modern">
+                                                <div class="participant-avatar">
+                                                    <i class="bi bi-person-circle"></i>
+                                                </div>
+                                                <div class="participant-details">
+                                                    <span class="participant-name"><strong>{{ app.user.prenom }} {{ app.user.nom }}</strong></span>
+                                                    <small class="participant-type">Vous-même</small>
+                                                </div>
+                                            </div>
+                                            {% if app.user in sortie.participants %}
+                                                <span class="participant-status">
+                                                    <i class="bi bi-check-circle-fill"></i>
+                                                    déjà inscrit
+                                                </span>
+                                            {% else %}
+                                                <span class="participant-price">{{ sortie.prix }} €</span>
+                                            {% endif %}
+                                        </label>
+                                    </div>
                                 </div>
-                            {% else %}
-                                <div class="alert alert-info">
-                                    <i class="bi bi-info-circle me-2"></i>
-                                    Aucun membre de famille enregistré.
-                                </div>
-                            {% endfor %}
-                        </fieldset>
 
-                        {# Section informations tarif #}
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title">
-                                    <i class="bi bi-tag me-2"></i>
-                                    Informations tarifaires
-                                </h5>
-                                <p class="card-text prix-unitaire">
-                                    Tarif unitaire : <strong>{{ sortie.prix }} €</strong> par personne
-                                </p>
+                                {# Boucle sur les membres de la famille - Garde les classes originales pour le JS #}
+                                {% for membre in app.user.famille.membre %}
+                                    <div class="participant-option-modern {% if membre in sortie.membresFamilleInscrits %}participant-disabled{% endif %}">
+                                        <div class="form-check participant-form-check">
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   name="membres[]"
+                                                   value="{{ membre.id }}"
+                                                   id="membre_{{ membre.id }}"
+                                                    {% if membre in sortie.membresFamilleInscrits %} disabled {% endif %}>
+                                            <label class="form-check-label participant-label-modern" for="membre_{{ membre.id }}">
+                                                <div class="participant-info-modern">
+                                                    <div class="participant-avatar">
+                                                        <i class="bi bi-person"></i>
+                                                    </div>
+                                                    <div class="participant-details">
+                                                        <span class="participant-name"><strong>{{ membre.prenom }} {{ membre.nom }}</strong></span>
+                                                        <small class="participant-type">Membre de famille</small>
+                                                    </div>
+                                                </div>
+                                                {% if membre in sortie.membresFamilleInscrits %}
+                                                    <span class="participant-status">
+                                                        <i class="bi bi-check-circle-fill"></i>
+                                                        déjà inscrit
+                                                    </span>
+                                                {% else %}
+                                                    <span class="participant-price">{{ sortie.prix }} €</span>
+                                                {% endif %}
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="empty-state">
+                                        <i class="bi bi-people" style="font-size: 2rem; color: var(--text-light);"></i>
+                                        <p class="text-muted mt-2 mb-0">Aucun membre de famille enregistré.</p>
+                                    </div>
+                                {% endfor %}
                             </div>
                         </div>
 
-                        {# Section récapitulatif #}
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <div class="row align-items-center">
-                                    <div class="col-md-6">
-                                        <h5 class="mb-1">
-                                            <i class="bi bi-calculator me-2"></i>
-                                            Récapitulatif
-                                        </h5>
-                                        <p class="mb-0">
-                                            Participants sélectionnés : <span id="compteur" class="fw-bold">0</span>
-                                        </p>
+                        {# Section récapitulatif et paiement #}
+                        <div class="card-modern">
+                            <div class="d-flex align-items-center mb-4">
+                                <div class="section-icon">
+                                    <i class="bi bi-calculator text-accent-brand"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-primary-brand mb-1">Récapitulatif</h4>
+                                    <p class="text-muted mb-0">Vérifiez votre sélection avant de procéder au paiement</p>
+                                </div>
+                            </div>
+
+                            {# Compteur et total #}
+                            <div class="recap-summary mb-4">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="recap-label">Participants sélectionnés</span>
+                                        <span id="compteur" class="recap-count">0</span>
                                     </div>
-                                    <div class="col-md-6 text-md-end">
-                                        <p class="mb-1">Montant total :</p>
-                                        <p class="mb-0" style="font-size: 1.5rem; font-weight: bold; color: var(--bs-primary);">
+                                    <div class="text-end">
+                                        <div class="recap-label">Montant total</div>
+                                        <div class="recap-total">
                                             <span id="total">0.00</span> €
-                                        </p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+
+                            {# Liste récapitulative - ID conservé pour le JS #}
+                            <ul id="recapitulatif" class="recap-list-modern mb-4"></ul>
+
+                            {# Bouton de soumission - ID conservé pour le JS #}
+                            <div class="action-buttons">
+                                <button type="submit" id="btn-payer" class="btn btn-payment-modern" disabled>
+                                    <i class="bi bi-credit-card me-2"></i>
+                                    Sélectionnez au moins une personne
+                                </button>
+
+                                <a href="{{ path('app_sortie_show', { id: sortie.id }) }}" class="btn btn-outline-modern w-100 mt-3">
+                                    <i class="bi bi-arrow-left me-2"></i>Retour à la sortie
+                                </a>
+                            </div>
+
+                            {# Info sécurité #}
+                            <div class="security-info">
+                                <div class="d-flex align-items-center justify-content-center gap-2">
+                                    <i class="bi bi-shield-check"></i>
+                                    <span>Paiement sécurisé via Stripe</span>
+                                </div>
+                            </div>
                         </div>
-
-                        {# Liste récapitulative #}
-                        <ul id="recapitulatif" class="list-group mb-4"></ul>
-
-                        {# Bouton de soumission #}
-                        <div class="d-grid">
-                            <button type="submit" id="btn-payer" class="btn btn-secondary btn-lg" disabled>
-                                <i class="bi bi-credit-card me-2"></i>
-                                Sélectionnez au moins une personne
-                            </button>
-                        </div>
-
-                        <div class="d-grid mt-3 mb-4">
-                            <a href="{{ path('app_sortie_show', { id: sortie.id }) }}" class="btn btn-outline-secondary">
-                                ← Retour à la sortie
-                            </a>
-                        </div>
-
-                        <p class="text-muted text-center mt-3 small">
-                            <i class="bi bi-shield-check me-1"></i>
-                            Paiement sécurisé via Stripe
-                        </p>
-
                     </form>
                 </div>
             </div>
         </div>
-
-
+    </section>
 {% endblock %}
-
-

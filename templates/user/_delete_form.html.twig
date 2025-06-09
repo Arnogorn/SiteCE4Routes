@@ -1,8 +1,108 @@
-<form method="post" action="{{ path('app_user_delete', {'id': user.id}) }}" class="d-inline">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
-    <button type="submit" class="btn btn-danger"
-            style="background: linear-gradient(135deg, var(--error-color) 0%, #c82333 100%); border: none;"
-            onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
-        <i class="bi bi-trash me-2"></i>Confirmer la suppression
-    </button>
-</form>
+<div class="container-fluid">
+    <!-- Informations utilisateur -->
+    <div class="card border-primary mb-3">
+        <div class="card-header bg-primary text-white">
+            <h6 class="mb-0">👤 {{ user.prenom }} {{ user.nom }} (ID: {{ user.id }})</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <p><strong>Email :</strong> {{ user.email }}</p>
+                    <p><strong>Téléphone :</strong> {{ user.telephone }}</p>
+                    {% if user.famille and user.famille.membre|length > 0 %}
+                        <p><strong>Famille :</strong> {{ user.famille.membre|length }} membre(s)</p>
+                        <ul class="list-unstyled ms-3">
+                            {% for membre in user.famille.membre %}
+                                <li><small>• {{ membre.prenom }} {{ membre.nom }}</small></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                    {% if user.sorties is defined and user.sorties|length > 0 %}
+                        <p><strong>Sorties :</strong> {{ user.sorties|length }} participation(s)</p>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    <div class="alert alert-info py-2">
+                        <small>
+                            <strong>Suppression complète :</strong><br>
+                            • Utilisateur<br>
+                            • Famille et membres<br>
+                            • Inscriptions sorties<br>
+                            • Tous les paiements<br>
+                            • Historique
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="card border-warning mb-3">
+        <div class="card-header bg-warning text-dark">
+            <h6 class="mb-0">⚡ Actions</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Analyse -->
+                <div class="col-md-6">
+                    <h6>1. Vérifier les paiements</h6>
+                    <p><small>Analyser les paiements confirmés avant suppression</small></p>
+                    <a href="{{ path('admin_user_analyze_payments', {'id': user.id}) }}"
+                       class="btn btn-info btn-sm">
+                        💳 Analyser les paiements
+                    </a>
+                </div>
+
+                <!-- Suppression -->
+                <div class="col-md-6">
+                    <h6>2. Supprimer complètement</h6>
+                    <p><small>Supprime tout : utilisateur, famille, paiements</small></p>
+
+                    <!-- Formulaire de suppression -->
+                    <form method="post" action="{{ path('admin_user_delete_complete', {'id': user.id}) }}"
+                          onsubmit="return confirmDeletion()">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_user_' ~ user.id) }}">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            🗑️ Supprimer définitivement
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Avertissements -->
+    <div class="alert alert-warning">
+        <strong>⚠️ Important :</strong>
+        <ul class="mb-0">
+            <li>La suppression est <strong>irréversible</strong></li>
+            <li>Tous les paiements seront supprimés (même ceux confirmés)</li>
+            <li>Les remboursements doivent être traités <strong>manuellement dans Stripe</strong></li>
+            <li>Toute la famille sera supprimée</li>
+            <li>Analysez d'abord les paiements pour connaître les montants à rembourser</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    function confirmDeletion() {
+        const userName = '{{ user.prenom }} {{ user.nom }}';
+        const familyCount = {{ user.famille ? user.famille.membre|length : 0 }};
+
+        let message = `Supprimer définitivement ${userName} ?\n\n`;
+        message += `Ceci supprimera :\n`;
+        message += `• L'utilisateur\n`;
+        if (familyCount > 0) {
+            message += `• Sa famille (${familyCount} membre(s))\n`;
+        }
+        message += `• Toutes ses inscriptions aux sorties\n`;
+        message += `• TOUS ses paiements (même confirmés)\n`;
+        message += `• Son historique\n\n`;
+        message += `⚠️ ATTENTION : Les remboursements devront être traités manuellement dans Stripe !\n\n`;
+        message += `Cette action est IRRÉVERSIBLE.\n\n`;
+        message += `Continuer ?`;
+
+        return confirm(message);
+    }
+</script>

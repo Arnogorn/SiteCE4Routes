@@ -3,69 +3,223 @@
 {% block title %}Historique des paiements (admin){% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <h1 class="mb-4">📋 Historique des paiements - Administration</h1>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>📋 Historique des paiements - Administration</h1>
 
-    <form method="get" class="row g-3 mb-4">
-        <div class="col-md-4">
-            <label for="utilisateur" class="form-label">ID utilisateur</label>
-            <input type="text" id="utilisateur" name="utilisateur" class="form-control"
-                   value="{{ filters.utilisateur ?? '' }}">
+            {% if statistiques is defined %}
+                <div class="badge bg-primary fs-6">
+                    {{ logs|length }} résultat(s)
+                </div>
+            {% endif %}
         </div>
 
-        <div class="col-md-4">
-            <label for="type" class="form-label">Type</label>
-            <select id="type" name="type" class="form-select">
-                <option value="">-- Tous --</option>
-                <option value="paiement_annule" {% if filters.type == 'paiement_annule' %}selected{% endif %}>Annulé</option>
-                <option value="paiement_reussi" {% if filters.type == 'paiement_reussi' %}selected{% endif %}>Réussi</option>
-            </select>
+        {# Statistiques rapides #}
+        {% if statistiques is defined %}
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title text-primary">{{ statistiques.total }}</h5>
+                            <p class="card-text">Total paiements</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title text-success">{{ statistiques.reussis }}</h5>
+                            <p class="card-text">Réussis</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title text-danger">{{ statistiques.annules }}</h5>
+                            <p class="card-text">Annulés</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h5 class="card-title text-info">{{ statistiques.taux_reussite }}%</h5>
+                            <p class="card-text">Taux de réussite</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        {# Formulaire de filtrage amélioré #}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">🔍 Filtres de recherche</h5>
+            </div>
+            <div class="card-body">
+                <form method="get" class="row g-3">
+                    <div class="col-md-4">
+                        <label for="email" class="form-label">Email utilisateur</label>
+                        <input type="email" id="email" name="email" class="form-control"
+                               value="{{ filters.email ?? '' }}"
+                               placeholder="ex: utilisateur@example.com">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="nom" class="form-label">Nom ou Prénom</label>
+                        <input type="text" id="nom" name="nom" class="form-control"
+                               value="{{ filters.nom ?? '' }}"
+                               placeholder="ex: Dupont ou Marie">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="type" class="form-label">Type de paiement</label>
+                        <select id="type" name="type" class="form-select">
+                            <option value="">-- Tous --</option>
+                            <option value="paiement_annule" {% if (filters.type?? '' ) == 'paiement_annule' %}selected{% endif %}>❌ Annulé</option>
+                            <option value="paiement_reussi" {% if (filters.type?? '' ) == 'paiement_reussi' %}selected{% endif %}>✅ Réussi</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="sortie" class="form-label">Titre de la sortie</label>
+                        <input type="text" id="sortie" name="sortie" class="form-control"
+                               value="{{ filters.sortie ?? '' }}"
+                               placeholder="ex: Randonnée">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="date_debut" class="form-label">Date début</label>
+                        <input type="datetime-local" id="date_debut" name="date_debut" class="form-control"
+                               value="{{ filters.date_debut ?? '' }}">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="date_fin" class="form-label">Date fin</label>
+                        <input type="datetime-local" id="date_fin" name="date_fin" class="form-control"
+                               value="{{ filters.date_fin ?? '' }}">
+                    </div>
+
+                    <div class="col-12">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                🔍 Filtrer
+                            </button>
+                            <a href="{{ path('admin_index_paiement') }}" class="btn btn-outline-secondary">
+                                🔄 Réinitialiser
+                            </a>
+                            {% if logs is not empty %}
+                                <a href="{{ path('historique_export_csv', filters) }}" class="btn btn-success">
+                                    📤 Exporter CSV ({{ logs|length }} lignes)
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <div class="col-md-4 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary">Filtrer</button>
-        </div>
-    </form>
-
-    <div class="mb-3">
-        <a href="{{ path('historique_export_csv', filters) }}" class="btn btn-success">
-            📤 Exporter au format CSV
-        </a>
+        {# Résultats #}
+        {% if logs is empty %}
+            <div class="alert alert-info d-flex align-items-center">
+                <i class="bi bi-info-circle me-2"></i>
+                <div>
+                    {% if filters is empty %}
+                        Aucun paiement enregistré pour le moment.
+                    {% else %}
+                        Aucun résultat trouvé pour ces critères de recherche.
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">📊 Résultats ({{ logs|length }})</h5>
+                    <small class="text-muted">Triés par date décroissante</small>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th>📅 Date</th>
+                            <th>👤 Utilisateur</th>
+                            <th>💳 Type</th>
+                            <th>🎯 Sortie</th>
+                            <th>📝 Message</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for log in logs %}
+                            <tr class="{% if log.type == 'paiement_annule' %}table-danger{% elseif log.type == 'paiement_reussi' %}table-success{% endif %}">
+                                <td>
+                                    <small class="text-muted">{{ log.date|date('d/m/Y') }}</small><br>
+                                    <strong>{{ log.date|date('H:i') }}</strong>
+                                </td>
+                                <td>
+                                    <div>
+                                        <strong>{{ log.utilisateur.prenom }} {{ log.utilisateur.nom }}</strong><br>
+                                        <small class="text-muted">{{ log.utilisateur.email }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if log.type == 'paiement_annule' %}
+                                        <span class="badge bg-danger">❌ Annulé</span>
+                                    {% elseif log.type == 'paiement_reussi' %}
+                                        <span class="badge bg-success">✅ Réussi</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ log.type }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if log.sortie %}
+                                        <strong>{{ log.sortie.titre }}</strong><br>
+                                        <small class="text-muted">{{ log.sortie.date|date('d/m/Y') }}</small>
+                                    {% else %}
+                                        <span class="text-muted">—</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small>{{ log.message }}</small>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
     </div>
 
-    {% if logs is empty %}
-        <div class="alert alert-info">Aucun résultat pour ces filtres.</div>
-    {% else %}
-        <table class="table table-bordered table-hover">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Utilisateur</th>
-                    <th>Type</th>
-                    <th>Sortie</th>
-                    <th>Message</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for log in logs %}
-                    <tr>
-                        <td>{{ log.date|date('d/m/Y H:i') }}</td>
-                        <td>{{ log.utilisateur.email }}</td>
-                        <td>
-                            {% if log.type == 'paiement_annule' %}
-                                ❌ Annulé
-                            {% elseif log.type == 'paiement_reussi' %}
-                                ✅ Réussi
-                            {% else %}
-                                {{ log.type }}
-                            {% endif %}
-                        </td>
-                        <td>{{ log.sortie ? log.sortie.titre : '—' }}</td>
-                        <td>{{ log.message }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-complétion simple pour l'email (optionnel)
+            const emailInput = document.getElementById('email');
+            if (emailInput) {
+                emailInput.addEventListener('input', function() {
+                    // Vous pouvez ajouter une logique d'auto-complétion ici
+                });
+            }
+
+            // Validation des dates
+            const dateDebut = document.getElementById('date_debut');
+            const dateFin = document.getElementById('date_fin');
+
+            if (dateDebut && dateFin) {
+                dateDebut.addEventListener('change', function() {
+                    if (dateFin.value && this.value > dateFin.value) {
+                        alert('La date de début ne peut pas être postérieure à la date de fin');
+                        this.value = '';
+                    }
+                });
+
+                dateFin.addEventListener('change', function() {
+                    if (dateDebut.value && this.value < dateDebut.value) {
+                        alert('La date de fin ne peut pas être antérieure à la date de début');
+                        this.value = '';
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}
