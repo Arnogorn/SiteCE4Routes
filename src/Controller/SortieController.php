@@ -227,8 +227,8 @@ final class SortieController extends AbstractController
             return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
         } elseif ($sortie->getNombreInscritsTotal() >= $sortie->getNbInscriptionMax()) {
             $this->addFlash('danger', 'Cette sortie est complète, vous ne pouvez pas vous inscrire.');
-        } elseif ($sortie->getDateLimiteInscription() < new \DateTime()) {
-            $this->addFlash('danger', 'La date limite d\'inscription est dépassée.');
+        } elseif ((new \DateTime()) > (clone $sortie->getDate())->sub(new DateInterval('PT30M'))) {
+            $this->addFlash('danger', 'Les inscriptions sont désormais fermées (30 minutes avant le début).');
         } else {
             $sortie->addParticipant($user);
             $em->flush();
@@ -339,8 +339,8 @@ final class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Aucune famille trouvée.');
         }
 
-        if ($sortie->getDateLimiteInscription() < new \DateTime()) {
-            $this->addFlash('danger', 'La date limite d\'inscription est dépassée pour cette sortie.');
+        if ((new \DateTime()) > (clone $sortie->getDate())->sub(new DateInterval('PT30M'))) {
+            $this->addFlash('danger', 'Les inscriptions sont désormais fermées (30 minutes avant le début).');
             return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
         }
 
