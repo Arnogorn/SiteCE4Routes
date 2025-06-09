@@ -34,6 +34,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
+    #[Assert\NotBlank(message: 'Le mot de passe ne peut pas être vide.')]
+    #[Assert\Regex(
+        pattern: '/^(?=.*[A-Z])(?=.*[\d\W]).{8,}$/',
+        message: 'Le mot de passe doit comporter au moins 8 caractères, dont une majuscule et un chiffre ou un caractère spécial.'
+    )]
+    private ?string $plainPassword = null;
+
     /**
      * @var string The hashed password
      */
@@ -80,15 +87,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 20)]
     #[Assert\NotBlank(message: 'Le téléphone ne peut pas être vide')]
     #[Assert\Regex(
-        pattern: '/^[0-9]{10}$/',
-        message: 'Le numéro de téléphone doit contenir 10 chiffres pour un numéro français ou commencer par 00(indicateur pays) pour un numéro étranger'
+        pattern: '/^(?:[0-9]{10}|00\d{6,14}|\+\d{6,14})$/',
+        message: 'Le numéro doit être soit 10 chiffres, soit commencer par 00 suivi de 6 à 14 chiffres, ou par + suivi de 6 à 14 chiffres.'
     )]
     private ?string $telephone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Regex(
-        pattern: '/^[\s\S]{0,255}$/',
-        message: 'Le nom de la photo ne peut dépasser 255 caractères.'
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Le nom de la photo ne peut dépasser {{ limit }} caractères.'
     )]
     private ?string $photo = null;
 
@@ -100,9 +107,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $telPersContact = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Regex(
-        pattern: '/^[\s\S]{0,255}$/',
-        message: 'Les allergies ne peuvent dépasser 255 caractères.'
+    #[Assert\Length(
+        max: 255,
+        maxMessage: 'Les allergies ne peuvent dépasser {{ limit }} caractères.'
     )]
     private ?string $allergies = null;
 
@@ -127,14 +134,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?bool $actif = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
-    #[Assert\Regex(
-        pattern: '/^[\s\S]{0,500}$/',
-        message: 'Les informations de l\'utilisateur ne peuvent dépasser 500 caractères.'
+    #[Assert\Length(
+        max: 500,
+        maxMessage: 'Les informations de l\'utilisateur ne peuvent dépasser {{ limit }} caractères.'
     )]
     private ?string $infos = null;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\NotNull(message: 'Le niveau est obligatoire.')]
     private ?Niveau $niveau = null;
 
     #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
@@ -228,6 +236,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): static
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }
