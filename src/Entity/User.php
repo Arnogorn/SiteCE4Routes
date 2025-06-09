@@ -34,11 +34,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
-    #[Assert\NotBlank(message: 'Le mot de passe ne peut pas être vide.')]
-    #[Assert\Regex(
-        pattern: '/^(?=.*[A-Z])(?=.*[\d\W]).{8,}$/',
-        message: 'Le mot de passe doit comporter au moins 8 caractères, dont une majuscule et un chiffre ou un caractère spécial.'
-    )]
     private ?string $plainPassword = null;
 
     /**
