@@ -116,17 +116,28 @@
 <footer class="footer-sticky">
     <div class="container-fluid px-3">
         {# Version desktop #}
-        <div class="d-none d-md-flex justify-content-between align-items-center">
+        <div class="d-none d-md-flex justify-content-between align-items-center w-100">
             <a href="https://www.google.fr/maps/search/?api=1&query=Ecuries+des+quatre+routes+35750+IFFENDIC"
                target="_blank" rel="noopener"
                class="text-white text-decoration-none d-flex align-items-center">
                 <i class="bi bi-geo-alt-fill me-2"></i>
                 <span>&copy; {{ "now"|date("Y") }} - Écuries Des 4 Routes - 217 Les Quatre Routes, 35750 Iffendic</span>
             </a>
-            <a id="phone-link" class="text-white text-decoration-none d-flex align-items-center">
-                <i class="bi bi-telephone-fill me-2"></i>
-                <span id="phone-display">Afficher le numéro</span>
-            </a>
+            <div class="d-flex align-items-center">
+                <a id="phone-link" class="text-white text-decoration-none d-flex align-items-center me-4">
+                    <i class="bi bi-telephone-fill me-2"></i>
+                    <span id="phone-display">Afficher le numéro</span>
+                </a>
+                <a href="https://www.facebook.com/people/Ecuries-des-4-routes/100037905025229/" class="text-white text-decoration-none me-3" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-facebook"></i>
+                </a>
+                <a href="https://www.instagram.com/ecuriesdes4routes/" class="text-white text-decoration-none me-3" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-instagram"></i>
+                </a>
+                <a href="https://www.tiktok.com/@lorrainekitzingdressage?_t=ZN-8x3waKV93WY&_r=1" class="text-white text-decoration-none" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-tiktok"></i>
+                </a>
+            </div>
         </div>
 
         {# Version mobile #}
@@ -152,6 +163,17 @@
                         </div>
                     </a>
                 </div>
+            </div>
+            <div class="d-flex justify-content-center align-items-center mt-3">
+                <a href="https://www.facebook.com/people/Ecuries-des-4-routes/100037905025229/" class="text-white text-decoration-none me-3" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-facebook footer-mobile-icon"></i>
+                </a>
+                <a href="https://www.instagram.com/ecuriesdes4routes/" class="text-white text-decoration-none me-3" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-instagram footer-mobile-icon"></i>
+                </a>
+                <a href="https://www.tiktok.com/@lorrainekitzingdressage?_t=ZN-8x3waKV93WY&_r=1" class="text-white text-decoration-none" target="_blank" rel="noopener noreferrer">
+                    <i class="bi bi-tiktok footer-mobile-icon"></i>
+                </a>
             </div>
             <div class="text-center">
                 <small class="footer-mobile-copyright" style="opacity: 0.7;">
