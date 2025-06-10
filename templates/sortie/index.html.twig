@@ -1,21 +1,82 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nos Sorties - Écuries des 4 Routes{% endblock %}
+{% block title %}Nos Activités - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <section class="py-5">
+    <section class="py-5 hero-modern">
         <div class="container">
-
-            <div class="text-center mb-5">
+            {# En-tête avec style moderne #}
+            <div class="text-center mb-5 fade-in-up">
                 <h1 class="text-primary-brand mb-3">
                     <i class="bi bi-calendar-event-fill" style="color: var(--accent-color);"></i>
-                    Nos Sorties Équestres
+                    Nos Activités Équestres
                     <i class="bi bi-calendar-event-fill" style="color: var(--accent-color);"></i>
                 </h1>
                 <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
                 <p class="mt-3" style="color: var(--text-secondary);">
                     Découvrez nos sorties et activités équestres exceptionnelles
                 </p>
+            </div>
+
+            {# Section Photos Showcase #}
+            <div class="photos-showcase">
+                <div class="photos-showcase-title">
+                    <h3>
+                        <i class="bi bi-camera"></i>
+                        Nos Sorties à Cheval
+                    </h3>
+                    <p>Découvrez nos balades et excursions équestres</p>
+                </div>
+
+                <div class="row g-4">
+                    {# Photo 1 - Balade au bord de l'eau #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/activites_1.jpeg') }}', 'Balade au lac de Trémelin', 'Nos sorties découverte dans des paysages magnifiques au bord de l\'eau')">
+                            <img src="{{ asset('images/activites_1.jpeg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Groupe de cavaliers lors d'une balade équestre au bord de l'eau">
+                            <div class="position-absolute top-3 end-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-zoom-in"></i>
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi bi-water me-2"></i>Balade au bord de l'eau
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Nos sorties découverte dans des paysages magnifiques
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Photo 2 - Balade en forêt #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/activites_2.jpg') }}', 'Balade en forêt', 'Promenades équestres à travers les sentiers forestiers verdoyants')">
+                            <img src="{{ asset('images/activites_2.jpg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Cavaliers en file indienne lors d'une balade en forêt">
+                            <div class="position-absolute top-3 end-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-zoom-in"></i>
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi bi-tree me-2"></i>Balade en forêt
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Promenades à travers les sentiers verdoyants
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {# Barre de recherche et filtres #}
@@ -387,4 +448,34 @@
             </div>
         </div>
     </section>
+
+    {# Modal pour affichage des photos en grand #}
+    <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-white" id="photoModalLabel"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <img id="photoModalImage" src="" alt="" class="w-100">
+                    <div class="p-3">
+                        <p id="photoModalDescription" class="text-white-50 mb-0"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPhotoModal(imageSrc, title, description) {
+            document.getElementById('photoModalLabel').textContent = title;
+            document.getElementById('photoModalImage').src = imageSrc;
+            document.getElementById('photoModalImage').alt = title;
+            document.getElementById('photoModalDescription').textContent = description;
+
+            const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+            modal.show();
+        }
+    </script>
 {% endblock %}

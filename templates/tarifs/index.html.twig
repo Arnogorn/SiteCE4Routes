@@ -3,48 +3,107 @@
 {% block title %}Poney club - Tarifs - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <section class="py-5">
+    <section class="py-5 hero-modern">
         <div class="container">
-            {# Section téléchargement PDF avec dates automatiques via extension Twig #}
-            <div class="row justify-content-center mb-5">
-                <div class="col-lg-8">
-                    <div class="card-modern text-center" style="background: linear-gradient(135deg, var(--primary-ultra-light) 0%, #ffffff 100%); border: 2px solid var(--primary-light);">
-                        <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
-                            <div class="text-center text-md-start">
-                                <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 3rem;"></i>
+        {# Section PDF d'inscription - Structure propre et simple #}
+        <div class="pdf-inscription-card">
+
+            {# Header PDF centré #}
+            <div class="pdf-header">
+                <i class="bi bi-file-earmark-pdf pdf-icon-large"></i>
+
+                <h4 class="pdf-title">
+                    <i class="bi bi-download"></i>
+                    Fiche d'inscription {{ current_season() }}
+                </h4>
+
+                <p class="pdf-description">
+                    Téléchargez votre fiche d'inscription pour la saison équestre {{ current_season() }}
+                </p>
+
+                <a href="{{ path('app_download_inscription_pdf') }}"
+                   class="pdf-download-btn"
+                   target="_blank">
+                    <i class="bi bi-download"></i>
+                    Télécharger le PDF
+                </a>
+
+                {# Section admin #}
+                {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                    <div class="pdf-admin-section">
+                        <a href="{{ path('app_admin_inscription_pdf') }}"
+                           class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-gear me-1"></i>Gérer le PDF
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+
+        </div>
+
+            {# Section photos #}
+            <div class="photos-showcase">
+                <div class="photos-showcase-title">
+                    <h3>
+                        <i class="bi bi-camera"></i>
+                        Notre Poney Club
+                    </h3>
+                    <p>Découvrez l'ambiance de nos cours</p>
+                </div>
+
+                <div class="row g-4">
+                    {# Photo 1 - Préparation et départ à cheval #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/poney_club_3.jpg') }}', 'Préparation et départ à cheval', 'Nos cavaliers se préparent pour un cours équestre')">
+                            <img src="{{ asset('images/poney_club_3.jpg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Groupe de cavaliers préparant leurs chevaux dans la cour des écuries avant une sortie équestre">
+                            <div class="position-absolute top-3 end-3">
+                        <span class="badge bg-dark bg-opacity-75">
+                            <i class="bi bi-zoom-in"></i>
+                        </span>
                             </div>
-                            <div class="text-center text-md-start flex-grow-1">
-                                <h4 class="text-primary-brand mb-2">
-                                    <i class="bi bi-download me-2"></i>Fiche d'inscription {{ current_season() }}
-                                </h4>
-                                <p class="text-muted mb-0">
-                                    Téléchargez votre fiche d'inscription pour la saison équestre {{ current_season() }}
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi bi-people me-2"></i>Préparation et départ
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Nos cavaliers se préparent pour un cours équestre
                                 </p>
                             </div>
-                            <div>
-                                <a href="{{ path('app_download_inscription_pdf') }}"
-                                   class="btn btn-modern-primary btn-lg"
-                                   target="_blank">
-                                    <i class="bi bi-download me-2"></i>
-                                    Télécharger le PDF
-                                </a>
+                        </div>
+                    </div>
+
+                    {# Photo 2 - Cours en manège #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/poney_club_2.jpg') }}', 'Cours d\'équitation en manège', 'Apprentissage dans un cadre sécurisé')">
+                            <img src="{{ asset('images/poney_club_2.jpg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Cours d'équitation en manège">
+                            <div class="position-absolute top-3 end-3">
+                        <span class="badge bg-dark bg-opacity-75">
+                            <i class="bi bi-zoom-in"></i>
+                        </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi bi-house me-2"></i>Cours en manège
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Apprentissage dans un cadre sécurisé
+                                </p>
                             </div>
                         </div>
-
-                        {# Lien d'administration pour les admins #}
-                        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
-                            <div class="mt-3 pt-3 border-top border-light">
-                                <a href="{{ path('app_admin_inscription_pdf') }}"
-                                   class="btn btn-outline-secondary btn-sm">
-                                    <i class="bi bi-gear me-1"></i>Gérer le PDF
-                                </a>
-                            </div>
-                        {% endif %}
                     </div>
                 </div>
             </div>
 
-                {# En-tête avec style moderne #}
+
+            {# En-tête avec style moderne #}
             <div class="text-center mb-5">
                 <h1 class="text-primary-brand mb-3">
                     Tarifs du poney club
@@ -101,7 +160,7 @@
                                             <h3 class="text-primary-brand mb-0">{{ categorie_nom }}</h3>
                                             {% if categorie_key == 'forfait' %}
                                                 <p style="font-size: 1rem;">34 séances à l'année</p>
-                                            <i style="font-size: 1rem;">Une majoration de 5% est applicable sur tous les montants si règlement en chèque vacances</i>
+                                                <i style="font-size: 1rem;">Une majoration de 5% est applicable sur tous les montants si règlement en chèque vacances</i>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -109,7 +168,7 @@
                                     {# Version desktop avec tableau #}
                                     <div class="d-none d-lg-block">
                                         <div class="table-responsive">
-                                            <table class="table table-hover" style="border-radius: 12px; overflow: hidden;">
+                                            <table class="table table-hover table-tarifs" style="border-radius: 12px; overflow: hidden;">
                                                 <thead style="background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);">
                                                 <tr>
                                                     <th style="font-weight: 600;"><i class="bi bi-chat-text me-1"></i>Description</th>
@@ -133,20 +192,24 @@
                                                                 <span class="text-muted">-</span>
                                                             {% endif %}
                                                         </td>
-                                                        <td>
-                                                            <span class="fw-bold text-success fs-5">
-                                                                {% if tarif.prix == '0' %}
-                                                                    Gratuit
-                                                                {% else %}
-                                                                    {{ tarif.prix }}€
-                                                                        {% if categorie_key=='forfait' %}
-                                                                            <h6 class="text-primary-brand mb-2">Prix par séance</h6>
-                                                                            <span class="badge bg-secondary" style="font-size: 1rem; padding: 0.4rem 0.8rem;">
-                                                                                {{ (tarif.prix / 34)|number_format(2) }}€
-                                                                            </span>
-                                                                        {% endif%}
+                                                        <td style="vertical-align: top;">
+                                                            <div class="prix-table-container">
+                                                                <div class="prix-principal-table">
+                                                                    {% if tarif.prix == '0' %}
+                                                                        Gratuit
+                                                                    {% else %}
+                                                                        {{ tarif.prix }}€
+                                                                    {% endif %}
+                                                                </div>
+                                                                {% if categorie_key == 'forfait' %}
+                                                                    <div class="prix-seance-table">
+                                                                        <small class="text-primary-brand fw-semibold d-block mb-1">Prix par séance</small>
+                                                                        <span class="badge bg-secondary" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
+                                                                            {{ (tarif.prix / 34)|number_format(2) }}€
+                                                                        </span>
+                                                                    </div>
                                                                 {% endif %}
-                                                            </span>
+                                                            </div>
                                                         </td>
                                                         {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
                                                             <td>
@@ -175,28 +238,28 @@
                                             {% for tarif in tarifs_par_categorie[categorie_key] %}
                                                 <div class="col-12 col-md-6">
                                                     <div class="card h-100" style="border: 2px solid var(--border-color); border-radius: 12px;">
-                                                        <div class="card-body">
-
+                                                        <div class="card-body d-flex flex-column">
                                                             {% if tarif.description %}
                                                                 <p class="text-muted mb-3">{{ tarif.description }}</p>
                                                             {% endif %}
-                                                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                                                <span class="fw-bold text-success fs-4">
+
+                                                            <div class="text-center my-3 flex-grow-1 d-flex flex-column justify-content-center">
+                                                                <span class="fw-bold text-success fs-4 d-block">
                                                                     {% if tarif.prix == '0' %}
                                                                         Gratuit
                                                                     {% else %}
                                                                         {{ tarif.prix }}€
-                                                                            {% if categorie_key=='forfait' %}
-                                                                                <h6 class="text-primary-brand mb-2">Prix par séance</h6>
-                                                                                <span class="badge bg-secondary" style="font-size: 1rem; padding: 0.4rem 0.8rem;">
-                                                                                    {{ (tarif.prix / 34)|number_format(2) }}€
-                                                                                </span>
-                                                                            {% endif%}
                                                                     {% endif %}
                                                                 </span>
+                                                                {% if categorie_key == 'forfait' %}
+                                                                    <div class="mt-2">
+                                                                        <small class="text-primary-brand fw-semibold d-block">Prix par séance</small>
+                                                                        <span class="badge bg-secondary" style="font-size: 0.9rem; padding: 0.4rem 0.8rem;">
+                                                                            {{ (tarif.prix / 34)|number_format(2) }}€
+                                                                        </span>
+                                                                    </div>
+                                                                {% endif %}
                                                             </div>
-
-
 
                                                             {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
                                                                 <div class="d-flex gap-2 mt-auto">
@@ -236,5 +299,35 @@
             {% endif %}
 
         </div>
+
     </section>
+
+    {# Modal pour affichage des photos en grand #}
+    <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-white" id="photoModalLabel"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="position-relative">
+                        <img id="modalImage" src="" alt="" class="w-100" style="max-height: 80vh; object-fit: contain;">
+                        <div class="position-absolute bottom-0 start-0 end-0 p-3" style="background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);">
+                            <p class="text-white mb-0" id="modalDescription"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function openPhotoModal(imageSrc, title, description) {
+            const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+            document.getElementById('modalImage').src = imageSrc;
+            document.getElementById('photoModalLabel').textContent = title;
+            document.getElementById('modalDescription').textContent = description;
+            modal.show();
+        }
+    </script>
 {% endblock %}

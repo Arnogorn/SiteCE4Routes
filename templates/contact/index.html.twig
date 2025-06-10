@@ -1,23 +1,85 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Gestion des Contacts - Écuries des 4 Routes{% endblock %}
+{% block title %}Notre équipe - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <section class="py-5">
+    <section class="py-5 hero-modern">
         <div class="container">
-
-            <div class="text-center mb-5">
+            {# En-tête avec style moderne #}
+            <div class="text-center mb-5 fade-in-up">
                 <h1 class="text-primary-brand mb-3">
                     <i class="bi bi-people-fill" style="color: var(--accent-color);"></i>
-                    Gestion des Contacts
+                    Notre équipe
                     <i class="bi bi-people-fill" style="color: var(--accent-color);"></i>
                 </h1>
                 <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
                 <p class="mt-3" style="color: var(--text-secondary);">
-                    Gérez les membres de votre équipe
+                    Rencontrez notre équipe passionnée et nos cavaliers en compétition
                 </p>
             </div>
 
+            {# Section Photos Showcase #}
+            <div class="photos-showcase">
+                <div class="photos-showcase-title">
+                    <h3>
+                        <i class="bi bi-camera"></i>
+                        Nos Cavaliers en Action
+                    </h3>
+                    <p>Découvrez notre expertise en compétition</p>
+                </div>
+
+                <div class="row g-4">
+                    {# Photo 1 - Saut d'obstacles #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/equipe_1.jpg') }}', 'Saut d\'obstacles en compétition avec Damien', 'Excellence et technique en concours de saut d\'obstacles')">
+                            <img src="{{ asset('images/equipe_1.jpg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Cavalier en saut d'obstacles lors d'une compétition équestre">
+                            <div class="position-absolute top-3 end-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-zoom-in"></i>
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi bi-award me-2"></i>Saut d'obstacles
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Excellence et technique en concours avec Damien
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Photo 2 - Dressage #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/equipe_2.jpg') }}', 'Dressage en compétition avec Lorraine', 'Précision et harmonie en dressage')">
+                            <img src="{{ asset('images/equipe_2.jpg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Cavalière en dressage lors d'une compétition équestre">
+                            <div class="position-absolute top-3 end-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-zoom-in"></i>
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi bi-trophy me-2"></i>Dressage
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Précision et harmonie en compétition avec Lorraine
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Contenu principal #}
             <div class="card-modern">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3 class="text-primary-brand mb-0">
@@ -191,4 +253,34 @@
             </div>
         </div>
     </section>
+
+    {# Modal pour affichage des photos en grand #}
+    <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-white" id="photoModalLabel"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <img id="photoModalImage" src="" alt="" class="w-100">
+                    <div class="p-3">
+                        <p id="photoModalDescription" class="text-white-50 mb-0"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPhotoModal(imageSrc, title, description) {
+            document.getElementById('photoModalLabel').textContent = title;
+            document.getElementById('photoModalImage').src = imageSrc;
+            document.getElementById('photoModalImage').alt = title;
+            document.getElementById('photoModalDescription').textContent = description;
+
+            const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+            modal.show();
+        }
+    </script>
 {% endblock %}
