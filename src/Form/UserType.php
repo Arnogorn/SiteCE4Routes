@@ -10,10 +10,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Image;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class UserType extends AbstractType
 {
@@ -57,18 +61,39 @@ class UserType extends AbstractType
             ->add('actif', CheckboxType::class, [
                 'label' => 'Actif',
             ])
-            ->add('new_password', PasswordType::class, [
-                'label' => 'Nouveau mot de passe :',
-                'required' => false,
-                'mapped' => false, // Ne pas mapper ce champ à l'entité
-                'attr' => ['placeholder' => 'Uniquement si vous désirez modifier le mot de passe'],
+            ->add('droitImage', CheckboxType::class, [
+                'label' => 'Acceptez vous la prise de photo et l\'éventuelle diffusion de votre image? *',
+                'label_attr' => [
+                    'style' => 'color: #333 !important'
+                ]
             ])
-            ->add('confirm_password', PasswordType::class, [
-                'label' => 'Confirmer le mot de passe :',
-                'required' => false,
-                'mapped' => false, // Ne pas mapper ce champ à l'entité
-                'attr' => ['placeholder' => 'Confirmer le nouveau mot de passe'],
-            ]);
+            ->add('new_Password', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'mapped' => false,
+                'first_options' => [
+                    'label' => 'Mot de passe * :',
+                    'attr' => ['autocomplete' => 'new-password'],
+                ],
+                'second_options' => [
+                    'label' => 'Confirmez le mot de passe * :',
+                    'attr' => ['autocomplete' => 'new-password'],
+                ],
+                'invalid_message' => 'Les mots de passe doivent correspondre.',
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Veuillez entrer un mot de passe',
+                    ]),
+                    new Length([
+                        'min' => 8,
+                        'minMessage' => 'Le mot de passe doit comporter au moins {{ limit }} caractères.',
+                        'max' => 4096,
+                    ]),
+                    new Regex([
+                        'pattern' => '/^(?=.*[A-Z])(?=.*[\d\W]).{8,}$/',
+                        'message' => 'Le mot de passe doit comporter au moins une majuscule et un chiffre ou caractère spécial.',
+                    ]),
+                ],
+            ])
         ;
     }
 

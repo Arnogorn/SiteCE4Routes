@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration - Gestion PDF Inscription{% endblock %}
+
+{% block body %}
+<section class="py-5">
+    <div class="container">
+        {# En-tête #}
+        <div class="text-center mb-5">
+            <h1 class="text-primary-brand mb-3">
+                <i class="bi bi-file-earmark-pdf me-2"></i>
+                Gestion du PDF d'inscription {{ current_year }}/{{ next_year }}
+            </h1>
+            <p class="text-muted">Téléversez ou remplacez le fichier PDF d'inscription pour la saison équestre</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                {# Messages flash #}
+                {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                <div class="alert alert-{{ type == 'error' ? 'danger' : type }} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-{{ type == 'success' ? 'check-circle' : type == 'error' ? 'exclamation-triangle' : 'info-circle' }} me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endfor %}
+                {% endfor %}
+
+                {# Statut actuel du fichier #}
+                <div class="card-modern mb-4">
+                    <h4 class="text-primary-brand mb-3">
+                        <i class="bi bi-info-circle me-2"></i>Statut actuel
+                    </h4>
+
+                    {% if file_exists %}
+                    <div class="d-flex align-items-center justify-content-between p-3 bg-success bg-opacity-10 rounded">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-file-earmark-pdf text-success me-3" style="font-size: 2rem;"></i>
+                            <div>
+                                <h6 class="mb-1 text-success">{{ file_info.name }}</h6>
+                                <small class="text-muted">
+                                    Taille : {{ file_info.size }} |
+                                    Mis à jour le : {{ file_info.date }}
+                                </small>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ path('app_download_inscription_pdf') }}"
+                               class="btn btn-outline-success btn-sm"
+                               target="_blank">
+                                <i class="bi bi-download me-1"></i>Télécharger
+                            </a>
+                            <form method="post" action="{{ path('app_admin_delete_inscription_pdf') }}"
+                                  class="d-inline"
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_inscription_pdf') }}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash me-1"></i>Supprimer
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="text-center p-4 bg-warning bg-opacity-10 rounded">
+                        <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                        <h5 class="text-warning mt-2">Aucun fichier PDF disponible</h5>
+                        <p class="text-muted mb-0">
+                            Les utilisateurs ne pourront pas télécharger la fiche d'inscription tant qu'aucun fichier n'est téléversé.
+                        </p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {# Formulaire de téléversement #}
+                <div class="card-modern">
+                    <h4 class="text-primary-brand mb-3">
+                        <i class="bi bi-cloud-upload me-2"></i>
+                        {% if file_exists %}Remplacer{% else %}Téléverser{% endif %} le fichier PDF
+                    </h4>
+
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        <div class="mb-4">
+                            <label for="pdf_file" class="form-label-modern">
+                                Sélectionner un fichier PDF <span class="text-danger">*</span>
+                            </label>
+                            <input type="file"
+                                   class="form-control-modern"
+                                   id="pdf_file"
+                                   name="pdf_file"
+                                   accept=".pdf"
+                                   required>
+                            <div class="form-text-modern mt-2">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Formats acceptés : PDF uniquement | Taille maximale : 10 MB
+                            </div>
+                            <div class="invalid-feedback">
+                                Veuillez sélectionner un fichier PDF valide.
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-modern-primary">
+                                <i class="bi bi-cloud-upload me-2"></i>
+                                {% if file_exists %}Remplacer le fichier{% else %}Téléverser le fichier{% endif %}
+                            </button>
+                            <a href="{{ path('app_tarifs_index') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Retour aux tarifs
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                {# Informations complémentaires #}
+                <div class="card-modern mt-4" style="background: linear-gradient(135deg, var(--primary-ultra-light) 0%, #ffffff 100%);">
+                    <h5 class="text-primary-brand mb-3">
+                        <i class="bi bi-lightbulb me-2"></i>Informations importantes
+                    </h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            Le fichier sera automatiquement nommé <code>fiche-inscription-{{ current_year }}-{{ next_year }}.pdf</code>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            L'ancien fichier sera automatiquement remplacé lors du téléversement
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            Les utilisateurs pourront télécharger le fichier depuis la page des tarifs
+                        </li>
+                        <li class="mb-0">
+                            <i class="bi bi-check-circle text-success me-2"></i>
+                            La saison sera automatiquement mise à jour chaque année
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Validation du formulaire Bootstrap
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+    // Afficher le nom du fichier sélectionné
+    document.getElementById('pdf_file').addEventListener('change', function(e) {
+        if (e.target.files.length > 0) {
+            const fileName = e.target.files[0].name;
+            const fileSize = (e.target.files[0].size / 1024 / 1024).toFixed(2);
+
+            // Créer ou mettre à jour l'affichage du fichier sélectionné
+            let fileInfo = document.getElementById('file-info');
+            if (!fileInfo) {
+                fileInfo = document.createElement('div');
+                fileInfo.id = 'file-info';
+                fileInfo.className = 'mt-2 p-2 bg-light rounded';
+                e.target.parentNode.appendChild(fileInfo);
+            }
+
+            fileInfo.innerHTML = `
+                    <i class="bi bi-file-earmark-pdf text-danger me-2"></i>
+                    <strong>${fileName}</strong> (${fileSize} MB)
+                `;
+        }
+    });
+</script>
+{% endblock %}
