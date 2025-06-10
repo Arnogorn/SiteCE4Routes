@@ -226,7 +226,7 @@ symfony.lock
 /public/build/
 
 # Ignorer les uploads
-/assets/images/uploads/
+
 
 # Ignorer les fichiers IDE
 /.idea/
@@ -246,6 +246,8 @@ manifest.json
 /public/uploads/*.jpeg
 /var/uploads/*.jpg
 /var/uploads/*.jpeg
+/public/uploads/*.pdf
+/var/uploads/*.pdf
 ###> symfony/asset-mapper ###
 /public/assets/
 /assets/vendor/
