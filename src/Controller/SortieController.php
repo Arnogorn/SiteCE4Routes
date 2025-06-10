@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Repository\PaiementRepository;
 use App\Service\NotificationService;
 use App\Entity\Sortie;
 use App\Entity\MembreFamille;
@@ -269,11 +270,15 @@ final class SortieController extends AbstractController
         int $membreId,
         Security $security,
         InscriptionService $inscriptionService,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        SortieRepository $sortieRepository,
+        Request $request
     ): Response
     {
         /** @var User $user */
         $user = $security->getUser();
+
+
 
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour désinscrire un membre.');
@@ -281,8 +286,10 @@ final class SortieController extends AbstractController
         $membre = $entityManager->getRepository(MembreFamille::class)->find($membreId);
 
         try {
+            $montantEnEuros = $sortie->getPrix();
+
             $inscriptionService->unregisterParticipant($sortie, $user, $membre);
-            $this->notifier->sendDesinscriptionMail($user, $membre, $sortie, null);
+            $this->notifier->sendDesinscriptionMail($user, $membre, $sortie, $montantEnEuros);
             $this->addFlash('success', 'Le membre a bien été désinscrit de la sortie et remboursé. Un e-mail de confirmation a été envoyé.');
         } catch (\Exception $e) {
             $this->addFlash('danger', $e->getMessage());
