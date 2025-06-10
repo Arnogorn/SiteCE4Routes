@@ -39,10 +39,11 @@ class UpdateEtatService
 
         foreach ($sorties as $sortie) {
             // On prépare les variables
-            $cloture = $sortie->getDateLimiteInscription();
             $debut = $sortie->getDate();
             $duree = $sortie->getDuree();
             $estPubliee = $sortie->isPublished();
+            // Date de clôture des inscriptions : 30 minutes avant le début
+            $cloture = (clone $debut)->sub(new DateInterval('PT30M'));
 
             // Calculer la date de fin de la sortie
             $fin = (clone $debut)->add(new DateInterval('PT' . $duree . 'M'));

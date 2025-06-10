@@ -168,26 +168,29 @@
                                     <div class="d-flex align-items-center">
                                         <i class="bi bi-hourglass-split me-2"></i>
                                         <div>
-                                            <strong>Date limite d'inscription :</strong><br>
+                                            <strong>Information : </strong>Date limite remboursement suite à une désinscription (48h avant début) :<br>
                                             <span class="fw-bold">{{ sortie.dateLimiteInscription|date('d/m/Y à H:i') }}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="alert alert-info mb-0">
-                                    <div class="d-flex align-items-start">
-                                        <i class="bi bi-info-circle me-2 mt-1"></i>
-                                        <div>
-                                            <small>
-                                                <strong>Important :</strong> Cette date est également la limite pour être remboursé en cas de désinscription.
-                                            </small>
-                                        </div>
+                                {% set now = "now"|date("U") %}
+                                {% set refundDeadline = sortie.date|date_modify("-2 days")|date("U") %}
+                                {% if now > refundDeadline %}
+                                    <div class="alert alert-danger mb-0">
+                                        <i class="bi bi-exclamation-triangle me-2"></i>
+                                        <strong>Attention :</strong> les désinscriptions effectuées moins de 48h avant le début de la sortie ne déclenchent aucun remboursement.
                                     </div>
-                                </div>
+                                {% else %}
+                                    <div class="alert alert-info mb-0">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        <strong>Remboursement :</strong> toute désinscription avant le {{ sortie.date|date_modify("-2 days")|date('d/m/Y à H:i') }}, soit 48h avant de début de l'activité sera intégralement remboursée.
+                                    </div>
+                                {% endif %}
                             </div>
                         {% endif %}
 
                         {# Bouton d'inscription #}
-                        {% if sortie.etat.libelle == 'Ouverte' and totalParticipants < sortie.nbInscriptionMax %}
+                        {% if not is_granted('ROLE_ADMIN') and sortie.etat.libelle == 'Ouverte' and totalParticipants < sortie.nbInscriptionMax %}
                             <div class="text-center">
                                 <a href="{{ path('paiement_choisir_membres', {'id': sortie.id}) }}" class="btn btn-modern-primary w-100 mb-2">
                                     <i class="bi bi-credit-card me-2"></i>S'inscrire à cette sortie
@@ -277,11 +280,10 @@
                                         </div>
                                         <div class="participant-actions">
                                             <form action="{{ path('sortie_desinscription', {id: sortie.id}) }}"
-                                                  method="post" class="d-inline">
+                                                  method="post" class="d-inline desinscription-form">
                                                 <input type="hidden" name="_token"
                                                        value="{{ csrf_token('desinscription_utilisateur' ~ sortie.id) }}">
-                                                <button type="submit" class="btn btn-outline-warning btn-sm"
-                                                        onclick="return confirm('Êtes-vous sûr de vouloir vous désinscrire ? (vous serez remboursé automatiquement)')">
+                                                <button type="submit" class="btn btn-outline-warning btn-sm">
                                                     <i class="bi bi-person-dash"></i> Se désinscrire
                                                 </button>
                                             </form>
@@ -303,11 +305,10 @@
                                             </div>
                                             <div class="participant-actions">
                                                 <form action="{{ path('sortie_desinscription_membre', {id: sortie.id, membreId: membre.id}) }}"
-                                                      method="post" class="d-inline">
+                                                      method="post" class="d-inline desinscription-form">
                                                     <input type="hidden" name="_token"
                                                            value="{{ csrf_token('desinscription_membre' ~ sortie.id ~ membre.id) }}">
-                                                    <button type="submit" class="btn btn-outline-danger btn-sm"
-                                                            onclick="return confirm('Êtes-vous sûr de vouloir désinscrire ce membre ? (vous serez remboursé automatiquement)')">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm">
                                                         <i class="bi bi-person-dash"></i>
                                                     </button>
                                                 </form>
@@ -381,4 +382,44 @@
             {% endif %}
         </div>
     </section>
+    <!-- Modal de confirmation de désinscription -->
+    <div class="modal fade" id="desinscriptionConfirmModal" tabindex="-1" aria-labelledby="desinscriptionConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="desinscriptionConfirmModalLabel">Confirmer la désinscription</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
+                <div class="modal-body text-danger" id="desinscriptionConfirmModalBody">
+                    <!-- Le message est injecté par JS -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" id="desinscriptionConfirmModalYes">Confirmer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+      document.querySelectorAll('.desinscription-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const start = new Date('{{ sortie.date|date("Y-m-d\\TH:i:s") }}');
+          const now = new Date();
+          const diffH = (start - now) / 1000 / 3600;
+          const modalBody = document.getElementById('desinscriptionConfirmModalBody');
+          if (diffH < 48) {
+            modalBody.textContent = 'Attention : vous êtes à moins de 48 h du début, aucun remboursement ne sera effectué. Continuer ?';
+          } else {
+            modalBody.textContent = 'Êtes-vous sûr de vouloir vous désinscrire ? Vous serez remboursé automatiquement.';
+          }
+          const modal = new bootstrap.Modal(document.getElementById('desinscriptionConfirmModal'));
+          modal.show();
+          document.getElementById('desinscriptionConfirmModalYes').onclick = () => {
+            modal.hide();
+            form.submit();
+          };
+        });
+      });
+    </script>
 {% endblock %}
