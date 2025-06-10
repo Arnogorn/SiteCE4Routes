@@ -24,21 +24,20 @@ class NotificationService
      * @param User|null $userDestinataire L’utilisateur parent du membre, ou l’utilisateur lui-même.
      * @param MembreFamille|null $membre La personne désinscrite (null si c’est le user principal).
      * @param Sortie $sortie La sortie concernée.
-     * @param float|null $amountRefunded Montant remboursé en euros (facultatif).
+     * @param float|null $amountRefunded Montant remboursé en euros.
      */
     public function sendDesinscriptionMail(
         ?User          $userDestinataire,
         ?MembreFamille $membre,
         Sortie         $sortie,
-        ?float         $amountRefunded = null
+        ?int         $amountRefunded = null
     ): void
     {
         if (!$userDestinataire) {
-            // Sans destinataire, on ne fait rien
             return;
         }
 
-        // Définir l’adresse et le nom du désinscrit
+        // Définir l'adresse et le nom du désinscrit
         if ($membre) {
             $personName = $membre->getPrenom() . ' ' . $membre->getNom();
         } else {
@@ -57,15 +56,16 @@ class NotificationService
             sprintf("%s a été désinscrit(e) de la sortie « %s » du %s.",
                 $personName,
                 $sortie->getTitre(),
-                $sortie->getDate()->format('d/m/Y H:i')
+                $sortie->getDate()->format('d/m/Y à H:i')
             )
         ];
 
-        if ($amountRefunded !== null) {
+
+        if ($amountRefunded !== null && $amountRefunded > 0) {
             $bodyLines[] = "";
             $bodyLines[] = sprintf(
-                "Le remboursement d'une place (%.2f €) a bien été effectué.",
-                $amountRefunded
+                "Le remboursement d'une place (%s) sera traité dans les prochains jours.",
+                number_format($amountRefunded, 2, ',', ' ') . ' €'
             );
         }
 
@@ -73,7 +73,7 @@ class NotificationService
         $bodyLines[] = "Si vous avez des questions, n'hésitez pas à nous contacter.";
         $bodyLines[] = "";
         $bodyLines[] = "Cordialement,";
-        $bodyLines[] = "Les Écuries des 4 Routes";
+        $bodyLines[] = "L'équipe des Écuries des 4 Routes";
 
         $email = (new Email())
             ->from($this->senderEmail)
@@ -82,6 +82,5 @@ class NotificationService
             ->text(implode("\n", $bodyLines));
 
         $this->mailer->send($email);
-
     }
 }
