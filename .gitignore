@@ -242,8 +242,10 @@ manifest.json
 *.js
 *.woff
 *.woff2
-*.jpg
-*.jpeg
+/public/uploads/*.jpg
+/public/uploads/*.jpeg
+/var/uploads/*.jpg
+/var/uploads/*.jpeg
 ###> symfony/asset-mapper ###
 /public/assets/
 /assets/vendor/
