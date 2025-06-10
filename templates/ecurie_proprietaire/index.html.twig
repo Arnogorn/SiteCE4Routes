@@ -3,10 +3,10 @@
 {% block title %}Prestations Écurie - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <section class="py-5">
+    <section class="py-5 hero-modern">
         <div class="container">
             {# En-tête avec style moderne #}
-            <div class="text-center mb-5">
+            <div class="text-center mb-5 fade-in-up">
                 <h1 class="text-primary-brand mb-3">
                     <i class="bi bi-house-fill" style="color: var(--accent-color);"></i>
                     Prestations Écurie de Propriétaire
@@ -16,6 +16,67 @@
                 <p class="mt-3" style="color: var(--text-secondary);">
                     Découvrez nos différentes formules de pension pour votre cheval
                 </p>
+            </div>
+
+            {# Section Photos Showcase #}
+            <div class="photos-showcase">
+                <div class="photos-showcase-title">
+                    <h3>
+                        <i class="bi bi-camera"></i>
+                        Nos Installations
+                    </h3>
+                    <p>Découvrez nos écuries et manège couvert</p>
+                </div>
+
+                <div class="row g-4">
+                    {# Photo 1 - Manège couvert #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/ecuries_1.jpg') }}', 'Manège couvert', 'Notre grand manège couvert pour travailler par tous les temps')">
+                            <img src="{{ asset('images/ecuries_1.jpg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Manège couvert des Écuries des 4 Routes avec charpente en bois">
+                            <div class="position-absolute top-3 end-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-zoom-in"></i>
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi bi-building me-2"></i>Manège couvert
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Notre grand manège couvert pour travailler par tous les temps
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Photo 2 - Boxes #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/ecuries_2.jpg') }}', 'Marcheur automatique', 'Notre marcheur pour l\'exercice et la détente de votre cheval')">
+                            <img src="{{ asset('images/ecuries_2.jpg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Marcheur automatique pour chevaux aux Écuries des 4 Routes">
+                            <div class="position-absolute top-3 end-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-zoom-in"></i>
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi-arrow-repeat me-2"></i>Marcheur automatique
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Notre marcheur pour l'exercice et la détente de votre cheval
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {# Contenu principal #}
@@ -94,7 +155,7 @@
                                     <tr style="border-bottom: 1px solid var(--border-color);">
                                         <td>
                                             <a href="{{ path('app_ecurie_proprietaire_show', {'id': ecurie_proprietaire.id}) }}">
-                                            <strong class="text-primary-brand">{{ ecurie_proprietaire.prestation }}</strong>
+                                                <strong class="text-primary-brand">{{ ecurie_proprietaire.prestation }}</strong>
                                             </a>
                                         </td>
                                         <td>
@@ -153,4 +214,34 @@
             </div>
         </div>
     </section>
+
+    {# Modal pour affichage des photos en grand #}
+    <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-white" id="photoModalLabel"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <img id="photoModalImage" src="" alt="" class="w-100">
+                    <div class="p-3">
+                        <p id="photoModalDescription" class="text-white-50 mb-0"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPhotoModal(imageSrc, title, description) {
+            document.getElementById('photoModalLabel').textContent = title;
+            document.getElementById('photoModalImage').src = imageSrc;
+            document.getElementById('photoModalImage').alt = title;
+            document.getElementById('photoModalDescription').textContent = description;
+
+            const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+            modal.show();
+        }
+    </script>
 {% endblock %}

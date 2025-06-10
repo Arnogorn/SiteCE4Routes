@@ -17,6 +17,67 @@
                 </p>
             </div>
 
+            {# Section Photos Showcase - Nouvelle section ajoutée #}
+            <div class="photos-showcase">
+                <div class="photos-showcase-title">
+                    <h3>
+                        <i class="bi bi-camera"></i>
+                        Nos Chevaux en Action
+                    </h3>
+                    <p>Découvrez l'excellence de nos chevaux</p>
+                </div>
+
+                <div class="row g-4">
+                    {# Photo 1 - Dressage #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/commerce_1.jpg') }}', 'Dressage en compétition avec Lorraine', 'Excellence et élégance de nos chevaux en dressage')">
+                            <img src="{{ asset('images/commerce_1.jpg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Cheval alezan en dressage avec cavalière en tenue de compétition">
+                            <div class="position-absolute top-3 end-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-zoom-in"></i>
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi bi-trophy me-2"></i>Dressage avec Lorraine
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Excellence et élégance de nos chevaux
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Photo 2 - Saut d'obstacles #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/commerce_2.jpg') }}', 'Saut d\'obstacles avec Damien', 'Performance et agilité en compétition')">
+                            <img src="{{ asset('images/commerce_2.jpg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Cheval alezan franchissant un obstacle en saut d'obstacles">
+                            <div class="position-absolute top-3 end-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-zoom-in"></i>
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi bi-award me-2"></i>Saut d'obstacles avec Damien
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Performance et agilité en compétition
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {# Section Chevaux à vendre #}
             <div class="card-modern mb-5">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -187,11 +248,13 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            <a href="{{ path('app_cheval_show', {'id': chevalAVendre.id,'from': 'commerce'}) }}"
-                                               class="btn btn-outline-modern btn-sm"
-                                               title="Voir le profil">
-                                                <i class="bi bi-eye me-1"></i>Voir le profil
-                                            </a>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{{ path('app_cheval_show', {'id': chevalAVendre.id,'from': 'commerce'}) }}"
+                                                   class="btn btn-outline-primary btn-sm"
+                                                   title="Voir le profil">
+                                                    <i class="bi bi-eye me-1"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -378,11 +441,13 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            <a href="{{ path('app_cheval_show', {'id': chevalVendu.id,'from': 'commerce'}) }}"
-                                               class="btn btn-outline-modern btn-sm"
-                                               title="Voir le profil">
-                                                <i class="bi bi-eye me-1"></i>Voir le profil
-                                            </a>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{{ path('app_cheval_show', {'id': chevalVendu.id,'from': 'commerce'}) }}"
+                                                   class="btn btn-outline-primary btn-sm"
+                                                   title="Voir le profil">
+                                                    <i class="bi bi-eye me-1"></i>
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 {% endfor %}
@@ -400,4 +465,34 @@
             </div>
         </div>
     </section>
+
+    {# Modal pour affichage des photos en grand (si pas déjà présent dans votre base.html.twig) #}
+    <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-white" id="photoModalLabel"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <img id="photoModalImage" src="" alt="" class="w-100">
+                    <div class="p-3">
+                        <p id="photoModalDescription" class="text-white-50 mb-0"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPhotoModal(imageSrc, title, description) {
+            document.getElementById('photoModalLabel').textContent = title;
+            document.getElementById('photoModalImage').src = imageSrc;
+            document.getElementById('photoModalImage').alt = title;
+            document.getElementById('photoModalDescription').textContent = description;
+
+            const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+            modal.show();
+        }
+    </script>
 {% endblock %}

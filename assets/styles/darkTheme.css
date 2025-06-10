@@ -830,3 +830,37 @@
 .skip-to-content:focus {
     top: 0;
 }
+
+@media (prefers-color-scheme: dark) {
+    /* Card principale PDF */
+    .pdf-inscription-card {
+        background: linear-gradient(135deg, #2a3d5c 0%, #1a2332 100%);
+        border-color: #3066BE;
+        color: #e1e5f0;
+    }
+
+    /* Textes dans la card PDF */
+    .pdf-inscription-card .text-muted {
+        color: #b4c5e4 !important;
+    }
+
+    .pdf-inscription-card .text-primary-brand {
+        color: #7695c9 !important;
+    }
+
+    /* Icône PDF en mode sombre */
+    .pdf-icon-large {
+        color: #ff6b6b;
+    }
+
+    /* Section photos en mode sombre */
+    .photos-showcase {
+        background: rgba(26, 35, 50, 0.9);
+        border-color: #3066BE;
+    }
+
+    /* Section admin en mode sombre */
+    .pdf-admin-section {
+        border-top-color: #3066BE;
+    }
+}

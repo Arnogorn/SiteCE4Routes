@@ -197,6 +197,8 @@ fabric.properties
 /web/bundles/
 /web/uploads/
 
+
+
 # PHPUnit
 
 # Build data
@@ -224,7 +226,7 @@ symfony.lock
 /public/build/
 
 # Ignorer les uploads
-/assets/images/uploads/
+/assets/images/uploads/chevaux/
 
 # Ignorer les fichiers IDE
 /.idea/
@@ -240,8 +242,10 @@ manifest.json
 *.js
 *.woff
 *.woff2
-*.jpg
-*.jpeg
+/public/uploads/*.jpg
+/public/uploads/*.jpeg
+/var/uploads/*.jpg
+/var/uploads/*.jpeg
 ###> symfony/asset-mapper ###
 /public/assets/
 /assets/vendor/

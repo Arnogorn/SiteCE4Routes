@@ -1,4 +1,3 @@
-
 :root {
     /* Couleurs principales - Nouvelle palette avec 3C3744, 090C9B, 3066BE, B4C5E4, 7695C9 */
     --primary-color: #090C9B;        /* Bleu-violet foncé principal */
@@ -89,9 +88,7 @@
     box-sizing: border-box;
 }
 
-
 body {
-
     margin: 0;
     padding: 0;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -105,7 +102,6 @@ body {
             radial-gradient(circle at 20% 80%, rgba(48, 102, 190, 0.1) 0%, transparent 50%),
             radial-gradient(circle at 80% 20%, rgba(9, 12, 155, 0.05) 0%, transparent 50%);
 }
-
 
 /* Typography moderne  */
 h1{
@@ -797,6 +793,160 @@ a:hover {
     }
 }
 
+/* STYLES SPÉCIFIQUES AU TEMPLATE - Photos et galerie */
+.photo-hover {
+    transition: transform 0.3s ease;
+}
+
+.photo-gallery-item {
+    cursor: pointer;
+    height: 280px; /* Hauteur de base pour mobile */
+}
+
+/* Photos plus grandes sur desktop uniquement */
+@media (min-width: 768px) {
+    .photo-desktop-large {
+        height: 500px !important; /* Vraiment grand sur desktop */
+    }
+}
+
+.photo-gallery-item:hover .photo-hover {
+    transform: scale(1.05);
+}
+
+.photo-gallery-item:hover {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* CORRECTIONS POUR L'ALIGNEMENT DES TABLEAUX DE PRIX UNIQUEMENT - VERSION DESKTOP */
+@media (min-width: 992px) {
+    /* Sélecteur spécifique pour les tableaux de tarifs uniquement */
+    .table-tarifs {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+    /* Largeurs fixes pour les colonnes des tableaux de tarifs */
+    .table-tarifs th:first-child,
+    .table-tarifs td:first-child {
+        width: 60%; /* Description */
+    }
+
+    .table-tarifs th:nth-child(2),
+    .table-tarifs td:nth-child(2) {
+        width: 25%; /* Prix */
+    }
+
+    .table-tarifs th:nth-child(3),
+    .table-tarifs td:nth-child(3) {
+        width: 15%; /* Actions (si admin connecté) */
+    }
+
+    /* Alignement vertical pour les cellules des tableaux de tarifs uniquement */
+    .table-tarifs td,
+    .table-tarifs th {
+        vertical-align: middle !important;
+        padding: 1rem 0.75rem !important;
+    }
+
+    /* Container de prix avec alignement centré */
+    .prix-table-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center !important;
+        justify-content: center;
+        width: 100%;
+        text-align: center;
+        min-height: 60px; /* Hauteur minimale constante */
+    }
+
+    /* Prix principal centré */
+    .prix-principal-table {
+        font-weight: bold;
+        color: #28a745;
+        font-size: 1.25rem;
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
+        text-align: center;
+    }
+
+    /* Prix par séance centré */
+    .prix-seance-table {
+        margin-top: 0.25rem;
+        width: 100%;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .prix-seance-table small {
+        margin-bottom: 0.25rem;
+    }
+
+    /* Centrage des en-têtes de colonnes pour les tableaux de tarifs */
+    .table-tarifs thead th:nth-child(2) {
+        text-align: center;
+    }
+
+    /* Centrage de la colonne actions pour les tableaux de tarifs */
+    .table-tarifs thead th:nth-child(3),
+    .table-tarifs tbody td:nth-child(3) {
+        text-align: center;
+    }
+
+    /* Alignement de la description pour les tableaux de tarifs */
+    .table-tarifs thead th:first-child,
+    .table-tarifs tbody td:first-child {
+        text-align: left;
+        vertical-align: middle;
+    }
+}
+
+/* Corrections spécifiques pour éviter les débordements de texte dans les tableaux de tarifs */
+@media (min-width: 992px) {
+    /* Description avec gestion du texte long pour les tableaux de tarifs */
+    .table-tarifs td:first-child {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+    }
+
+    /* Boutons d'actions compacts pour les tableaux de tarifs */
+    .table-tarifs .btn-group-sm .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Formatage correct des prix dans les tableaux - Version originale maintenue pour mobile */
+.prix-table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.prix-principal-table {
+    font-weight: bold;
+    color: #28a745;
+    font-size: 1.25rem;
+    line-height: 1.2;
+    margin-bottom: 0;
+}
+
+.prix-seance-table {
+    margin-top: 0.25rem;
+    width: 100%;
+}
+
+/* Alignement vertical des cellules du tableau */
+.table td {
+    vertical-align: top !important;
+    padding: 1rem 0.75rem;
+}
+
 /* Corrections responsive pour écrans plus petits - Structure à deux niveaux */
 @media (min-width: 992px) and (max-width: 1299px) {
     .navbar-modern {
@@ -1026,5 +1176,183 @@ a:hover {
 
     .card-modern {
         padding: 1.5rem;
+    }
+}
+.pdf-inscription-card {
+    background: linear-gradient(135deg, var(--primary-ultra-light) 0%, #ffffff 100%);
+    border: 2px solid var(--primary-light);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-base);
+    margin-bottom: 3rem;
+}
+
+/* Header PDF - Structure simple et centrée */
+.pdf-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.pdf-icon-large {
+    font-size: 4rem;
+    color: #dc3545;
+    margin-bottom: 1.5rem;
+    display: block;
+    transition: var(--transition-base);
+}
+
+.pdf-icon-large:hover {
+    transform: scale(1.1);
+}
+
+.pdf-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.pdf-description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pdf-download-btn {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: var(--shadow-md);
+    transition: var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.pdf-download-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, transparent 100%);
+    transition: left 0.5s ease;
+}
+
+.pdf-download-btn:hover::before {
+    left: 100%;
+}
+
+.pdf-download-btn:hover {
+    background: linear-gradient(135deg, var(--primary-hover) 0%, var(--accent-hover) 100%);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+    text-decoration: none;
+}
+
+.pdf-download-btn i {
+    font-size: 1.25rem;
+}
+
+/* Section photos avec fond distinct */
+.photos-showcase {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.photos-showcase-title {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.photos-showcase-title h3 {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.photos-showcase-title p {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Section admin propre */
+.pdf-admin-section {
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pdf-inscription-card {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .pdf-icon-large {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .pdf-title {
+        font-size: 1.5rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .pdf-description {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .pdf-download-btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+
+    .photos-showcase {
+        padding: 1.5rem;
+    }
+
+
+    .hero-modern {
+        background-attachment: scroll !important;
+        min-height: 60vh !important;
+    }
+
+    .hero-modern h1 {
+        font-size: 2.5rem !important;
+    }
+
+    .hero-modern .lead {
+        font-size: 1.1rem !important;
     }
 }

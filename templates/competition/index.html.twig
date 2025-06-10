@@ -3,13 +3,13 @@
 {% block title %}Compétitions - Écuries des 4 Routes{% endblock %}
 
 {% block body %}
-    <section class="py-5">
+    <section class="py-5 hero-modern">
         <div class="container">
             {# En-tête avec style moderne #}
-            <div class="text-center mb-5">
+            <div class="text-center mb-5 fade-in-up">
                 <h1 class="text-primary-brand mb-3">
                     <i class="bi bi-trophy-fill" style="color: var(--accent-color);"></i>
-                    Nos Compétitions
+                    Compétitions
                     <i class="bi bi-trophy-fill" style="color: var(--accent-color);"></i>
                 </h1>
                 <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
@@ -18,6 +18,66 @@
                 </p>
             </div>
 
+            {# Section Photos Showcase #}
+            <div class="photos-showcase">
+                <div class="photos-showcase-title">
+                    <h3>
+                        <i class="bi bi-camera"></i>
+                        Nos Compétitions en Images
+                    </h3>
+                    <p>Revivez l'ambiance de nos concours équestres</p>
+                </div>
+
+                <div class="row g-4">
+                    {# Photo 1 - Saut d'obstacles en compétition #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/concours_1.jpg') }}', 'Saut d\'obstacles en compétition', 'Performances de haut niveau lors de nos concours de saut d\'obstacles')">
+                            <img src="{{ asset('images/concours_1.jpg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Cavalier et cheval franchissant un obstacle lors d'une compétition de saut d'obstacles">
+                            <div class="position-absolute top-3 end-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-zoom-in"></i>
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi bi-trophy me-2"></i>Saut d'obstacles
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Performances de haut niveau en compétition
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Photo 2 - Ambiance et participants #}
+                    <div class="col-md-6">
+                        <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
+                             onclick="openPhotoModal('{{ asset('images/concours_2.jpg') }}', 'Ambiance des concours', 'Convivialité et esprit sportif de nos compétitions équestres')">
+                            <img src="{{ asset('images/concours_2.jpg') }}"
+                                 class="w-100 h-100 object-fit-cover photo-hover"
+                                 alt="Groupe de cavaliers et participants lors d'une compétition équestre">
+                            <div class="position-absolute top-3 end-3">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-zoom-in"></i>
+                                </span>
+                            </div>
+                            <div class="position-absolute bottom-0 start-0 end-0 p-3"
+                                 style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
+                                <h5 class="text-white mb-1">
+                                    <i class="bi bi-people me-2"></i>Ambiance des concours
+                                </h5>
+                                <p class="text-white-50 mb-0 small">
+                                    Convivialité et esprit sportif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {# Contenu principal #}
             <div class="card-modern">
@@ -121,7 +181,7 @@
                                     <tr style="border-bottom: 1px solid var(--border-color);">
                                         <td>
                                             <a href="{{ path('app_competition_show', {'id': competition.id}) }}">
-                                            <strong class="text-primary-brand">{{ competition.titre }}</strong>
+                                                <strong class="text-primary-brand">{{ competition.titre }}</strong>
                                             </a>
                                             {% if competition.description %}
                                                 <br><small class="text-muted">
@@ -212,4 +272,34 @@
             </div>
         </div>
     </section>
+
+    {# Modal pour affichage des photos en grand #}
+    <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-white" id="photoModalLabel"></h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <img id="photoModalImage" src="" alt="" class="w-100">
+                    <div class="p-3">
+                        <p id="photoModalDescription" class="text-white-50 mb-0"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPhotoModal(imageSrc, title, description) {
+            document.getElementById('photoModalLabel').textContent = title;
+            document.getElementById('photoModalImage').src = imageSrc;
+            document.getElementById('photoModalImage').alt = title;
+            document.getElementById('photoModalDescription').textContent = description;
+
+            const modal = new bootstrap.Modal(document.getElementById('photoModal'));
+            modal.show();
+        }
+    </script>
 {% endblock %}
