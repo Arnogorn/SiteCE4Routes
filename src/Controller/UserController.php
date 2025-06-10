@@ -77,22 +77,15 @@ final class UserController extends AbstractController
             }
 
             // Gérer la mise à jour du mot de passe
-            $newPassword = $form->get('new_password')->getData();
-            $confirmPassword = $form->get('confirm_password')->getData();
+            $newPassword = $form->get('new_Password')->getData();
 
             if (!empty($newPassword)) {
-                if ($newPassword !== $confirmPassword) {
-                    // Ajouter une erreur si les mots de passe ne correspondent pas
-                    $form->get('confirm_password')->addError(new FormError('Les mots de passe ne correspondent pas.'));
-                    return $this->render('user/edit.html.twig', [
-                        'user' => $userToEdit,
-                        'form' => $form,
-                    ]);
-                } else {
-                    // Hasher le mot de passe et mettre à jour l'utilisateur
-                    $hashedPassword = $passwordHasher->hashPassword($userToEdit, $newPassword);
-                    $userToEdit->setPassword($hashedPassword); // Mettre à jour le mot de passe de l'utilisateur
-                }
+                // Avec RepeatedType, la validation de correspondance est automatique
+                // Si on arrive ici, les mots de passe correspondent déjà
+
+                // Hasher le mot de passe et mettre à jour l'utilisateur
+                $hashedPassword = $passwordHasher->hashPassword($userToEdit, $newPassword);
+                $userToEdit->setPassword($hashedPassword);
             }
 
             if(!in_array("ROLE_ADMIN", $userToEdit->getRoles())){

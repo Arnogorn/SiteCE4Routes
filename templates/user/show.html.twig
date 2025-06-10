@@ -104,6 +104,21 @@
                             <div class="col-md-6">
                                 <div class="form-group-modern">
                                     <label class="form-label-modern">
+                                        <i class="bi bi-card-text me-1" style="color: var(--accent-color);"></i>Numéro de licence
+                                    </label>
+                                    <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                        {% if user.NoLicence %}
+                                            <span class="badge bg-primary-brand text-white">{{ user.NoLicence }}</span>
+                                        {% else %}
+                                            <span class="text-muted fst-italic">Non renseigné</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">
                                         <i class="bi bi-calendar me-1" style="color: var(--accent-color);"></i>Date de Naissance
                                     </label>
                                     <div class="form-control-modern" style="background: var(--bg-tertiary);">

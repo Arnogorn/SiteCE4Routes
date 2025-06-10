@@ -45,8 +45,10 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Numéro de téléphone * :'
             ])
             ->add('droitImage', CheckboxType::class, [
-                'label' => 'Acceptez vous la prise de photo et l\'éventuelle diffusion de votre image? *'
-
+                'label' => 'Acceptez vous la prise de photo et l\'éventuelle diffusion de votre image? *',
+                'label_attr' => [
+                    'style' => 'color: #333 !important'
+                ]
             ])
             ->add('niveau', EntityType::class, [
                 'label' => 'Niveau * :',
@@ -67,6 +69,10 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('allergies', TextType::class, [
                 'label' => 'Avez vous des allergies, si oui lesquelles? :',
+                'required' => false,
+            ])
+            ->add('NoLicence', TextType::class, [
+                'label' => 'Numéro de licence FFE',
                 'required' => false,
             ])
 //             Combine plainPassword et plainPasswordConfirmation on les appel désormais dans le template avec :
@@ -107,6 +113,9 @@ class RegistrationFormType extends AbstractType
                         'message' => 'Veuillez accepter les conditions d\'utilisation pour continuer',
                     ]),
                 ],
+                'label_attr' => [
+                    'style' => 'color: #333 !important'
+                ]
             ])
         ;
     }

@@ -5,7 +5,46 @@
 {% block body %}
     <section class="py-5">
         <div class="container">
-            {# En-tête avec style moderne #}
+            {# Section téléchargement PDF avec dates automatiques via extension Twig #}
+            <div class="row justify-content-center mb-5">
+                <div class="col-lg-8">
+                    <div class="card-modern text-center" style="background: linear-gradient(135deg, var(--primary-ultra-light) 0%, #ffffff 100%); border: 2px solid var(--primary-light);">
+                        <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
+                            <div class="text-center text-md-start">
+                                <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 3rem;"></i>
+                            </div>
+                            <div class="text-center text-md-start flex-grow-1">
+                                <h4 class="text-primary-brand mb-2">
+                                    <i class="bi bi-download me-2"></i>Fiche d'inscription {{ current_season() }}
+                                </h4>
+                                <p class="text-muted mb-0">
+                                    Téléchargez votre fiche d'inscription pour la saison équestre {{ current_season() }}
+                                </p>
+                            </div>
+                            <div>
+                                <a href="{{ path('app_download_inscription_pdf') }}"
+                                   class="btn btn-modern-primary btn-lg"
+                                   target="_blank">
+                                    <i class="bi bi-download me-2"></i>
+                                    Télécharger le PDF
+                                </a>
+                            </div>
+                        </div>
+
+                        {# Lien d'administration pour les admins #}
+                        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                            <div class="mt-3 pt-3 border-top border-light">
+                                <a href="{{ path('app_admin_inscription_pdf') }}"
+                                   class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-gear me-1"></i>Gérer le PDF
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+                {# En-tête avec style moderne #}
             <div class="text-center mb-5">
                 <h1 class="text-primary-brand mb-3">
                     Tarifs du poney club

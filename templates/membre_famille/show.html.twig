@@ -1,50 +1,215 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}MembreFamille{% endblock %}
+{% block title %}Profil de {{ membre_famille.prenom }} {{ membre_famille.nom }}{% endblock %}
 
 {% block body %}
-    <h1>MembreFamille</h1>
+    <div class="container mt-5">
+        {# En-tête #}
+        <div class="text-center mb-5">
+            <h1 class="text-primary-brand mb-3">
+                <i class="bi bi-person-heart" style="color: var(--accent-color);"></i>
+                Profil membre de famille
+                <i class="bi bi-person-heart" style="color: var(--accent-color);"></i>
+            </h1>
+            <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+            <p class="mt-3" style="color: var(--text-secondary);">
+                Informations détaillées de <strong>{{ membre_famille.prenom }} {{ membre_famille.nom }}</strong>
+            </p>
+        </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ membre_famille.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ membre_famille.nom }}</td>
-            </tr>
-            <tr>
-                <th>Prenom</th>
-                <td>{{ membre_famille.prenom }}</td>
-            </tr>
-            <tr>
-                <th>DateNaissance</th>
-                <td>{{ membre_famille.dateNaissance ? membre_famille.dateNaissance|date('Y-m-d') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Allergies</th>
-                <td>{{ membre_famille.allergies }}</td>
-            </tr>
-            <tr>
-                <th>MedecinTraitant</th>
-                <td>{{ membre_famille.medecinTraitant }}</td>
-            </tr>
-            <tr>
-                <th>TelMedecin</th>
-                <td>{{ membre_famille.telMedecin }}</td>
-            </tr>
-            <tr>
-                <th>DroitImage</th>
-                <td>{{ membre_famille.droitImage ? 'Yes' : 'No' }}</td>
-            </tr>
-        </tbody>
-    </table>
+        <div class="row g-4">
+            {# Informations principales #}
+            <div class="col-lg-6">
+                <div class="card-modern">
+                    <h4 class="text-primary-brand mb-4">
+                        <i class="bi bi-info-circle me-2"></i>Informations Personnelles
+                    </h4>
 
-    <a href="{{ path('app_membre_famille_index') }}">back to list</a>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-person me-1" style="color: var(--accent-color);"></i>Prénom
+                                </label>
+                                <div class="form-control-modern" style="background: var(--bg-tertiary); font-weight: 600; color: var(--primary-color);">
+                                    {{ membre_famille.prenom }}
+                                </div>
+                            </div>
+                        </div>
 
-    <a href="{{ path('app_membre_famille_edit', {'id': membre_famille.id}) }}">edit</a>
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-person-badge me-1" style="color: var(--accent-color);"></i>Nom
+                                </label>
+                                <div class="form-control-modern" style="background: var(--bg-tertiary); font-weight: 600; color: var(--primary-color);">
+                                    {{ membre_famille.nom }}
+                                </div>
+                            </div>
+                        </div>
 
-    {{ include('membre_famille/_delete_form.html.twig') }}
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-calendar me-1" style="color: var(--accent-color);"></i>Date de Naissance
+                                </label>
+                                <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                    {% if membre_famille.dateNaissance %}
+                                        <span class="badge bg-primary-brand text-white">{{ membre_famille.dateNaissance|date('d/m/Y') }}</span>
+                                        <small class="text-muted ms-2">
+                                            ({{ date('now').diff(date(membre_famille.dateNaissance)).y }} ans)
+                                        </small>
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-star me-1" style="color: var(--accent-color);"></i>Niveau
+                                </label>
+                                <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                    {% if membre_famille.niveau %}
+                                        <span class="badge bg-accent-brand text-white">{{ membre_famille.niveau.libelle }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-card-text me-1" style="color: var(--accent-color);"></i>Numéro de licence FFE
+                                </label>
+                                <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                    {% if membre_famille.NoLicence %}
+                                        <span class="badge bg-primary-brand text-white">{{ membre_famille.NoLicence }}</span>
+                                    {% else %}
+                                        <span class="text-muted fst-italic">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# Informations médicales #}
+            <div class="col-lg-6">
+                <div class="card-modern">
+                    <h4 class="text-primary-brand mb-4">
+                        <i class="bi bi-heart-pulse me-2"></i>Informations Médicales
+                    </h4>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-exclamation-triangle me-1" style="color: var(--warning-color);"></i>Allergies
+                                </label>
+                                <div class="form-control-modern" style="background: var(--bg-tertiary); min-height: 60px;">
+                                    {% if membre_famille.allergies %}
+                                        <div class="alert alert-warning mb-0" style="background: rgba(255, 193, 7, 0.1); border: 1px solid var(--warning-color);">
+                                            <i class="bi bi-exclamation-triangle me-2"></i>{{ membre_famille.allergies }}
+                                        </div>
+                                    {% else %}
+                                        <span class="text-success"><i class="bi bi-check-circle me-1"></i>Aucune allergie déclarée</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-person-heart me-1" style="color: var(--accent-color);"></i>Médecin Traitant
+                                </label>
+                                <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                    {% if membre_famille.medecinTraitant %}
+                                        {{ membre_famille.medecinTraitant }}
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-telephone-plus me-1" style="color: var(--accent-color);"></i>Téléphone du Médecin
+                                </label>
+                                <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                    {% if membre_famille.telMedecin %}
+                                        <a href="tel:{{ membre_famille.telMedecin }}" class="text-decoration-none">{{ membre_famille.telMedecin }}</a>
+                                    {% else %}
+                                        <span class="text-muted">Non renseigné</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group-modern">
+                                <label class="form-label-modern">
+                                    <i class="bi bi-camera me-1" style="color: var(--accent-color);"></i>Droit à l'Image
+                                </label>
+                                <div class="form-control-modern" style="background: var(--bg-tertiary);">
+                                    {% if membre_famille.droitImage %}
+                                        <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Autorisé</span>
+                                    {% else %}
+                                        <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Non autorisé</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Actions #}
+        <div class="card-modern mt-4">
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                <a href="{{ path('app_membre_famille_index') }}" class="btn btn-outline-modern">
+                    <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+                </a>
+
+                <a href="{{ path('app_membre_famille_edit', {'id': membre_famille.id}) }}" class="btn btn-modern-primary">
+                    <i class="bi bi-pencil me-2"></i>Modifier
+                </a>
+
+                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                    <i class="bi bi-trash me-2"></i>Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {# Modal de suppression #}
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title text-primary-brand" id="deleteModalLabel">
+                        <i class="bi bi-exclamation-triangle me-2"></i>Confirmer la suppression
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer <strong>{{ membre_famille.prenom }} {{ membre_famille.nom }}</strong> ?</p>
+                    <p class="text-danger"><small><i class="bi bi-exclamation-triangle me-1"></i>Cette action est irréversible.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-modern" data-bs-dismiss="modal">Annuler</button>
+                    {{ include('membre_famille/_delete_form.html.twig') }}
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

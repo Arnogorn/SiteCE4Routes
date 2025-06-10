@@ -145,6 +145,16 @@
                                         Important pour votre sécurité (optionnel)
                                     </div>
                                 </div>
+                                <!-- Numéro de licence -->
+                                <div class="form-group-modern">
+                                    {{ form_label(registrationForm.NoLicence, null, {'label_attr': {'class': 'form-label-modern'}}) }}
+                                    {{ form_widget(registrationForm.NoLicence, {'attr': {'class': 'form-control-modern', 'placeholder': 'Votre numéro de licence FFE'}}) }}
+                                    {{ form_errors(registrationForm.NoLicence) }}
+                                    <div class="form-text-modern">
+                                        <i class="bi bi-card-text me-1"></i>
+                                        Numéro de licence FFE (optionnel)
+                                    </div>
+                                </div>
 
                                 <!-- Mot de passe -->
                                 <div class="form-group-modern">

@@ -71,6 +71,9 @@ class MembreFamille
     #[ORM\ManyToMany(mappedBy: 'membresFamilleInscrits', targetEntity: Sortie::class)]
     private Collection $sorties;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $NoLicence = null;
+
     public function __construct()
     {
         $this->sorties = new ArrayCollection();
@@ -215,6 +218,18 @@ class MembreFamille
     public function setNiveau(?Niveau $niveau): static
     {
         $this->niveau = $niveau;
+
+        return $this;
+    }
+
+    public function getNoLicence(): ?string
+    {
+        return $this->NoLicence;
+    }
+
+    public function setNoLicence(?string $NoLicence): static
+    {
+        $this->NoLicence = $NoLicence;
 
         return $this;
     }

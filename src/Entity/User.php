@@ -158,6 +158,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Sortie::class, mappedBy: 'participants')]
     private Collection $sorties;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $NoLicence = null;
+
     public function __construct()
     {
         $this->cheval = new ArrayCollection();
@@ -204,7 +207,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
+        // guarantie que tous les users ont au moins le ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -508,6 +511,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->sorties->removeElement($sortie)) {
             $sortie->removeParticipant($this);
         }
+
+        return $this;
+    }
+
+    public function getNoLicence(): ?string
+    {
+        return $this->NoLicence;
+    }
+
+    public function setNoLicence(?string $NoLicence): static
+    {
+        $this->NoLicence = $NoLicence;
 
         return $this;
     }
