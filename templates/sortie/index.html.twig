@@ -22,11 +22,11 @@
             <div class="card-modern mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3 class="text-primary-brand mb-0">
-                        <i class="bi bi-funnel me-2"></i>Filtrer les sorties
+                        <i class="bi bi-funnel me-2"></i>Filtrer les activités
                     </h3>
                     {% if is_granted('ROLE_ADMIN') %}
                         <a href="{{ path('app_sortie_new') }}" class="btn btn-modern-primary">
-                            <i class="bi bi-plus-circle me-2"></i>Nouvelle Sortie
+                            <i class="bi bi-plus-circle me-2"></i>Nouvelle activité
                         </a>
                     {% endif %}
                 </div>
@@ -82,7 +82,7 @@
             <div class="card-modern">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h3 class="text-primary-brand mb-0">
-                        <i class="bi bi-list-ul me-2"></i>Liste des sorties
+                        <i class="bi bi-list-ul me-2"></i>Liste des activités
                         <span class="badge bg-accent-brand ms-2">{{ sorties|length }}</span>
                     </h3>
                     <div class="d-flex gap-2">
@@ -126,10 +126,14 @@
                                             <div class="col-6">
                                                 <div class="sortie-info-item">
                                                     <i class="bi bi-calendar-event text-accent-brand"></i>
-                                                    <div class="sortie-info-text">
-                                                        <small class="sortie-info-label">Date</small>
-                                                        <div class="sortie-info-value">{{ sortie.date ? sortie.date|date('d/m/Y H:i') : 'Non définie' }}</div>
-                                                    </div>
+                                                    <span class="sortie-detail-value">
+                                                        {% if sortie.date %}
+                                                            {{ sortie.date|format_datetime('full', 'none', locale='fr') }}<br>
+                                                            <small class="text-muted">à {{ sortie.date|date('H:i') }}</small>
+                                                        {% else %}
+                                                            <span class="text-muted">Date non définie</span>
+                                                        {% endif %}
+                                                     </span>
                                                 </div>
                                             </div>
                                             <div class="col-6">
@@ -164,13 +168,6 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        {% if sortie.dateLimiteInscription %}
-                                            <div class="sortie-deadline mb-3">
-                                                <i class="bi bi-hourglass-split text-warning"></i>
-                                                <span>Inscription avant le {{ sortie.dateLimiteInscription|date('d/m/Y H:i') }}</span>
-                                            </div>
-                                        {% endif %}
 
                                         {% if sortie.niveauxAdmis|length > 0 %}
                                             <div class="sortie-niveaux mb-3">
@@ -230,13 +227,10 @@
                                         <i class="bi bi-card-text text-primary-brand me-1 "></i>Titre
                                     </th>
                                     <th class="text-primary-brand">
-                                        <i class="bi bi-calendar-event me-1"></i>Date
+                                        <i class="bi bi-calendar-event me-1"></i>Date et Heure
                                     </th>
                                     <th class="text-primary-brand">
                                         <i class="bi bi-clock me-1"></i>Durée
-                                    </th>
-                                    <th class="text-primary-brand">
-                                        <i class="bi bi-hourglass-split me-1"></i>Limite d'inscription
                                     </th>
                                     <th class="text-primary-brand">
                                         <i class="bi bi-people me-1"></i>Participants
@@ -275,12 +269,14 @@
                                                 </a>
                                             </td>
                                             <td>
-                                                    <span class="sortie-date">
-                                                        {{ sortie.date ? sortie.date|date('d/m/Y') : '' }}
-                                                        {% if sortie.date %}
-                                                            <br><small class="text-muted">{{ sortie.date|date('H:i') }}</small>
-                                                        {% endif %}
-                                                    </span>
+                                                     <span class="sortie-detail-value">
+                                            {% if sortie.date %}
+                                                {{ sortie.date|format_datetime('full', 'none', locale='fr') }}<br>
+                                                <small class="text-muted">à {{ sortie.date|date('H:i') }}</small>
+                                            {% else %}
+                                                <span class="text-muted">Date non définie</span>
+                                            {% endif %}
+                                        </span>
                                             </td>
                                             <td>
                                                 <span class="badge bg-accent-brand text-white">
@@ -288,16 +284,6 @@
                                                     {% set minutes = sortie.duree % 60 %}
                                                     {% if hours > 0 %}{{ hours }}h{% endif %}{% if minutes > 0 or hours == 0 %}{% if hours > 0 %} {% endif %}{{ minutes }}min{% endif %}
                                                 </span>
-                                            </td>
-                                            <td>
-                                                {% if sortie.dateLimiteInscription %}
-                                                    <span class="sortie-date-limite">
-                                                            {{ sortie.dateLimiteInscription|date('d/m/Y') }}
-                                                            <br><small class="text-muted">{{ sortie.dateLimiteInscription|date('H:i') }}</small>
-                                                        </span>
-                                                {% else %}
-                                                    <span class="text-muted">Non définie</span>
-                                                {% endif %}
                                             </td>
                                             <td>
                                                 <div class="participants-counter">
