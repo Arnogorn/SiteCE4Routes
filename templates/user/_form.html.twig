@@ -46,6 +46,15 @@
             {{ form_widget(form.telephone, {'attr': {'class': 'form-control-modern', 'placeholder': '06 12 34 56 78'}}) }}
             {{ form_errors(form.telephone) }}
         </div>
+        <div class="form-group-modern">
+            {{ form_label(form.NoLicence, 'Numéro de licence', {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.NoLicence, {'attr': {'class': 'form-control-modern', 'placeholder': 'Votre numéro de licence FFE'}}) }}
+            {{ form_errors(form.NoLicence) }}
+            <div class="form-text-modern">
+                <i class="bi bi-card-text me-1"></i>
+                Numéro de licence FFE (optionnel)
+            </div>
+        </div>
     </div>
 
     {# Colonne droite #}
@@ -140,7 +149,7 @@
                 {{ form_errors(form.new_password) }}
                 <div class="form-text-modern">
                     <i class="bi bi-lock me-1"></i>
-                    Minimum 6 caractères. Laissez vide pour conserver le mot de passe actuel.
+                    Minimum 8 caractères. Laissez vide pour conserver le mot de passe actuel.
                 </div>
             </div>
         </div>

@@ -1,47 +1,159 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}MembreFamille index{% endblock %}
+{% block title %}Mes membres de famille{% endblock %}
 
 {% block body %}
-    <h1>MembreFamille index</h1>
+    <div class="container mt-5">
+        {# En-tête simple #}
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="text-primary-brand">👨‍👩‍👧‍👦 Mes membres de famille</h1>
+            {% if membre_familles is not empty %}
+                <div class="badge bg-primary-brand fs-6">
+                    {{ membre_familles|length }} membre(s)
+                </div>
+            {% endif %}
+        </div>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>DateNaissance</th>
-                <th>Allergies</th>
-                <th>MedecinTraitant</th>
-                <th>TelMedecin</th>
-                <th>DroitImage</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for membre_famille in membre_familles %}
-            <tr>
-                <td>{{ membre_famille.id }}</td>
-                <td>{{ membre_famille.nom }}</td>
-                <td>{{ membre_famille.prenom }}</td>
-                <td>{{ membre_famille.dateNaissance ? membre_famille.dateNaissance|date('Y-m-d') : '' }}</td>
-                <td>{{ membre_famille.allergies }}</td>
-                <td>{{ membre_famille.medecinTraitant }}</td>
-                <td>{{ membre_famille.telMedecin }}</td>
-                <td>{{ membre_famille.droitImage ? 'Yes' : 'No' }}</td>
-                <td>
-                    <a href="{{ path('app_membre_famille_show', {'id': membre_famille.id}) }}">show</a>
-                    <a href="{{ path('app_membre_famille_edit', {'id': membre_famille.id}) }}">edit</a>
-                </td>
-            </tr>
+        {% if membre_familles is empty %}
+            {# Message vide avec style moderne #}
+            <div class="card-modern text-center py-5">
+                <div class="feature-icon mx-auto mb-3">
+                    <i class="bi bi-people"></i>
+                </div>
+                <h3 class="text-primary-brand mb-3">Aucun membre de famille</h3>
+                <p class="text-muted">Ajoutez les membres de votre famille pour qu'ils puissent participer aux sorties.</p>
+                <a href="{{ path('app_membre_famille_new') }}" class="btn-modern-primary mt-3">
+                    <i class="bi bi-person-plus me-2"></i>Ajouter un membre
+                </a>
+            </div>
         {% else %}
-            <tr>
-                <td colspan="9">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            {# Bouton d'ajout en haut #}
+            <div class="mb-4">
+                <a href="{{ path('app_membre_famille_new') }}" class="btn-modern-primary">
+                    <i class="bi bi-person-plus me-2"></i>Ajouter un membre
+                </a>
+            </div>
 
-    <a href="{{ path('app_membre_famille_new') }}">Create new</a>
+            {# Tableau avec style moderne #}
+            <div class="card-modern p-0 overflow-hidden">
+                <div class="bg-accent-brand text-white p-3">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-ul me-2"></i>
+                        Liste des membres ({{ membre_familles|length }})
+                    </h5>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th class="border-0 fw-semibold text-primary-brand">
+                                <i class="bi bi-person me-1"></i>Nom
+                            </th>
+                            <th class="border-0 fw-semibold text-primary-brand">
+                                <i class="bi bi-person me-1"></i>Prénom
+                            </th>
+                            <th class="border-0 fw-semibold text-primary-brand">
+                                <i class="bi bi-calendar-event me-1"></i>Date de naissance
+                            </th>
+                            <th class="border-0 fw-semibold text-primary-brand">
+                                <i class="bi bi-heart-pulse me-1"></i>Allergies
+                            </th>
+                            <th class="border-0 fw-semibold text-primary-brand">
+                                <i class="bi bi-hospital me-1"></i>Médecin traitant
+                            </th>
+                            <th class="border-0 fw-semibold text-primary-brand">
+                                <i class="bi bi-telephone me-1"></i>Tél. médecin
+                            </th>
+                            <th class="border-0 fw-semibold text-primary-brand">
+                                <i class="bi bi-camera me-1"></i>Droit image
+                            </th>
+                            <th class="border-0 fw-semibold text-primary-brand">
+                                <i class="bi bi-gear me-1"></i>Actions
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for membre_famille in membre_familles %}
+                            <tr>
+                                <td class="align-middle">
+                                    <strong class="text-primary-brand">{{ membre_famille.nom }}</strong>
+                                </td>
+                                <td class="align-middle">
+                                    <strong class="text-primary-brand">{{ membre_famille.prenom }}</strong>
+                                </td>
+                                <td class="align-middle">
+                                    {% if membre_famille.dateNaissance %}
+                                        <div>
+                                            <div class="fw-semibold">
+                                                {{ membre_famille.dateNaissance|date('d/m/Y') }}
+                                            </div>
+                                            <small class="text-muted">
+                                                {% set age = date('now').diff(date(membre_famille.dateNaissance)).y %}
+                                                {{ age }} ans
+                                            </small>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted fst-italic">Non renseigné</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle">
+                                    {% if membre_famille.allergies is not empty %}
+                                        <span class="badge bg-warning text-dark">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ membre_famille.allergies }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>Aucune
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle">
+                                    {% if membre_famille.medecinTraitant %}
+                                        {{ membre_famille.medecinTraitant }}
+                                    {% else %}
+                                        <span class="text-muted fst-italic">Non renseigné</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle">
+                                    {% if membre_famille.telMedecin %}
+                                        <a href="tel:{{ membre_famille.telMedecin }}" class="text-decoration-none">
+                                            {{ membre_famille.telMedecin }}
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted fst-italic">Non renseigné</span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle">
+                                    {% if membre_famille.droitImage %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>Oui
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>Non
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="align-middle">
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ path('app_membre_famille_show', {'id': membre_famille.id}) }}"
+                                           class="btn btn-outline-modern btn-sm" title="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ path('app_membre_famille_edit', {'id': membre_famille.id}) }}"
+                                           class="btn btn-outline-modern btn-sm" title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}

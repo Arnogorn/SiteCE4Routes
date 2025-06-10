@@ -53,6 +53,7 @@ class UserType extends AbstractType
                 'label' => 'Veuillez sélectionner votre niveau',
                 'choice_label' => 'libelle',
             ])
+            ->add('NoLicence')
             ->add('actif', CheckboxType::class, [
                 'label' => 'Actif',
             ])

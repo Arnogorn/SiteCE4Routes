@@ -1,4 +1,113 @@
-{{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
-{{ form_end(form) }}
+{{ form_start(form, {'attr': {'class': 'form-modern', 'novalidate': 'novalidate'}}) }}
+
+{# Token CSRF explicite #}
+{% if form._token is defined %}
+    {{ form_widget(form._token) }}
+{% endif %}
+
+<div class="row g-4">
+    {# Colonne gauche #}
+    <div class="col-md-6">
+        {# Nom #}
+        <div class="form-group-modern">
+            {{ form_label(form.nom, 'Nom *', {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.nom, {'attr': {'class': 'form-control-modern', 'placeholder': 'Nom de famille'}}) }}
+            {{ form_errors(form.nom) }}
+        </div>
+
+        {# Prénom #}
+        <div class="form-group-modern">
+            {{ form_label(form.prenom, 'Prénom *', {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.prenom, {'attr': {'class': 'form-control-modern', 'placeholder': 'Prénom'}}) }}
+            {{ form_errors(form.prenom) }}
+        </div>
+
+        {# Date de naissance #}
+        <div class="form-group-modern">
+            {{ form_label(form.dateNaissance, 'Date de naissance *', {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.dateNaissance, {'attr': {'class': 'form-control-modern'}}) }}
+            {{ form_errors(form.dateNaissance) }}
+            <div class="form-text-modern">
+                <i class="bi bi-calendar me-1"></i>
+                Format : JJ/MM/AAAA
+            </div>
+        </div>
+
+        {# Niveau #}
+        <div class="form-group-modern">
+            {{ form_label(form.niveau, 'Niveau d\'équitation *', {'label_attr': {'class': 'form-label-modern required'}}) }}
+            {{ form_widget(form.niveau, {'attr': {'class': 'form-select-modern form-control-modern'}}) }}
+            {{ form_errors(form.niveau) }}
+            <div class="form-text-modern">
+                <i class="bi bi-star me-1"></i>
+                Sélectionnez le niveau d'équitation
+            </div>
+        </div>
+    </div>
+
+    {# Colonne droite #}
+    <div class="col-md-6">
+        {# Allergies #}
+        <div class="form-group-modern">
+            {{ form_label(form.allergies, 'Allergies', {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.allergies, {'attr': {'class': 'form-control-modern', 'placeholder': 'Précisez les allergies si il y en a'}}) }}
+            {{ form_errors(form.allergies) }}
+            <div class="form-text-modern">
+                <i class="bi bi-heart-pulse me-1"></i>
+                Important pour la sécurité (optionnel)
+            </div>
+        </div>
+
+        {# Numéro de licence #}
+        <div class="form-group-modern">
+            {{ form_label(form.NoLicence, 'Numéro de licence FFE', {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.NoLicence, {'attr': {'class': 'form-control-modern', 'placeholder': 'Numéro de licence FFE'}}) }}
+            {{ form_errors(form.NoLicence) }}
+            <div class="form-text-modern">
+                <i class="bi bi-card-text me-1"></i>
+                Numéro de licence FFE (optionnel)
+            </div>
+        </div>
+
+        {# Médecin traitant #}
+        <div class="form-group-modern">
+            {{ form_label(form.medecinTraitant, 'Médecin traitant', {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.medecinTraitant, {'attr': {'class': 'form-control-modern', 'placeholder': 'Nom du médecin'}}) }}
+            {{ form_errors(form.medecinTraitant) }}
+        </div>
+
+        {# Téléphone médecin #}
+        <div class="form-group-modern">
+            {{ form_label(form.telMedecin, 'Téléphone du médecin', {'label_attr': {'class': 'form-label-modern'}}) }}
+            {{ form_widget(form.telMedecin, {'attr': {'class': 'form-control-modern', 'placeholder': '02 12 34 56 78'}}) }}
+            {{ form_errors(form.telMedecin) }}
+            <div class="form-text-modern">
+                <i class="bi bi-telephone-plus me-1"></i>
+                Numéro du médecin traitant (optionnel)
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Droit à l'image  #}
+<div class="col-12">
+    <div class="form-check" style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+        {{ form_widget(form.droitImage, {'attr': {'class': 'form-check-input'}}) }}
+        {{ form_label(form.droitImage, null, {'label_attr': {'class': 'form-check-label'}}) }}
+        {{ form_errors(form.droitImage) }}
+        <div class="form-text-modern mt-2">
+            <i class="bi bi-camera me-1"></i>
+            Cette autorisation nous permet de prendre des photos lors des activités équestres
+        </div>
+    </div>
+</div>
+
+
+{# Bouton de soumission #}
+<div class="text-center mt-4">
+    <button type="submit" class="btn btn-modern-primary" style="min-width: 200px;">
+        <i class="bi bi-check-circle me-2"></i>{{ button_label|default('Enregistrer') }}
+    </button>
+</div>
+
+{{ form_end(form, {render_rest: false}) }}

@@ -162,12 +162,15 @@ function initFooterAnimations() {
 
     footer.dataset.animated = 'true';
 
-    // Padding pour le main
+    // Padding adaptatif pour la main
     const main = document.querySelector('main');
     if (main) {
         const footerHeight = footer.offsetHeight;
-        main.style.paddingBottom = (footerHeight + 20) + 'px';
+        const isMobile = window.innerWidth < 768;
+        const spacing = isMobile ? 5 : 15; // Espacement réduit
+        main.style.paddingBottom = (footerHeight + spacing) + 'px';
     }
+
 
     // Animation d'apparition
     footer.style.transform = 'translateY(100%)';
