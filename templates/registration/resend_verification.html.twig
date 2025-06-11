@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Renvoyer l'email de vérification{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">
+                            <i class="fas fa-envelope"></i>
+                            Renvoyer l'email de vérification
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        {% for message in app.flashes('success') %}
+                            <div class="alert alert-success">
+                                <i class="fas fa-check-circle"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                        {% for message in app.flashes('error') %}
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-circle"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                        {% for message in app.flashes('warning') %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                        {% for message in app.flashes('info') %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Lien expiré ?</strong> Pas de problème ! Saisissez votre adresse email ci-dessous pour recevoir un nouveau lien de vérification.
+                        </div>
+
+                        {{ form_start(resendForm) }}
+                        <div class="mb-3">
+                            {{ form_label(resendForm.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(resendForm.email, {'attr': {'class': 'form-control', 'placeholder': 'votre@email.com'}}) }}
+                            {{ form_errors(resendForm.email) }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            {{ form_widget(resendForm.submit, {'attr': {'class': 'btn btn-primary btn-lg'}}) }}
+                        </div>
+                        {{ form_end(resendForm) }}
+
+                        <hr>
+
+                        <div class="text-center">
+                            <small class="text-muted">
+                                <strong>Conseils :</strong>
+                                <ul class="list-unstyled mt-2">
+                                    <li><i class="fas fa-search"></i> Vérifiez votre dossier spam/courrier indésirable</li>
+                                    <li><i class="fas fa-clock"></i> Les liens sont valides pendant 1 heure</li>
+                                    <li><i class="fas fa-envelope"></i> Un seul email à la fois pour éviter le spam</li>
+                                </ul>
+                            </small>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a href="{{ path('app_login') }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour à la connexion
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
