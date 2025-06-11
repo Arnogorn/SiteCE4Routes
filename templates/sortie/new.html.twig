@@ -191,6 +191,17 @@
                                 </div>
                             </div>
                         {% endfor %}
+                        {% for membre in form.membresFamilleInscrits %}
+                            <div class="participant-item">
+                                <div class="participant-avatar">
+                                    {{ membre.vars.label|slice(0,1)|upper }}
+                                </div>
+                                <div class="flex-grow-1">
+                                    {{ form_widget(membre) }}
+                                    {{ form_label(membre) }}
+                                </div>
+                            </div>
+                        {% endfor %}
                     </div>
                     {{ form_errors(form.participants) }}
                 </div>
