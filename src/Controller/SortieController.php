@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use App\Repository\PaiementRepository;
 use App\Service\NotificationService;
+use App\Service\InscriptionService;
 use App\Entity\Sortie;
 use App\Entity\MembreFamille;
 use App\Entity\User;
@@ -16,7 +18,6 @@ use App\Entity\HistoriquePaiement;
 use App\Repository\EtatRepository;
 use App\Repository\SortieRepository;
 use App\Service\UpdateEtatService;
-use App\Service\InscriptionService;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use DateInterval;
 use Doctrine\ORM\EntityManagerInterface;
@@ -144,9 +145,13 @@ final class SortieController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/{id}/edit', name: 'app_sortie_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Sortie $sortie, EntityManagerInterface $entityManager, EtatRepository $etatRepository): Response
+    public function edit(Request $request, Sortie $sortie, EntityManagerInterface $entityManager, EtatRepository $etatRepository, InscriptionService $inscriptionService): Response
     {
 //        $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        // Conserver la liste originale de participants et de membres pour détecter les suppressions
+        $originalParticipants = new ArrayCollection($sortie->getParticipants()->toArray());
+        $originalMembres = new ArrayCollection($sortie->getMembresFamilleInscrits()->toArray());
 
         $form = $this->createForm(SortieType::class, $sortie);
         $form->handleRequest($request);
@@ -161,19 +166,35 @@ final class SortieController extends AbstractController
                 $etatOuvert = $etatRepository->findOneBy(['libelle' => 'Ouverte']);
 
                 if ($etatOuvert) {
-                $sortie->setEtat($etatOuvert);
+                    $sortie->setEtat($etatOuvert);
+                } else {
+                    // Gestion d'erreur si l'état n'existe pas
+                    $this->addFlash('danger', 'Impossible de trouver l\'état "Ouvert". Veuillez vérifier votre configuration.');
+                }
             } else {
-                // Gestion d'erreur si l'état n'existe pas
-                $this->addFlash('danger', 'Impossible de trouver l\'état "Ouvert". Veuillez vérifier votre configuration.');
+                // Si non publiée, définir un état par défaut, par exemple "Créée"
+                $etatCree = $etatRepository->findOneBy(['libelle' => 'Créée']);
+                if ($etatCree) {
+                    $sortie->setEtat($etatCree);
+                }
+            }
 
+            // Traiter les désinscriptions opérées par l'admin
+            foreach ($originalParticipants as $participant) {
+                if (!$sortie->getParticipants()->contains($participant)) {
+                    // remboursement/gérer retrait de l'utilisateur
+                    $inscriptionService->unregisterParticipant($sortie, $participant);
+                }
             }
-        } else {
-            // Si non publiée, définir un état par défaut, par exemple "Créée"
-            $etatCree = $etatRepository->findOneBy(['libelle' => 'Créée']);
-            if ($etatCree) {
-                $sortie->setEtat($etatCree);
+            foreach ($originalMembres as $membre) {
+                if (!$sortie->getMembresFamilleInscrits()->contains($membre)) {
+                    // remboursement/gérer retrait du membre de famille
+                    /** @var \App\Entity\User $admin */
+                    $admin = $this->getUser();
+                    $inscriptionService->unregisterParticipant($sortie, $admin, $membre);
+                }
             }
-        }
+
             $entityManager->persist($sortie);
             $entityManager->flush();
 
