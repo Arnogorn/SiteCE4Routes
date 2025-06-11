@@ -157,11 +157,26 @@ class InscriptionService
                 ]);
         }
         if (!$insc) {
-            throw new \RuntimeException("Aucune inscription trouvée pour cette personne.");
+            // Inscrit manuellement par l’admin : retirer simplement sans erreur ni remboursement
+            if ($membre) {
+                $sortie->removeMembresFamilleInscrit($membre);
+            } else {
+                $sortie->removeParticipant($user);
+            }
+            $this->em->flush();
+            return;
         }
         $paiement = $insc->getPaiement();
         if (!$paiement || $paiement->getStatut() !== Paiement::STATUT_PAYE) {
-            throw new \RuntimeException("Aucun paiement valide trouvé pour cette inscription.");
+            // Pas de paiement ou pas payé : supprimer l’inscription sans remboursement
+            $this->em->remove($insc);
+            if ($membre) {
+                $sortie->removeMembresFamilleInscrit($membre);
+            } else {
+                $sortie->removeParticipant($user);
+            }
+            $this->em->flush();
+            return;
         }
 
         // Calcul du montant par place
