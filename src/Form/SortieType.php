@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Etat;
+use App\Entity\MembreFamille;
 use App\Entity\Moniteur;
 use App\Entity\Niveau;
 use App\Entity\Sortie;
@@ -18,9 +19,20 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Bundle\SecurityBundle\Security;
+use Doctrine\ORM\EntityManagerInterface;
 
 class SortieType extends AbstractType
 {
+    private Security $security;
+    private EntityManagerInterface $em;
+
+    public function __construct(Security $security, EntityManagerInterface $em)
+    {
+        $this->security = $security;
+        $this->em       = $em;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -123,23 +135,51 @@ class SortieType extends AbstractType
                 'choice_attr' => function() {
                     return ['class' => 'form-check-input'];
                 },
-            ])
-            ->add('participants', EntityType::class, [
-                'class' => User::class,
-                'multiple' => true,
-                'expanded' => true,
-                'choice_label' => function (User $user) {
-                    return $user->getPrenom() . ' ' . $user->getNom();
-                },
-                'label' => 'Ajouter des participants',
-                'attr' => [
-                    'class' => 'participants-list-container',
-                ],
-                'choice_attr' => function() {
-                    return ['class' => 'form-check-input'];
-                },
-                'required' => false,
             ]);
+        // Récupère l'utilisateur courant
+        /** @var \App\Entity\User|null $user */
+        $user = $this->security->getUser();
+        // Récupère ses membres de famille
+        $membresFamille = [];
+        if ($user instanceof \App\Entity\User && null !== $user->getFamille()) {
+            $membresFamille = $user->getFamille()->getMembre()->toArray();
+        }
+        // Récupère tous les utilisateurs
+        $allUsers = $this->em->getRepository(User::class)->findAll();
+        // Fusionne les deux listes
+        $choices = array_merge($allUsers, $membresFamille);
+        $builder->add('participants', EntityType::class, [
+            'class' => User::class,
+            'choices' => $choices,
+            'multiple' => true,
+            'expanded' => true,
+            'choice_label' => function (User $user) {
+                return $user->getPrenom() . ' ' . $user->getNom();
+            },
+
+            'label' => 'Ajouter des participants',
+            'attr' => [
+                'class' => 'participants-list-container',
+            ],
+            'choice_attr' => function() {
+                return ['class' => 'form-check-input'];
+            },
+            'required' => false,
+        ])
+        ->add('membresFamilleInscrits', EntityType::class, [
+            'class' => MembreFamille::class,
+            'choices' => $this->em->getRepository(MembreFamille::class)->findAll(),
+            'multiple' => true,
+            'expanded' => true,
+            'choice_label' => function (MembreFamille $m) {
+                return $m->getPrenom() . ' ' . $m->getNom();
+            },
+            'label' => 'Membres de famille',
+            'attr' => ['class' => 'participants-list-container'],
+            'choice_attr' => function() {
+                return ['class' => 'form-check-input'];
+            },
+        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
