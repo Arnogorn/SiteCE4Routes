@@ -18,6 +18,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class RegistrationController extends AbstractController
 {
@@ -41,7 +44,7 @@ class RegistrationController extends AbstractController
             if (count($violations) > 0) {
                 $this->addFlash(
                     'warning',
-                    'Attention : ce mot de passe a déjà été compromis dans des fuites publiques. Il est fortement conseillé d’en choisir un autre.'
+                    'Attention : ce mot de passe a déjà été compromis dans des fuites publiques. Il est fortement conseillé d\'en choisir un autre.'
                 );
             }
 
@@ -52,17 +55,17 @@ class RegistrationController extends AbstractController
 
             $entityManager->persist($user);
             $entityManager->flush();
-// @TODO réactiver avant la mise en prod
-            // generate a signed url and email it to the user
-//            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
-//                (new TemplatedEmail())
-//                    ->from(new Address('ecuriesdes4routes@gmail.com', 'Ed4r Mail Bot'))
-//                    ->to((string) $user->getEmail())
-//                    ->subject('Please Confirm your Email')
-//                    ->htmlTemplate('registration/confirmation_email.html.twig')
-//            );
 
-            // do anything else you need here, like send an email
+            // generate a signed url and email it to the user
+            $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                (new TemplatedEmail())
+                    ->from(new Address('ecuriesdes4routes@gmail.com', 'Ed4r Mail Bot'))
+                    ->to((string) $user->getEmail())
+                    ->subject('Veuillez confirmer votre adresse email')
+                    ->htmlTemplate('registration/confirmation_email.html.twig')
+            );
+
+            $this->addFlash('info', 'Un email de confirmation a été envoyé à votre adresse. Veuillez cliquer sur le lien pour activer votre compte.');
 
             return $this->redirectToRoute('index');
         }
@@ -88,17 +91,71 @@ class RegistrationController extends AbstractController
         }
 
         // validate email confirmation link, sets User::isVerified=true and persists
-//        try {
-//            $this->emailVerifier->handleEmailConfirmation($request, $user);
-//        } catch (VerifyEmailExceptionInterface $exception) {
-//            $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
-//
-//            return $this->redirectToRoute('app_register');
-//        }
+        try {
+            $this->emailVerifier->handleEmailConfirmation($request, $user);
+        } catch (VerifyEmailExceptionInterface $exception) {
+            // Si le lien a expiré, proposer de renvoyer un email
+            if (str_contains($exception->getReason(), 'expired') || str_contains($exception->getMessage(), 'expiré')) {
+                $this->addFlash('warning', 'Le lien pour vérifier votre adresse e-mail a expiré.');
+                return $this->redirectToRoute('app_resend_verification', ['email' => $user->getEmail()]);
+            }
 
-        // @TODO Change the redirect on success and handle or remove the flash message in your templates
-        $this->addFlash('success', 'Your email address has been verified.');
+            $this->addFlash('verify_email_error', $translator->trans($exception->getReason(), [], 'VerifyEmailBundle'));
+            return $this->redirectToRoute('app_register');
+        }
 
-        return $this->redirectToRoute('app_register');
+        $this->addFlash('success', 'Votre adresse email a bien été vérifiée');
+
+        return $this->redirectToRoute('app_login');
+    }
+
+    #[Route('/resend-verification', name: 'app_resend_verification')]
+    public function resendVerification(Request $request, UserRepository $userRepository): Response
+    {
+        // Créer un formulaire simple pour l'email
+        $form = $this->createFormBuilder()
+            ->add('email', EmailType::class, [
+                'label' => 'Adresse email',
+                'data' => $request->query->get('email', ''),
+                'constraints' => [
+                    new Assert\NotBlank(['message' => 'L\'email ne peut pas être vide']),
+                    new Assert\Email(['message' => 'Veuillez saisir un email valide'])
+                ]
+            ])
+            ->add('submit', SubmitType::class, [
+                'label' => 'Renvoyer l\'email de vérification',
+                'attr' => ['class' => 'btn btn-primary']
+            ])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $email = $form->get('email')->getData();
+            $user = $userRepository->findOneBy(['email' => $email]);
+
+            if (!$user) {
+                $this->addFlash('error', 'Aucun compte trouvé avec cette adresse email.');
+            } elseif ($user->isVerified()) {
+                $this->addFlash('info', 'Votre compte est déjà vérifié. Vous pouvez vous connecter.');
+                return $this->redirectToRoute('app_login');
+            } else {
+                // Renvoyer l'email de vérification
+                $this->emailVerifier->sendEmailConfirmation('app_verify_email', $user,
+                    (new TemplatedEmail())
+                        ->from(new Address('ecuriesdes4routes@gmail.com', 'Ed4r Mail Bot'))
+                        ->to((string) $user->getEmail())
+                        ->subject('Veuillez confirmer votre adresse email')
+                        ->htmlTemplate('registration/confirmation_email.html.twig')
+                );
+
+                $this->addFlash('success', 'Un nouveau lien de vérification a été envoyé à votre adresse email.');
+                return $this->redirectToRoute('app_login');
+            }
+        }
+
+        return $this->render('registration/resend_verification.html.twig', [
+            'resendForm' => $form,
+        ]);
     }
 }

@@ -153,7 +153,7 @@ a:hover {
 
 /* Navigation moderne - Version sur deux niveaux */
 .navbar-modern {
-    background: rgba(251, 255, 241, 0.95);
+    background: white;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border-bottom: 1px solid var(--border-color);

@@ -90,7 +90,7 @@ class SortieRepository extends ServiceEntityRepository
             }
         } else {
             // Tri par défaut
-            $qb->orderBy('s.date', 'ASC');
+            $qb->orderBy('s.date', 'DESC');
         }
 
         return $qb->getQuery()->getResult();

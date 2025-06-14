@@ -168,7 +168,7 @@
                                     <div class="d-flex align-items-center">
                                         <i class="bi bi-hourglass-split me-2"></i>
                                         <div>
-                                            <strong>Information : </strong>Date limite remboursement suite à une désinscription (48h avant début) :<br>
+                                            <strong>Information : </strong>Date limite de remboursement suite à une désinscription (48h avant le début) :<br>
                                             <span class="fw-bold">{{ sortie.dateLimiteInscription|date('d/m/Y à H:i') }}</span>
                                         </div>
                                     </div>
@@ -183,7 +183,7 @@
                                 {% else %}
                                     <div class="alert alert-info mb-0">
                                         <i class="bi bi-info-circle me-2"></i>
-                                        <strong>Remboursement :</strong> toute désinscription avant le {{ sortie.date|date_modify("-2 days")|date('d/m/Y à H:i') }}, soit 48h avant de début de l'activité sera intégralement remboursée.
+                                        <strong>Remboursement :</strong> Toute désinscription avant le {{ sortie.date|date_modify("-2 days")|date('d/m/Y à H:i') }}, soit 48h avant de début de l'activité sera intégralement remboursée.
                                     </div>
                                 {% endif %}
                             </div>

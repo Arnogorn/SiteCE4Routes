@@ -136,28 +136,17 @@ class SortieType extends AbstractType
                     return ['class' => 'form-check-input'];
                 },
             ]);
-        // Récupère l'utilisateur courant
-        /** @var \App\Entity\User|null $user */
-        $user = $this->security->getUser();
-        // Récupère ses membres de famille
-        $membresFamille = [];
-        if ($user instanceof \App\Entity\User && null !== $user->getFamille()) {
-            $membresFamille = $user->getFamille()->getMembre()->toArray();
-        }
-        // Récupère tous les utilisateurs
-        $allUsers = $this->em->getRepository(User::class)->findAll();
-        // Fusionne les deux listes
-        $choices = array_merge($allUsers, $membresFamille);
+
+        // Séparation des champs pour Users et MembreFamille
         $builder->add('participants', EntityType::class, [
             'class' => User::class,
-            'choices' => $choices,
+            'choices' => $this->em->getRepository(User::class)->findAll(),
             'multiple' => true,
             'expanded' => true,
             'choice_label' => function (User $user) {
                 return $user->getPrenom() . ' ' . $user->getNom();
             },
-
-            'label' => 'Ajouter des participants',
+            'label' => 'Utilisateurs inscrits',
             'attr' => [
                 'class' => 'participants-list-container',
             ],
@@ -165,20 +154,36 @@ class SortieType extends AbstractType
                 return ['class' => 'form-check-input'];
             },
             'required' => false,
-        ])
-        ->add('membresFamilleInscrits', EntityType::class, [
+        ]);
+
+        // Récupération des membres de famille de l'utilisateur connecté
+        /** @var \App\Entity\User|null $user */
+        $user = $this->security->getUser();
+        $membresFamille = [];
+
+        if ($user instanceof User && null !== $user->getFamille()) {
+            $membresFamille = $user->getFamille()->getMembre()->toArray();
+        }
+
+        // Si l'utilisateur est admin, récupérer tous les membres de famille
+        if ($user && in_array('ROLE_ADMIN', $user->getRoles())) {
+            $membresFamille = $this->em->getRepository(MembreFamille::class)->findAll();
+        }
+
+        $builder->add('membresFamilleInscrits', EntityType::class, [
             'class' => MembreFamille::class,
-            'choices' => $this->em->getRepository(MembreFamille::class)->findAll(),
+            'choices' => $membresFamille,
             'multiple' => true,
             'expanded' => true,
-            'choice_label' => function (MembreFamille $m) {
-                return $m->getPrenom() . ' ' . $m->getNom();
+            'choice_label' => function (MembreFamille $membre) {
+                return $membre->getPrenom() . ' ' . $membre->getNom();
             },
             'label' => 'Membres de famille',
             'attr' => ['class' => 'participants-list-container'],
             'choice_attr' => function() {
                 return ['class' => 'form-check-input'];
             },
+            'required' => false,
         ]);
     }
 
