@@ -18,7 +18,7 @@ class CustomUserChecker implements UserCheckerInterface
         // Vérifier si l'email est vérifié
         if (!$user->isVerified()) {
             throw new CustomUserMessageAccountStatusException(
-                'Votre adresse email n\'a pas encore été vérifiée. <a href="/resend-verification?email=' . urlencode($user->getEmail()) . '" class="alert-link">Cliquez ici pour renvoyer l\'email de vérification</a>.'
+                'Votre adresse email n\'a pas encore été vérifiée.'
             );
         }
 
