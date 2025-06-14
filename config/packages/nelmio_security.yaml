@@ -19,46 +19,14 @@ nelmio_security:
             - 'no-referrer'
             - 'strict-origin-when-cross-origin'
     forced_ssl:
-        enabled: false
+        enabled: true
+        hsts_max_age: 31536000
+
 
             # Headers de sécurité supplémentaires
 
     csp:
-        report: # Section séparée, pas sous enforce
-            default-src: [ 'self' ]
-            script-src:
-                - 'self'
-                - 'js.stripe.com'
-                - 'ga.jspm.io'
-                - 'cdn.jsdelivr.net'
-                - 'unsafe-inline'
-                - 'unsafe-eval'
-                - 'data:'
-                - 'blob:'
-                - 'maps.googleapis.com'
-                - 'maps.gstatic.com'
-            style-src:
-                - 'self'
-                - 'unsafe-inline'
-                - 'cdn.jsdelivr.net'
-                - 'fonts.googleapis.com'
-            img-src: [ 'self', 'data:', 'https:', 'maps.googleapis.com', 'maps.gstatic.com', '*.googleapis.com', '*.gstatic.com' ]
-            font-src: [ 'self', 'cdn.jsdelivr.net', 'fonts.gstatic.com' ]
-            connect-src:
-                - 'self'
-                - 'api.stripe.com'
-                - 'ga.jspm.io'
-                - 'https:'
-                - 'ws:'
-                - 'wss:'
-                - 'maps.googleapis.com'
-            frame-src:
-                - 'self'
-                - 'https://www.google.com'
-                - 'https://maps.google.com'
-            object-src: [ 'none' ]
-            base-uri: [ 'self' ]
-#        enforce:
+#        report: # Section séparée, pas sous enforce
 #            default-src: [ 'self' ]
 #            script-src:
 #                - 'self'
@@ -66,20 +34,59 @@ nelmio_security:
 #                - 'ga.jspm.io'
 #                - 'cdn.jsdelivr.net'
 #                - 'unsafe-inline'
+#                - 'unsafe-eval'
+#                - 'data:'
+#                - 'blob:'
+#                - 'maps.googleapis.com'
+#                - 'maps.gstatic.com'
 #            style-src:
 #                - 'self'
 #                - 'unsafe-inline'
 #                - 'cdn.jsdelivr.net'
-#            img-src: [ 'self', 'data:', 'https:' ]
-#            font-src: [ 'self', 'cdn.jsdelivr.net' ]
+#                - 'fonts.googleapis.com'
+#            img-src: [ 'self', 'data:', 'https:', 'maps.gstatic.com', '*.googleapis.com' ]
+#            font-src: [ 'self', 'cdn.jsdelivr.net', 'fonts.gstatic.com' ]
 #            connect-src:
 #                - 'self'
 #                - 'api.stripe.com'
 #                - 'ga.jspm.io'
 #                - 'https:'
+#                - 'ws:'
+#                - 'wss:'
+#                - 'maps.googleapis.com'
 #            frame-src:
 #                - 'self'
 #                - 'https://www.google.com'
+#                - 'https://maps.google.com'
+#                - 'js.stripe.com'
 #            object-src: [ 'none' ]
 #            base-uri: [ 'self' ]
+        enforce:
+            default-src: [ 'self' ]
+            script-src:
+                - 'self'
+                - 'js.stripe.com'
+                - 'ga.jspm.io'
+                - 'cdn.jsdelivr.net'
+                - 'unsafe-inline'
+            style-src:
+                - 'self'
+                - 'unsafe-inline'
+                - 'fonts.googleapis.com'
+                - 'cdn.jsdelivr.net'
+            img-src: [ 'self', 'data:', 'https:', 'maps.gstatic.com', '*.googleapis.com', '*.stripe.com' ]
+            font-src: [ 'self', 'cdn.jsdelivr.net', 'fonts.gstatic.com' ]
+            connect-src:
+                - 'self'
+                - 'api.stripe.com'
+                - 'ga.jspm.io'
+                - 'maps.googleapis.com'
+                - 'https:'
+            frame-src:
+                - 'self'
+                - 'js.stripe.com'
+                - 'https://www.google.com'
+            object-src: [ 'none' ]
+            base-uri: [ 'self' ]
+            form-action: ['self']
 

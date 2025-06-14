@@ -13,7 +13,6 @@ class NotificationService
 
     public function __construct(
         private MailerInterface $mailer,
-        private string          $senderEmail
     )
     {
     }
@@ -76,10 +75,12 @@ class NotificationService
         $bodyLines[] = "L'équipe des Écuries des 4 Routes";
 
         $email = (new Email())
-            ->from($this->senderEmail)
+            ->from($_ENV['NOREPLY_EMAIL'])
             ->to($userDestinataire->getEmail())
             ->subject($subject)
             ->text(implode("\n", $bodyLines));
+
+        sleep(2);
 
         $this->mailer->send($email);
     }

@@ -147,7 +147,7 @@ class ResetPasswordController extends AbstractController
         }
 
         $email = (new TemplatedEmail())
-            ->from(new Address('ne_pas_repondre@ecuriesdes4routes.com', 'Reset MDP Mail Bot'))
+            ->from(new Address('ne_pas_repondre@ecuriesdes4routes.fr', 'ED4R Mail Bot'))
             ->to((string) $user->getEmail())
             ->subject('Votre demande de réinitialisation de mot de passe')
             ->htmlTemplate('reset_password/email.html.twig')
