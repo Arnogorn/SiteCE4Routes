@@ -35,6 +35,7 @@ class AppFixtures extends Fixture
             $etat = new \App\Entity\Etat();
             $etat->setLibelle($label);
             $manager->persist($etat);
+            $manager->flush();
             $etats[] = $etat;
         }
 
@@ -50,11 +51,12 @@ class AppFixtures extends Fixture
             $niveau = new Niveau();
             $niveau->setLibelle($libelle);
             $manager->persist($niveau);
+            $manager->flush();
             $niveaux[] = $niveau;
         }
 
         // === USERS INDIVIDUELS ===
-        $plainPassword = 'password';
+        $plainPassword = 'M269RS!a';
 
 
 
@@ -67,13 +69,13 @@ class AppFixtures extends Fixture
         );
 
         $user1 ->setPassword($hashedPassword) // password
-            ->setEmail("admin@admin.fr")
+            ->setEmail("ecuriesdes4routes@gmail.com")
             ->setRoles(['ROLE_ADMIN'])
             ->setNom("Admin")
             ->setPrenom("Istrateur")
-            ->setDateNaissance(new \DateTimeImmutable('1990-05-14'))
-            ->setAdresse("12 rue des Lilas, Lyon")
-            ->setTelephone("0601020304")
+            ->setDateNaissance(new \DateTimeImmutable('1990-06-05'))
+            ->setAdresse("217 Les Quatre Routes, 35750 Iffendic")
+            ->setTelephone("0698737600")
             ->setTelPersContact("0600000001")
             ->setAllergies("Aucune")
             ->setMedecinTraitant("Dr Lemoine")
@@ -81,130 +83,14 @@ class AppFixtures extends Fixture
             ->setDroitImage(true)
             ->setActif(true)
             ->setIsVerified(true)
-            ->setNiveau($niveaux[0]);
-
-        $user2 = (new User());
-
-        $hashedPassword = $this->passwordHasher->hashPassword(
-            $user2,
-            $plainPassword
-        );
-          $user2  ->setEmail("bob@bob.fr")
-            ->setPassword($hashedPassword) // password
-            ->setRoles(['ROLE_USER'])
-            ->setNom("Martin")
-            ->setPrenom("Bob")
-            ->setDateNaissance(new \DateTimeImmutable('1988-11-23'))
-            ->setAdresse("5 avenue du Stade, Toulouse")
-            ->setTelephone("0611121314")
-            ->setTelPersContact("0600000002")
-            ->setAllergies("Pollen")
-            ->setMedecinTraitant("Dr Bernard")
-            ->setTelMedecin("0611111111")
-            ->setDroitImage(true)
-            ->setActif(true)
-            ->setIsVerified(true)
-            ->setNiveau($niveaux[1]);
-
-        $user3 = (new User());
-
-        $hashedPassword = $this->passwordHasher->hashPassword(
-            $user3,
-            $plainPassword
-        );
-        $user3
-            ->setEmail("carole@carole.fr")
-            ->setPassword($hashedPassword) // password
-            ->setRoles(['ROLE_USER'])
-            ->setNom("Lemoine")
-            ->setPrenom("Carole")
-            ->setDateNaissance(new \DateTimeImmutable('1995-03-09'))
-            ->setAdresse("7 chemin du Lac, Marseille")
-            ->setTelephone("0621222324")
-            ->setTelPersContact("0600000003")
-            ->setAllergies("Aspirine")
-            ->setMedecinTraitant("Dr Faure")
-            ->setTelMedecin("0699999999")
-            ->setDroitImage(false)
-            ->setActif(true)
-            ->setIsVerified(true)
             ->setNiveau($niveaux[2]);
 
 
-        // MONITEURS
-        $userM1 = (new User())
-            ->setEmail("marc@moniteur.fr")
-            ->setPassword('$2y$13$VxFzxhEoVQb6V5VVYClGke6E8EBwBPKyDxMjkIJOVjE8UI1T4Z8Wm') // password
-            ->setRoles(['ROLE_USER'])
-            ->setNom("Dupuis")
-            ->setPrenom("Marc")
-            ->setDateNaissance(new \DateTimeImmutable('1985-04-20'))
-            ->setAdresse("2 rue des Écuries, Lyon")
-            ->setTelephone("0677001100")
-            ->setTelPersContact("0600000010")
-            ->setAllergies("Aucune")
-            ->setMedecinTraitant("Dr Brillant")
-            ->setTelMedecin("0610101010")
-            ->setDroitImage(true)
-            ->setActif(true)
-            ->setIsVerified(true)
-            ->setNiveau($niveaux[1]);
-
-        $moniteur1 = new \App\Entity\Moniteur();
-        $moniteur1->setUser($userM1);
-
-        $manager->persist($userM1);
-        $manager->persist($moniteur1);
 
 
-        // === FAMILLE ET MEMBRES ===
+            $manager->persist($user1);
+            $manager->flush();
 
-        $userFamille = (new User())
-            ->setEmail("famille.durand@example.com")
-            ->setPassword('$2y$13$VxFzxhEoVQb6V5VVYClGke6E8EBwBPKyDxMjkIJOVjE8UI1T4Z8Wm') // password
-            ->setRoles(['ROLE_USER'])
-            ->setNom("Durand")
-            ->setPrenom("Claire")
-            ->setDateNaissance(new \DateTimeImmutable('1975-08-20'))
-            ->setAdresse("42 rue du Moulin, Nantes")
-            ->setTelephone("0601020304")
-            ->setTelPersContact("0600000101")
-            ->setAllergies("Aucune")
-            ->setMedecinTraitant("Dr Julien")
-            ->setTelMedecin("0611223344")
-            ->setDroitImage(true)
-            ->setActif(true)
-            ->setIsVerified(true)
-            ->setNiveau($niveaux[0]);
-//            ->setFamille($famille); Il n'y en a plus besoin pusque le constructeur créer automatiquement une famille lors de la création du User
-
-        $famille = $userFamille->getFamille(); // récupère la famille créée automatiquement dans le constructeur
-
-        $membre1 = (new MembreFamille())
-            ->setNom("Durand")
-            ->setPrenom("Léa")
-            ->setDateNaissance(new \DateTimeImmutable('2010-05-15'))
-            ->setDroitImage(true)
-            ->setAllergies("Pollen")
-            ->setMedecinTraitant("Dr Moulin")
-            ->setTelMedecin("0699887766")
-            ->setFamille($famille)
-            ->setNiveau($niveaux[1]);
-
-        $membre2 = (new MembreFamille())
-            ->setNom("Durand")
-            ->setPrenom("Tom")
-            ->setDateNaissance(new \DateTimeImmutable('2012-09-10'))
-            ->setDroitImage(false)
-            ->setAllergies("Arachides")
-            ->setMedecinTraitant("Dr Lemoine")
-            ->setTelMedecin("0688776655")
-            ->setFamille($famille)
-            ->setNiveau($niveaux[2]);
-
-        foreach ([$user1, $user2, $user3, $userFamille, $famille, $membre1, $membre2] as $entity) {
-            $manager->persist($entity);
-        }
 
         //SEXE
 
@@ -220,54 +106,10 @@ class AppFixtures extends Fixture
         $manager->persist($sexe3);
         $manager->flush();
 
-        // CHEVAUX
-        $cheval1 = new \App\Entity\Cheval();
-        $cheval1->setNom("Orage")
-            ->setNomPere("Tonnerre")
-            ->setNomMere("Brume")
-            ->setDateNaissance(new \DateTimeImmutable('2017-04-01'))
-            ->setSexe($sexe3)
-            ->setLieuNaissance("Élevage du Sud")
-            ->setAppartientEcurie(false)
-            ->setAVendre(false)
-            ->setVendu(false)
-            ->setInfos("Cheval très docile et idéal pour les débutants.")
-            ->setUser($user1); // Alice
-
-        $manager->persist($cheval1);
-
-        // SORTIE
 
 
-        // COMPÉTITION
-        $competition1 = new \App\Entity\Competition();
-        $competition1->setTitre("Concours d’Obstacle")
-            ->setDateDebut(new \DateTimeImmutable('2025-07-01'))
-            ->setDateFin(new \DateTimeImmutable('2025-07-03'))
-            ->setPrixTransport(50)
-            ->setPrixEpreuve(30)
-            ->setDescription("Concours officiel pour cavaliers de niveau Galop 3 et plus.");
-
-        $manager->persist($competition1);
 
 
-        $manager->flush();
-
-        //contact
-        $contact1 = (new Contact());
-        $contact1->setNom("Jehanno")
-            ->setPrenom("Damien")
-            ->setDescription("cavalier CSO, Jeunes chevaux - pro 1/ International")
-            ->setTel("0632935092");
-        $manager->persist($contact1);
-        $manager->flush();
-        $contact2 = (new Contact());
-        $contact2->setNom("Kitzing")
-            ->setPrenom("Lorraine")
-            ->setDescription("Monitrice d'équitation, cavalière dressage, Jeune chevaux-pro 2")
-            ->setTel("0698737600");
-        $manager->persist($contact2);
-        $manager->flush();
 
         //écurie propriétaire
     $ecurieproprio1 = (new ecurieProprietaire());
@@ -328,10 +170,7 @@ class AppFixtures extends Fixture
         $manager->persist($typeSortie2);
         $manager->flush();
 
-        $typeSortie3 = (new typeSortie());
-        $typeSortie3->setLibelle("Randonnée");
-        $manager->persist($typeSortie3);
-        $manager->flush();
+
     }
 
 

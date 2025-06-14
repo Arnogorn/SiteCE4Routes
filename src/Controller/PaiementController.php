@@ -224,7 +224,7 @@ class PaiementController extends AbstractController
             );
 
             $email = (new Email())
-                ->from('ecuriesdes4routes@gmail.com')
+                ->from('ne_pas_repondre@ecuriesdes4routes.fr')
                 ->to($user->getEmail())
                 ->subject('Confirmation de votre inscription - ' . $sortie->getTitre())
                 ->text($messageText);
@@ -250,7 +250,7 @@ class PaiementController extends AbstractController
         if ($user && $user instanceof \App\Entity\User) {
             $email = (new Email())
 
-                ->from('ecurie4routes@gmail.com')
+                ->from('ne_pas_repondre@ecuriesdes4routes.fr')
                 ->to($user->getEmail())
                 ->subject('Paiement non finalisé')
                 ->text(sprintf(
