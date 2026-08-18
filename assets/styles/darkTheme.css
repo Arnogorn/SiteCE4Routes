@@ -549,7 +549,7 @@
     .table-responsive {
         background-color: var(--bg-secondary);
         border-radius: 12px;
-        overflow: hidden;
+        overflow-x: auto;
         box-shadow: var(--shadow-sm);
     }
 

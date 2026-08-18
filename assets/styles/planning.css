@@ -1,6 +1,9 @@
 
 .planning-table {
     width: 100%;
+    /* Heure (150px) + 7 jours (110px mini chacun) : force le débordement horizontal
+       plutôt que de laisser le navigateur écraser les colonnes jusqu'à les rendre illisibles */
+    min-width: calc(150px + 7 * 110px);
     border-collapse: collapse;
     background-color: var(--bg-secondary);
     border-radius: 12px;
@@ -29,6 +32,7 @@
 }
 
 .planning-header-day {
+    width: 110px;
     background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);
     color: white;
     font-weight: 600;
@@ -140,6 +144,12 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+    .planning-table {
+        /* Heure (100px) + 7 jours (90px mini chacun) : plus étroit qu'en desktop
+           mais toujours assez large pour forcer le scroll horizontal tactile */
+        min-width: calc(100px + 7 * 90px);
+    }
+
     .planning-table th,
     .planning-table td {
         height: 60px;
@@ -148,6 +158,11 @@
 
     .planning-header-time {
         width: 100px;
+        padding: 0.5rem;
+    }
+
+    .planning-header-day {
+        width: 90px;
         padding: 0.5rem;
     }
 

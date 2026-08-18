@@ -90,7 +90,7 @@
         </div>
     {% endfor %}
 
-    <div class="container">
+    <div class="{% block container_class %}container{% endblock %}">
         {% block body %}{% endblock %}
     </div>
 </main>

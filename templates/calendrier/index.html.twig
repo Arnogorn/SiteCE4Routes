@@ -2,10 +2,11 @@
 
 {% block title %}Planning Hebdomadaire - Écuries des 4 Routes{% endblock %}
 
+{% block container_class %}container-fluid px-3 px-md-5{% endblock %}
+
 {% block body %}
     <section class="py-5 hero-modern">
-        <div class="container">
-            <div class="text-center mb-5">
+        <div class="text-center mb-5">
                 <h1 class="text-primary-brand mb-3">
                     <i class="bi bi-calendar-week" style="color: var(--accent-color);"></i>
                     Planning Hebdomadaire
@@ -118,6 +119,5 @@
                     </div>
                 {% endif %}
             </div>
-        </div>
     </section>
 {% endblock %}
