@@ -4,7 +4,7 @@
 
 {% block javascript %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function initCalendrierEditForm() {
     // Fonction pour calculer et afficher la durée
     function updateDuration() {
         const heureDebutSelect = document.querySelector('select[name="calendrier[heureDebut]"]');
@@ -90,7 +90,9 @@
 
     // Calculer la durée au chargement
     updateDuration();
-});
+    }
+    document.addEventListener('DOMContentLoaded', initCalendrierEditForm);
+    document.addEventListener('turbo:load', initCalendrierEditForm);
 </script>
 {% endblock %}
 

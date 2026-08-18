@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Politique de confidentialité - Écuries des 4 Routes{% endblock %}
+
+{% block body %}
+    <section class="py-5">
+        <div class="container">
+            <h1 class="mb-4">Politique de confidentialité</h1>
+            <p><em>Dernière mise à jour : {{ "now"|date("d/m/Y") }}</em></p>
+
+            <h2 class="mt-4">1. Responsable du traitement</h2>
+            <p>
+                Les Écuries Des 4 Routes, 217 Les Quatre Routes, 35750 Iffendic.<br>
+                <strong>[À compléter par le centre équestre : forme juridique / SIRET / nom du responsable de traitement]</strong><br>
+                Pour toute question relative à vos données personnelles, vous pouvez utiliser le formulaire de contact du site ou vous adresser directement à un administrateur du club.
+            </p>
+
+            <h2 class="mt-4">2. Données collectées et finalités</h2>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Données</th>
+                        <th>Finalité</th>
+                        <th>Base légale</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Nom, prénom, email, adresse, téléphone</td>
+                        <td>Gestion administrative du compte et des inscriptions aux activités</td>
+                        <td>Exécution de la relation avec le club</td>
+                    </tr>
+                    <tr>
+                        <td>Date de naissance, niveau, numéro de licence FFE</td>
+                        <td>Encadrement adapté et affiliation fédérale</td>
+                        <td>Exécution de la relation avec le club</td>
+                    </tr>
+                    <tr>
+                        <td>Allergies, médecin traitant, téléphone du médecin</td>
+                        <td>Sécurité de la personne en cas d'incident pendant une activité</td>
+                        <td>Consentement explicite (case dédiée lors de l'inscription)</td>
+                    </tr>
+                    <tr>
+                        <td>Photo, droit à l'image</td>
+                        <td>Communication du club (site, réseaux sociaux)</td>
+                        <td>Consentement explicite (case dédiée)</td>
+                    </tr>
+                    <tr>
+                        <td>Données de paiement</td>
+                        <td>Règlement des inscriptions aux sorties et compétitions</td>
+                        <td>Exécution du contrat. Le paiement est traité par notre prestataire Stripe : nous ne stockons jamais votre numéro de carte bancaire.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h2 class="mt-4">3. Destinataires des données</h2>
+            <p>
+                Vos données sont traitées par les administrateurs du club et, pour les seules données strictement nécessaires, par nos prestataires techniques :
+            </p>
+            <ul>
+                <li><strong>Stripe</strong> (paiement en ligne) : reçoit les informations nécessaires au règlement de votre inscription.</li>
+                <li><strong>Notre prestataire d'envoi d'emails</strong> : utilisé pour vous envoyer les confirmations d'inscription et de paiement.</li>
+            </ul>
+            <p>Vos données ne sont ni vendues, ni transmises à d'autres tiers, ni utilisées à des fins publicitaires.</p>
+
+            <h2 class="mt-4">4. Durée de conservation</h2>
+            <ul>
+                <li><strong>Données du compte membre</strong> (identité, contact, niveau) : conservées pendant la durée de votre relation avec le club, puis <strong>3 ans après votre dernière activité</strong>. Passé ce délai, votre compte est anonymisé (voir ci-dessous).</li>
+                <li><strong>Données de santé</strong> (allergies, médecin traitant) : supprimées dès l'anonymisation du compte, et à tout moment sur simple demande.</li>
+                <li><strong>Données de facturation et de paiement</strong> : conservées <strong>10 ans</strong> conformément à notre obligation légale de conservation des documents comptables (Code de commerce), même après l'anonymisation du compte associé.</li>
+            </ul>
+
+            <h2 class="mt-4">5. Vos droits</h2>
+            <p>Conformément au RGPD, vous disposez des droits suivants sur vos données personnelles :</p>
+            <ul>
+                <li>Droit d'accès et de rectification</li>
+                <li>Droit à l'effacement</li>
+                <li>Droit à la limitation du traitement</li>
+                <li>Droit d'opposition</li>
+                <li>Droit à la portabilité de vos données</li>
+            </ul>
+            <p>
+                Pour exercer ces droits, contactez-nous via le formulaire de contact du site ou directement auprès d'un administrateur du club. Nous nous engageons à répondre dans un délai d'un mois.
+                Vous disposez également du droit d'introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer">www.cnil.fr</a>).
+            </p>
+
+            <h2 class="mt-4">6. Cookies</h2>
+            <p>
+                Ce site utilise uniquement un cookie de session technique (PHPSESSID), strictement nécessaire pour vous maintenir connecté. Aucun cookie de mesure d'audience ou de publicité n'est utilisé.
+            </p>
+
+            <h2 class="mt-4">7. Sécurité</h2>
+            <p>
+                Vos mots de passe sont stockés de façon chiffrée (hachage). L'accès aux données médicales est réservé aux administrateurs du club. Les paiements sont traités directement par Stripe selon les standards de sécurité PCI-DSS.
+            </p>
+        </div>
+    </section>
+{% endblock %}

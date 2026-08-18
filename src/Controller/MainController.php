@@ -24,6 +24,12 @@ class MainController extends AbstractController
         ]);
     }
 
+    #[Route(path: '/politique-de-confidentialite', name: 'politique_confidentialite', methods: ['GET'])]
+    function politiqueConfidentialite(): Response
+    {
+        return $this->render('main/politique_confidentialite.html.twig');
+    }
+
 
     #[Route('/send-contact', name: 'send_contact', methods: ['POST'])]
     public function sendContact(Request $request, MailerInterface $mailer): Response

@@ -48,6 +48,13 @@ class UserType extends AbstractType
             ->add('allergies')
             ->add('medecinTraitant')
             ->add('telMedecin')
+            ->add('consentementDonneesSante', CheckboxType::class, [
+                'label' => 'J\'autorise le centre à conserver les informations médicales renseignées ci-dessus (allergies, médecin traitant) afin d\'assurer ma sécurité pendant les activités.',
+                'required' => false,
+                'label_attr' => [
+                    'style' => 'color: #333 !important'
+                ]
+            ])
             ->add('infos', TextareaType::class, [
                 'label' => "Informations",
                 'required' => false,

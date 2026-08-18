@@ -7,10 +7,6 @@
 import './styles/app.css';
 
 import './styles/sorties.css'
-//
-// import './bootstrap.js';
-
-
 
 console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
 

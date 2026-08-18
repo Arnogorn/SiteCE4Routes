@@ -245,7 +245,7 @@
     </section>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function initSortieNewPage() {
             // Gestion de la barre de durée - Version simplifiée
             const slider = document.getElementById('duration-slider');
             const display = document.getElementById('duration-display');
@@ -405,6 +405,8 @@
 
             // Test de la notification au chargement (à supprimer en production)
             // showNotification('Page chargée avec succès !', 'success');
-        });
+        }
+        document.addEventListener('DOMContentLoaded', initSortieNewPage);
+        document.addEventListener('turbo:load', initSortieNewPage);
     </script>
 {% endblock %}

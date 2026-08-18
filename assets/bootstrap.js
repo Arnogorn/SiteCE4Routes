@@ -1,16 +1,3 @@
-// import { startStimulusApp } from '@symfony/stimulus-bundle';
-//
-//
-//
-// const app = startStimulusApp();
-// // assets/bootstrap.js
-// import { Application } from '@hotwired/stimulus';
-//
-// // Démarrer l'application Stimulus
-// const application = Application.start();
-//
-// // Enregistrer manuellement les contrôleurs
-// // import HelloController from './controllers/hello_controller';
-// // application.register('hello', HelloController);
-//
-// export { application };
+// Stimulus n'est pas utilisé sur ce site (toute l'interactivité passe par
+// du JS classique dans app.js + les scripts inline des templates, avec
+// Turbo pour la navigation). Ce fichier reste vide volontairement.

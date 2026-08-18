@@ -22,7 +22,7 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function initSortieForm() {
         // Fonction pour afficher les notifications
         function showNotification(message, type = 'success') {
             const existingNotifications = document.querySelectorAll('.notification-toast');
@@ -154,5 +154,7 @@
         if (document.querySelector('.alert-danger')) {
             showNotification('Veuillez corriger les erreurs dans le formulaire.', 'error');
         }
-    });
+    }
+    document.addEventListener('DOMContentLoaded', initSortieForm);
+    document.addEventListener('turbo:load', initSortieForm);
 </script>

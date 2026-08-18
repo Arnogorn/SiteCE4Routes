@@ -86,7 +86,7 @@
 {{ form_end(form, {'render_rest': false}) }}
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    function initTarifsForm() {
         // Validation en temps réel
         const form = document.querySelector('.form-modern');
         const inputs = form.querySelectorAll('.form-control-modern');
@@ -126,5 +126,7 @@
                 e.preventDefault();
             }
         });
-    });
+    }
+    document.addEventListener('DOMContentLoaded', initTarifsForm);
+    document.addEventListener('turbo:load', initTarifsForm);
 </script>

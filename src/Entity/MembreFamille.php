@@ -74,6 +74,12 @@ class MembreFamille
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $NoLicence = null;
 
+    #[ORM\Column]
+    private bool $consentementDonneesSante = false;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $consentementDonneesSanteAt = null;
+
     public function __construct()
     {
         $this->sorties = new ArrayCollection();
@@ -232,5 +238,38 @@ class MembreFamille
         $this->NoLicence = $NoLicence;
 
         return $this;
+    }
+
+    public function isConsentementDonneesSante(): bool
+    {
+        return $this->consentementDonneesSante;
+    }
+
+    public function setConsentementDonneesSante(bool $consentementDonneesSante): static
+    {
+        if ($consentementDonneesSante && !$this->consentementDonneesSante) {
+            $this->consentementDonneesSanteAt = new \DateTimeImmutable();
+        } elseif (!$consentementDonneesSante) {
+            $this->consentementDonneesSanteAt = null;
+        }
+        $this->consentementDonneesSante = $consentementDonneesSante;
+
+        return $this;
+    }
+
+    public function getConsentementDonneesSanteAt(): ?\DateTimeImmutable
+    {
+        return $this->consentementDonneesSanteAt;
+    }
+
+    #[Assert\Callback]
+    public function validateConsentementDonneesSante(\Symfony\Component\Validator\Context\ExecutionContextInterface $context): void
+    {
+        $donneesSanteRenseignees = !empty($this->allergies) || !empty($this->medecinTraitant) || !empty($this->telMedecin);
+        if ($donneesSanteRenseignees && !$this->consentementDonneesSante) {
+            $context->buildViolation('Merci de cocher la case de consentement pour renseigner des informations médicales (allergies, médecin traitant).')
+                ->atPath('consentementDonneesSante')
+                ->addViolation();
+        }
     }
 }

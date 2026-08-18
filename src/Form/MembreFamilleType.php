@@ -24,6 +24,13 @@ class MembreFamilleType extends AbstractType
             ->add('NoLicence')
             ->add('medecinTraitant')
             ->add('telMedecin')
+            ->add('consentementDonneesSante', CheckboxType::class, [
+                'label' => 'J\'autorise le centre à conserver les informations médicales renseignées ci-dessus (allergies, médecin traitant) afin d\'assurer la sécurité de ce membre pendant les activités.',
+                'required' => false,
+                'label_attr' => [
+                    'style' => 'color: #333 !important'
+                ]
+            ])
             ->add('droitImage', CheckboxType::class, [
                 'label' => 'J\'autorise la prise de photo et l\'éventuelle diffusion de son image?',
                 'label_attr' => [

@@ -46,5 +46,9 @@ services:
         arguments:
             $uploadsDirectory: '%kernel.project_dir%/assets/images/uploads'
 
+    App\Command\RgpdPurgeInactiveMembersCommand:
+        arguments:
+            $participantPictureDir: '%participant_picture_dir%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

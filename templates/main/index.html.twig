@@ -692,9 +692,8 @@
         }
 
         // script formulaire contact
-        document.addEventListener('DOMContentLoaded', function() {
-            initSimpleTemporalProtection();
-        });
+        document.addEventListener('DOMContentLoaded', initSimpleTemporalProtection);
+        document.addEventListener('turbo:load', initSimpleTemporalProtection);
 
         function initSimpleTemporalProtection() {
             const form = document.getElementById('contact-form');
@@ -748,16 +747,22 @@
         }
 
         //script navbar
-        document.addEventListener('DOMContentLoaded', function() {
-            // Effet au scroll pour la navbar
-            window.addEventListener('scroll', function() {
-                const navbar = document.querySelector('.navbar-modern');
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
-            });
+        function initNavbarEffects() {
+            // Effet au scroll pour la navbar (écouteur global attaché une seule fois,
+            // window survit aux navigations Turbo contrairement aux éléments de la page)
+            if (!window.__navbarScrollAttached) {
+                window.__navbarScrollAttached = true;
+                window.addEventListener('scroll', function() {
+                    const navbar = document.querySelector('.navbar-modern');
+                    if (navbar) {
+                        if (window.scrollY > 50) {
+                            navbar.classList.add('scrolled');
+                        } else {
+                            navbar.classList.remove('scrolled');
+                        }
+                    }
+                });
+            }
 
             // Mise à jour de l'heure
             function updateTime() {
@@ -770,7 +775,12 @@
                     });
                 }
             }
-            setInterval(updateTime, 60000);
+            // Éviter d'empiler un nouvel intervalle à chaque navigation Turbo
+            if (window.__navbarClockInterval) {
+                clearInterval(window.__navbarClockInterval);
+            }
+            updateTime();
+            window.__navbarClockInterval = setInterval(updateTime, 60000);
 
             // Animation des cartes au scroll
             const observerOptions = {
@@ -790,6 +800,8 @@
             document.querySelectorAll('.card-modern, .feature-icon, .map-wrapper-modern').forEach(el => {
                 observer.observe(el);
             });
-        });
+        }
+        document.addEventListener('DOMContentLoaded', initNavbarEffects);
+        document.addEventListener('turbo:load', initNavbarEffects);
     </script>
 {% endblock %}

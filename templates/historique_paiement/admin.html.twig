@@ -192,7 +192,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function initHistoriquePaiementAdmin() {
             // Auto-complétion simple pour l'email (optionnel)
             const emailInput = document.getElementById('email');
             if (emailInput) {
@@ -220,6 +220,8 @@
                     }
                 });
             }
-        });
+        }
+        document.addEventListener('DOMContentLoaded', initHistoriquePaiementAdmin);
+        document.addEventListener('turbo:load', initHistoriquePaiementAdmin);
     </script>
 {% endblock %}

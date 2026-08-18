@@ -316,7 +316,7 @@
     </section>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function initSortieEditPage() {
             // Gestion de la barre de durée - Version simplifiée
             const slider = document.getElementById('duration-slider');
             const display = document.getElementById('duration-display');
@@ -416,6 +416,8 @@
                     adjustHeight();
                 }
             });
-        });
+        }
+        document.addEventListener('DOMContentLoaded', initSortieEditPage);
+        document.addEventListener('turbo:load', initSortieEditPage);
     </script>
 {% endblock %}

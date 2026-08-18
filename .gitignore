@@ -217,10 +217,8 @@ fabric.properties
 /web/js/
 
 # End of https://www.toptal.com/developers/gitignore/api/symfony,phpunit,phpstorm
-/migrations/
 # Ignorer les fichiers de lock
 composer.lock
-symfony.lock
 
 # Ignorer les fichiers de build
 /public/build/
@@ -236,12 +234,7 @@ symfony.lock
 /node_modules/
 
 # Fichiers spécifiques
-entrypoints.json
 importmap.php
-manifest.json
-*.js
-*.woff
-*.woff2
 /public/uploads/*.jpg
 /public/uploads/*.jpeg
 /var/uploads/*.jpg
@@ -253,3 +246,4 @@ manifest.json
 /assets/images/uploads/chevaux/
 /assets/images/uploads/contact/
 /assets/images/uploads/inscription/
+/assets/images/uploads/utilisateurs/

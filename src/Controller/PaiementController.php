@@ -157,32 +157,44 @@ class PaiementController extends AbstractController
             throw $this->createNotFoundException('Aucun paiement trouvé pour cette session.');
         }
 
-        // Récupère la session Stripe et crée les inscriptions si le webhook n'est pas encore passé
+        // Récupère la session Stripe pour vérifier que le paiement a réellement abouti
         $session = $stripe->checkout->sessions->retrieve($sessionId);
-        $metadata = $session->metadata;
-        // Met à jour le statut et conserve les IDs pour remboursement
-        $paiement->setStatut(Paiement::STATUT_PAYE);
-        if (!empty($session->payment_intent)) {
-            $paiement->setStripePaymentIntentId($session->payment_intent);
-            // Récupère le PaymentIntent pour extraire l'ID de charge
-            $pi = $stripe->paymentIntents->retrieve($session->payment_intent, ['expand' => ['charges']]);
-            if (!empty($pi->charges->data[0]->id)) {
-                $paiement->setStripeChargeId($pi->charges->data[0]->id);
-            }
+
+        if ($session->payment_status !== 'paid') {
+            $this->addFlash('danger', 'Votre paiement n\'a pas été confirmé par Stripe. Aucune inscription n\'a été enregistrée.');
+            return $this->redirectToRoute('app_sortie_show', ['id' => $paiement->getSortie()->getId()]);
         }
-        $paiement->setConfirmedAt(new \DateTimeImmutable());
-        $em->persist($paiement);
-        $em->flush();
+
         $sortie = $paiement->getSortie();
         $user = $paiement->getUtilisateur();
 
-        // Finalise les inscriptions via le service
-        $inscriptionService->finalizeInscription($paiement);
+        // Idempotence : si le webhook Stripe a déjà traité ce paiement, on ne refait pas le travail
+        // (évite les doubles inscriptions et les doubles emails si l'utilisateur recharge la page)
+        $dejaTraite = $paiement->getStatut() === Paiement::STATUT_PAYE;
+
+        if (!$dejaTraite) {
+            // Met à jour le statut et conserve les IDs pour remboursement
+            $paiement->setStatut(Paiement::STATUT_PAYE);
+            if (!empty($session->payment_intent)) {
+                $paiement->setStripePaymentIntentId($session->payment_intent);
+                // Récupère le PaymentIntent pour extraire l'ID de charge
+                $pi = $stripe->paymentIntents->retrieve($session->payment_intent, ['expand' => ['charges']]);
+                if (!empty($pi->charges->data[0]->id)) {
+                    $paiement->setStripeChargeId($pi->charges->data[0]->id);
+                }
+            }
+            $paiement->setConfirmedAt(new \DateTimeImmutable());
+            $em->persist($paiement);
+            $em->flush();
+
+            // Finalise les inscriptions via le service
+            $inscriptionService->finalizeInscription($paiement);
+        }
 
         $this->addFlash('success', 'Votre paiement a bien été confirmé.');
 
         $user = $this->getUser();
-        if ($user instanceof \App\Entity\User) {
+        if (!$dejaTraite && $user instanceof \App\Entity\User) {
             // Formatage de la date de la sortie avec jour et mois en toutes lettres
             if ($sortie->getDate()) {
                 // Utilise IntlDateFormatter pour formater en français avec jour et mois en toutes lettres
@@ -317,7 +329,8 @@ class PaiementController extends AbstractController
             $paiement = $repo->findOneBy(['stripeSessionId' => $session->id]);
 
             // On met à jour le statut du paiement dans la base de données
-            if ($paiement) {
+            // (idempotent : ignore si déjà traité par la page /success ou un webhook précédent)
+            if ($paiement && $paiement->getStatut() !== Paiement::STATUT_PAYE) {
                 $paiement->setStatut(Paiement::STATUT_PAYE);
                 $paiement->setConfirmedAt(new \DateTimeImmutable());
 

@@ -75,6 +75,13 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Numéro de licence FFE',
                 'required' => false,
             ])
+            ->add('consentementDonneesSante', CheckboxType::class, [
+                'label' => 'J\'autorise le centre à conserver les informations médicales renseignées ci-dessus (allergies, médecin traitant) afin d\'assurer ma sécurité pendant les activités. Ces données sont réservées aux administrateurs du club.',
+                'required' => false,
+                'label_attr' => [
+                    'style' => 'color: #333 !important'
+                ]
+            ])
 //             Combine plainPassword et plainPasswordConfirmation on les appel désormais dans le template avec :
 //            {{ form_row(form.plainPassword.first) }}
 //            {{ form_row(form.plainPassword.second) }}
