@@ -85,4 +85,44 @@ class NotificationService
 
         $this->mailer->send($email);
     }
+
+    /**
+     * Envoie un mail lorsqu'un paiement confirmé n'a pas pu être honoré faute de
+     * place disponible (course de concurrence entre deux paiements simultanés) et
+     * a été intégralement remboursé.
+     */
+    public function sendPlacesIndisponiblesMail(User $user, Sortie $sortie, float $montantRembourseEuros): void
+    {
+        $subject = sprintf(
+            "Sortie complète : votre paiement pour « %s » a été remboursé",
+            $sortie->getTitre()
+        );
+
+        $bodyLines = [
+            sprintf("Bonjour %s,", $user->getPrenom()),
+            "",
+            sprintf(
+                "Votre paiement pour la sortie « %s » a bien été reçu, mais toutes les places ont été prises par d'autres inscriptions confirmées entre-temps. Nous sommes désolés, votre inscription n'a donc pas pu être finalisée.",
+                $sortie->getTitre()
+            ),
+            "",
+            sprintf(
+                "Vous avez été intégralement remboursé (%s). Le remboursement sera visible sur votre compte dans les prochains jours.",
+                number_format($montantRembourseEuros, 2, ',', ' ') . ' €'
+            ),
+            "",
+            "N'hésitez pas à consulter nos autres activités disponibles sur le site.",
+            "",
+            "Toutes nos excuses pour la gêne occasionnée,",
+            "L'équipe des Écuries des 4 Routes",
+        ];
+
+        $email = (new Email())
+            ->from($this->senderEmail)
+            ->to($user->getEmail())
+            ->subject($subject)
+            ->text(implode("\n", $bodyLines));
+
+        $this->mailer->send($email);
+    }
 }

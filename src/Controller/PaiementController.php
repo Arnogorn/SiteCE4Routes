@@ -157,6 +157,15 @@ class PaiementController extends AbstractController
             throw $this->createNotFoundException('Aucun paiement trouvé pour cette session.');
         }
 
+        // Le paiement doit appartenir à l'utilisateur connecté : sans ce contrôle, toute
+        // personne connaissant/devinant ce session_id (ex. historique navigateur partagé)
+        // pouvait consulter les détails du paiement d'un tiers, et si le webhook n'était
+        // pas encore passé, l'email de confirmation partait vers son adresse à elle au
+        // lieu de celle du véritable payeur.
+        if ($paiement->getUtilisateur() !== $this->getUser()) {
+            throw $this->createAccessDeniedException('Ce paiement ne vous appartient pas.');
+        }
+
         // Récupère la session Stripe pour vérifier que le paiement a réellement abouti
         $session = $stripe->checkout->sessions->retrieve($sessionId);
 
@@ -168,9 +177,13 @@ class PaiementController extends AbstractController
         $sortie = $paiement->getSortie();
         $user = $paiement->getUtilisateur();
 
-        // Idempotence : si le webhook Stripe a déjà traité ce paiement, on ne refait pas le travail
-        // (évite les doubles inscriptions et les doubles emails si l'utilisateur recharge la page)
-        $dejaTraite = $paiement->getStatut() === Paiement::STATUT_PAYE;
+        // Idempotence : si le webhook Stripe (ou un précédent chargement de cette page) a déjà
+        // traité ce paiement, on ne refait pas le travail (évite les doubles inscriptions, les
+        // doubles emails et un double remboursement si l'utilisateur recharge la page)
+        $dejaTraite = in_array($paiement->getStatut(), [Paiement::STATUT_PAYE, Paiement::STATUT_REMBOURSE], true);
+        // Si déjà traité lors d'un chargement précédent, le statut stocké fait foi
+        // (utile si l'utilisateur recharge la page après avoir été remboursé).
+        $placesDisponibles = $paiement->getStatut() !== Paiement::STATUT_REMBOURSE;
 
         if (!$dejaTraite) {
             // Met à jour le statut et conserve les IDs pour remboursement
@@ -187,14 +200,18 @@ class PaiementController extends AbstractController
             $em->persist($paiement);
             $em->flush();
 
-            // Finalise les inscriptions via le service
-            $inscriptionService->finalizeInscription($paiement);
+            // Finalise les inscriptions via le service (revérifie les places disponibles et
+            // rembourse automatiquement si la sortie s'est remplie entre-temps)
+            $placesDisponibles = $inscriptionService->finalizeInscription($paiement);
         }
 
-        $this->addFlash('success', 'Votre paiement a bien été confirmé.');
+        if ($placesDisponibles) {
+            $this->addFlash('success', 'Votre paiement a bien été confirmé.');
+        } else {
+            $this->addFlash('danger', 'Cette sortie s\'est complétée avant la confirmation de votre paiement. Vous avez été intégralement remboursé, un email de confirmation vous a été envoyé.');
+        }
 
-        $user = $this->getUser();
-        if (!$dejaTraite && $user instanceof \App\Entity\User) {
+        if (!$dejaTraite && $placesDisponibles) {
             // Formatage de la date de la sortie avec jour et mois en toutes lettres
             if ($sortie->getDate()) {
                 // Utilise IntlDateFormatter pour formater en français avec jour et mois en toutes lettres
@@ -242,6 +259,12 @@ class PaiementController extends AbstractController
                 ->text($messageText);
 
             $mailer->send($email);
+        }
+
+        if (!$placesDisponibles) {
+            // La page de succès affiche "votre place est réservée" en dur : ne jamais la
+            // montrer ici, le message de remboursement ci-dessus suffit.
+            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
         }
 
         return $this->render('paiement/success.html.twig', [
@@ -329,8 +352,9 @@ class PaiementController extends AbstractController
             $paiement = $repo->findOneBy(['stripeSessionId' => $session->id]);
 
             // On met à jour le statut du paiement dans la base de données
-            // (idempotent : ignore si déjà traité par la page /success ou un webhook précédent)
-            if ($paiement && $paiement->getStatut() !== Paiement::STATUT_PAYE) {
+            // (idempotent : ignore si déjà traité par la page /success ou un webhook précédent,
+            // y compris si ce traitement précédent a abouti à un remboursement faute de place)
+            if ($paiement && !in_array($paiement->getStatut(), [Paiement::STATUT_PAYE, Paiement::STATUT_REMBOURSE], true)) {
                 $paiement->setStatut(Paiement::STATUT_PAYE);
                 $paiement->setConfirmedAt(new \DateTimeImmutable());
 

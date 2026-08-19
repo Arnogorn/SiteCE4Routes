@@ -7,6 +7,7 @@ use App\Entity\User;
 use App\Entity\Paiement;
 use App\Entity\Inscription;
 use App\Entity\HistoriquePaiement;
+use Doctrine\DBAL\LockMode;
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\StripeClient;
 use Stripe\Exception\ApiErrorException;
@@ -18,7 +19,8 @@ class InscriptionService
     public function __construct(
         private EntityManagerInterface $em,
         private StripeClient $stripe,
-        private UrlGeneratorInterface $router
+        private UrlGeneratorInterface $router,
+        private NotificationService $notifier
     ) {}
 
     public function startCheckout(
@@ -68,7 +70,11 @@ class InscriptionService
         return $session->url;
     }
 
-    public function finalizeInscription(Paiement $paiement): void
+    /**
+     * @return bool true si l'inscription a été finalisée, false si le paiement a dû
+     *              être intégralement remboursé faute de place (voir hasEnoughSeats()).
+     */
+    public function finalizeInscription(Paiement $paiement): bool
     {
         $sortie = $paiement->getSortie();
         $user    = $paiement->getUtilisateur();
@@ -92,6 +98,25 @@ class InscriptionService
             $this->em->persist($paiement);
         }
         $this->em->flush();
+
+        // Reverrouille la sortie et revérifie les places disponibles de façon atomique :
+        // entre la création de la session Stripe et cette confirmation, d'autres paiements
+        // lancés en parallèle ont pu être confirmés avant celui-ci et remplir la sortie.
+        $placesSuffisantes = $this->em->wrapInTransaction(function () use ($sortie, $paiement) {
+            $this->em->lock($sortie, LockMode::PESSIMISTIC_WRITE);
+            $this->em->refresh($sortie);
+
+            $placesRestantes = $sortie->getNbInscriptionMax()
+                - $sortie->getParticipants()->count()
+                - $sortie->getMembresFamilleInscrits()->count();
+
+            return $paiement->getParticipants() <= $placesRestantes;
+        });
+
+        if (!$placesSuffisantes) {
+            $this->refundUnavailablePlaces($paiement);
+            return false;
+        }
 
         // Inscription de l'utilisateur
         if (!empty($metadata->inscription_me)) {
@@ -135,6 +160,56 @@ class InscriptionService
         $this->em->persist($log);
 
         $this->em->flush();
+
+        return true;
+    }
+
+    /**
+     * Rembourse intégralement un paiement dont la sortie s'est remplie entre la
+     * création de la session Stripe et la confirmation du paiement, et prévient
+     * le payeur. N'inscrit personne : la place n'a jamais réellement été réservée.
+     */
+    private function refundUnavailablePlaces(Paiement $paiement): void
+    {
+        $chargeId = $paiement->getStripeChargeId();
+        if (!$chargeId && $paiement->getStripePaymentIntentId()) {
+            $pi = $this->stripe->paymentIntents->retrieve(
+                $paiement->getStripePaymentIntentId(),
+                ['expand' => ['charges']]
+            );
+            $chargeId = $pi->charges->data[0]->id ?? null;
+        }
+
+        $params = [];
+        if ($chargeId) {
+            $params['charge'] = $chargeId;
+        } else {
+            $params['payment_intent'] = $paiement->getStripePaymentIntentId();
+        }
+        $this->stripe->refunds->create($params);
+
+        $paiement->setStatut(Paiement::STATUT_REMBOURSE);
+        $this->em->persist($paiement);
+
+        $sortie = $paiement->getSortie();
+        $user = $paiement->getUtilisateur();
+
+        $log = (new HistoriquePaiement())
+            ->setType('remboursement_places_indisponibles')
+            ->setDate(new \DateTimeImmutable())
+            ->setMessage(sprintf(
+                "Paiement remboursé intégralement (%.2f €) : plus assez de places pour « %s » au moment de la confirmation (%d participant(s) demandé(s)).",
+                $paiement->getMontantEuros(),
+                $sortie->getTitre(),
+                $paiement->getParticipants()
+            ))
+            ->setUtilisateur($user)
+            ->setSortie($sortie);
+        $this->em->persist($log);
+
+        $this->em->flush();
+
+        $this->notifier->sendPlacesIndisponiblesMail($user, $sortie, $paiement->getMontantEuros());
     }
 
     public function unregisterParticipant(

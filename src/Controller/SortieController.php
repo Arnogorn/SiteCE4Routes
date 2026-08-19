@@ -260,11 +260,12 @@ final class SortieController extends AbstractController
         return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
     }
 
-    #[Route('/{id}/desinscription', name: 'sortie_desinscription')]
+    #[Route('/{id}/desinscription', name: 'sortie_desinscription', methods: ['POST'])]
     public function desinscription(
         Sortie $sortie,
         Security $security,
-        InscriptionService $inscriptionService
+        InscriptionService $inscriptionService,
+        Request $request
     ): Response
     {
         /** @var User $user */
@@ -272,6 +273,15 @@ final class SortieController extends AbstractController
 
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour vous désinscrire.');
+        }
+
+        // Le formulaire pose déjà ce jeton, mais rien ne le vérifiait côté serveur :
+        // sans ce contrôle (et méthode limitée à POST ci-dessus), un simple lien ou
+        // une image piégée sur une autre page suffisait à déclencher la désinscription
+        // (et le remboursement) d'un utilisateur connecté à son insu.
+        if (!$this->isCsrfTokenValid('desinscription_utilisateur' . $sortie->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton de sécurité invalide, veuillez réessayer.');
+            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
         }
 
         try {
@@ -305,6 +315,18 @@ final class SortieController extends AbstractController
             throw $this->createAccessDeniedException('Vous devez être connecté pour désinscrire un membre.');
         }
         $membre = $entityManager->getRepository(MembreFamille::class)->find($membreId);
+
+        // Le membre doit appartenir à la famille de l'utilisateur connecté : sans ce
+        // contrôle, n'importe quel utilisateur pourrait désinscrire (et faire rembourser)
+        // un membre de famille d'un autre compte simplement en devinant son ID.
+        if (!$membre || !$user->getFamille() || $membre->getFamille() !== $user->getFamille()) {
+            throw $this->createAccessDeniedException('Ce membre ne fait pas partie de votre famille.');
+        }
+
+        if (!$this->isCsrfTokenValid('desinscription_membre' . $sortie->getId() . $membre->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Jeton de sécurité invalide, veuillez réessayer.');
+            return $this->redirectToRoute('app_sortie_show', ['id' => $sortie->getId()]);
+        }
 
         try {
             $montantEnEuros = $sortie->getPrix();
