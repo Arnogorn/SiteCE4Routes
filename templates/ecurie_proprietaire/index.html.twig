@@ -32,10 +32,10 @@
                     {# Photo 1 - Manège couvert #}
                     <div class="col-md-6">
                         <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
-                             onclick="openPhotoModal('{{ asset('images/ecuries_1.jpg') }}', 'Manège couvert', 'Notre grand manège couvert pour travailler par tous les temps')">
-                            <img src="{{ asset('images/ecuries_1.jpg') }}"
+                             onclick="openPhotoModal('{{ photo_site('ecurie_manege') }}', '{{ photo_site_title('ecurie_manege')|e('js') }}', '{{ photo_site_description('ecurie_manege')|e('js') }}')">
+                            <img src="{{ photo_site('ecurie_manege') }}"
                                  class="w-100 h-100 object-fit-cover photo-hover"
-                                 alt="Manège couvert des Écuries des 4 Routes avec charpente en bois">
+                                 alt="{{ photo_site_title('ecurie_manege') }}">
                             <div class="position-absolute top-3 end-3">
                                 <span class="badge bg-dark bg-opacity-75">
                                     <i class="bi bi-zoom-in"></i>
@@ -44,10 +44,10 @@
                             <div class="position-absolute bottom-0 start-0 end-0 p-3"
                                  style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
                                 <h5 class="text-white mb-1">
-                                    <i class="bi bi-building me-2"></i>Manège couvert
+                                    <i class="bi bi-building me-2"></i>{{ photo_site_title('ecurie_manege') }}
                                 </h5>
                                 <p class="text-white-50 mb-0 small">
-                                    Notre grand manège couvert pour travailler par tous les temps
+                                    {{ photo_site_description('ecurie_manege') }}
                                 </p>
                             </div>
                         </div>
@@ -56,10 +56,10 @@
                     {# Photo 2 - Boxes #}
                     <div class="col-md-6">
                         <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
-                             onclick="openPhotoModal('{{ asset('images/ecuries_2.jpg') }}', 'Marcheur automatique', 'Notre marcheur pour l\'exercice et la détente de votre cheval')">
-                            <img src="{{ asset('images/ecuries_2.jpg') }}"
+                             onclick="openPhotoModal('{{ photo_site('ecurie_marcheur') }}', '{{ photo_site_title('ecurie_marcheur')|e('js') }}', '{{ photo_site_description('ecurie_marcheur')|e('js') }}')">
+                            <img src="{{ photo_site('ecurie_marcheur') }}"
                                  class="w-100 h-100 object-fit-cover photo-hover"
-                                 alt="Marcheur automatique pour chevaux aux Écuries des 4 Routes">
+                                 alt="{{ photo_site_title('ecurie_marcheur') }}">
                             <div class="position-absolute top-3 end-3">
                                 <span class="badge bg-dark bg-opacity-75">
                                     <i class="bi bi-zoom-in"></i>
@@ -68,10 +68,10 @@
                             <div class="position-absolute bottom-0 start-0 end-0 p-3"
                                  style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
                                 <h5 class="text-white mb-1">
-                                    <i class="bi-arrow-repeat me-2"></i>Marcheur automatique
+                                    <i class="bi-arrow-repeat me-2"></i>{{ photo_site_title('ecurie_marcheur') }}
                                 </h5>
                                 <p class="text-white-50 mb-0 small">
-                                    Notre marcheur pour l'exercice et la détente de votre cheval
+                                    {{ photo_site_description('ecurie_marcheur') }}
                                 </p>
                             </div>
                         </div>

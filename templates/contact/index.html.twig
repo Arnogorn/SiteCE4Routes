@@ -32,10 +32,10 @@
                     {# Photo 1 - Saut d'obstacles #}
                     <div class="col-md-6">
                         <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
-                             onclick="openPhotoModal('{{ asset('images/equipe_1.jpg') }}', 'Saut d\'obstacles en compétition avec Damien', 'Excellence et technique en concours de saut d\'obstacles')">
-                            <img src="{{ asset('images/equipe_1.jpg') }}"
+                             onclick="openPhotoModal('{{ photo_site('contact_obstacles') }}', '{{ photo_site_title('contact_obstacles')|e('js') }}', '{{ photo_site_description('contact_obstacles')|e('js') }}')">
+                            <img src="{{ photo_site('contact_obstacles') }}"
                                  class="w-100 h-100 object-fit-cover photo-hover"
-                                 alt="Cavalier en saut d'obstacles lors d'une compétition équestre">
+                                 alt="{{ photo_site_title('contact_obstacles') }}">
                             <div class="position-absolute top-3 end-3">
                                 <span class="badge bg-dark bg-opacity-75">
                                     <i class="bi bi-zoom-in"></i>
@@ -44,10 +44,10 @@
                             <div class="position-absolute bottom-0 start-0 end-0 p-3"
                                  style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
                                 <h5 class="text-white mb-1">
-                                    <i class="bi bi-award me-2"></i>Saut d'obstacles
+                                    <i class="bi bi-award me-2"></i>{{ photo_site_title('contact_obstacles') }}
                                 </h5>
                                 <p class="text-white-50 mb-0 small">
-                                    Excellence et technique en concours avec Damien
+                                    {{ photo_site_description('contact_obstacles') }}
                                 </p>
                             </div>
                         </div>
@@ -56,10 +56,10 @@
                     {# Photo 2 - Dressage #}
                     <div class="col-md-6">
                         <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
-                             onclick="openPhotoModal('{{ asset('images/equipe_2.jpg') }}', 'Dressage en compétition avec Lorraine', 'Précision et harmonie en dressage')">
-                            <img src="{{ asset('images/equipe_2.jpg') }}"
+                             onclick="openPhotoModal('{{ photo_site('contact_dressage') }}', '{{ photo_site_title('contact_dressage')|e('js') }}', '{{ photo_site_description('contact_dressage')|e('js') }}')">
+                            <img src="{{ photo_site('contact_dressage') }}"
                                  class="w-100 h-100 object-fit-cover photo-hover"
-                                 alt="Cavalière en dressage lors d'une compétition équestre">
+                                 alt="{{ photo_site_title('contact_dressage') }}">
                             <div class="position-absolute top-3 end-3">
                                 <span class="badge bg-dark bg-opacity-75">
                                     <i class="bi bi-zoom-in"></i>
@@ -68,10 +68,10 @@
                             <div class="position-absolute bottom-0 start-0 end-0 p-3"
                                  style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
                                 <h5 class="text-white mb-1">
-                                    <i class="bi bi-trophy me-2"></i>Dressage
+                                    <i class="bi bi-trophy me-2"></i>{{ photo_site_title('contact_dressage') }}
                                 </h5>
                                 <p class="text-white-50 mb-0 small">
-                                    Précision et harmonie en compétition avec Lorraine
+                                    {{ photo_site_description('contact_dressage') }}
                                 </p>
                             </div>
                         </div>

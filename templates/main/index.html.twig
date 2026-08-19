@@ -57,10 +57,10 @@
                     {# Photo 1 - Dressage de compétition #}
                     <div class="col-md-6">
                         <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
-                             onclick="openPhotoModal('{{ asset('images/concours_3.jpg') }}', 'Excellence en dressage', 'La précision et l\'harmonie de Lorraine en compétition de dressage')">
-                            <img src="{{ asset('images/concours_3.jpg') }}"
+                             onclick="openPhotoModal('{{ photo_site('accueil_dressage') }}', '{{ photo_site_title('accueil_dressage')|e('js') }}', '{{ photo_site_description('accueil_dressage')|e('js') }}')">
+                            <img src="{{ photo_site('accueil_dressage') }}"
                                  class="w-100 h-100 object-fit-cover photo-hover"
-                                 alt="Cavalière en dressage de compétition sur cheval noir"
+                                 alt="{{ photo_site_title('accueil_dressage') }}"
                                  style="object-position: center 20%;">
                             <div class="position-absolute top-3 end-3">
                                 <span class="badge bg-dark bg-opacity-75">
@@ -70,10 +70,10 @@
                             <div class="position-absolute bottom-0 start-0 end-0 p-3"
                                  style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
                                 <h5 class="text-white mb-1">
-                                    <i class="bi bi-award me-2"></i>Excellence en dressage
+                                    <i class="bi bi-award me-2"></i>{{ photo_site_title('accueil_dressage') }}
                                 </h5>
                                 <p class="text-white-50 mb-0 small">
-                                    La précision et l'harmonie en compétition
+                                    {{ photo_site_description('accueil_dressage') }}
                                 </p>
                             </div>
                         </div>
@@ -82,10 +82,10 @@
                     {# Photo 2 - Saut d'obstacles aux écuries #}
                     <div class="col-md-6">
                         <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
-                             onclick="openPhotoModal('{{ asset('images/accueil_3.jpg') }}', 'Saut d\'obstacles en compétitions', 'Entraînement et perfectionnement de Damien pour les concours')">
-                            <img src="{{ asset('images/accueil_3.jpg') }}"
+                             onclick="openPhotoModal('{{ photo_site('accueil_obstacles') }}', '{{ photo_site_title('accueil_obstacles')|e('js') }}', '{{ photo_site_description('accueil_obstacles')|e('js') }}')">
+                            <img src="{{ photo_site('accueil_obstacles') }}"
                                  class="w-100 h-100 object-fit-cover photo-hover"
-                                 alt="Cavalier franchissant un obstacle en concours">
+                                 alt="{{ photo_site_title('accueil_obstacles') }}">
                             <div class="position-absolute top-3 end-3">
                                 <span class="badge bg-dark bg-opacity-75">
                                     <i class="bi bi-zoom-in"></i>
@@ -94,10 +94,10 @@
                             <div class="position-absolute bottom-0 start-0 end-0 p-3"
                                  style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
                                 <h5 class="text-white mb-1">
-                                    <i class="bi bi-award me-2"></i>Saut d'obstacles en compétition
+                                    <i class="bi bi-award me-2"></i>{{ photo_site_title('accueil_obstacles') }}
                                 </h5>
                                 <p class="text-white-50 mb-0 small">
-                                    Entraînement et perfectionnement de Damien pour les compétitions
+                                    {{ photo_site_description('accueil_obstacles') }}
                                 </p>
                             </div>
                         </div>

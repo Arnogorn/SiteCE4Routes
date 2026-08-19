@@ -32,10 +32,10 @@
                     {# Photo 1 - Balade au bord de l'eau #}
                     <div class="col-md-6">
                         <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
-                             onclick="openPhotoModal('{{ asset('images/activites_1.jpeg') }}', 'Balade au lac de Trémelin', 'Nos sorties découverte dans des paysages magnifiques au bord de l\'eau')">
-                            <img src="{{ asset('images/activites_1.jpeg') }}"
+                             onclick="openPhotoModal('{{ photo_site('sortie_lac') }}', '{{ photo_site_title('sortie_lac')|e('js') }}', '{{ photo_site_description('sortie_lac')|e('js') }}')">
+                            <img src="{{ photo_site('sortie_lac') }}"
                                  class="w-100 h-100 object-fit-cover photo-hover"
-                                 alt="Groupe de cavaliers lors d'une balade équestre au bord de l'eau">
+                                 alt="{{ photo_site_title('sortie_lac') }}">
                             <div class="position-absolute top-3 end-3">
                                 <span class="badge bg-dark bg-opacity-75">
                                     <i class="bi bi-zoom-in"></i>
@@ -44,10 +44,10 @@
                             <div class="position-absolute bottom-0 start-0 end-0 p-3"
                                  style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
                                 <h5 class="text-white mb-1">
-                                    <i class="bi bi-water me-2"></i>Balade au bord de l'eau
+                                    <i class="bi bi-water me-2"></i>{{ photo_site_title('sortie_lac') }}
                                 </h5>
                                 <p class="text-white-50 mb-0 small">
-                                    Nos sorties découverte dans des paysages magnifiques
+                                    {{ photo_site_description('sortie_lac') }}
                                 </p>
                             </div>
                         </div>
@@ -56,10 +56,10 @@
                     {# Photo 2 - Balade en forêt #}
                     <div class="col-md-6">
                         <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
-                             onclick="openPhotoModal('{{ asset('images/activites_2.jpg') }}', 'Balade en forêt', 'Promenades équestres à travers les sentiers forestiers verdoyants')">
-                            <img src="{{ asset('images/activites_2.jpg') }}"
+                             onclick="openPhotoModal('{{ photo_site('sortie_foret') }}', '{{ photo_site_title('sortie_foret')|e('js') }}', '{{ photo_site_description('sortie_foret')|e('js') }}')">
+                            <img src="{{ photo_site('sortie_foret') }}"
                                  class="w-100 h-100 object-fit-cover photo-hover"
-                                 alt="Cavaliers en file indienne lors d'une balade en forêt">
+                                 alt="{{ photo_site_title('sortie_foret') }}">
                             <div class="position-absolute top-3 end-3">
                                 <span class="badge bg-dark bg-opacity-75">
                                     <i class="bi bi-zoom-in"></i>
@@ -68,10 +68,10 @@
                             <div class="position-absolute bottom-0 start-0 end-0 p-3"
                                  style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
                                 <h5 class="text-white mb-1">
-                                    <i class="bi bi-tree me-2"></i>Balade en forêt
+                                    <i class="bi bi-tree me-2"></i>{{ photo_site_title('sortie_foret') }}
                                 </h5>
                                 <p class="text-white-50 mb-0 small">
-                                    Promenades à travers les sentiers verdoyants
+                                    {{ photo_site_description('sortie_foret') }}
                                 </p>
                             </div>
                         </div>

@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Photos du site - Écuries des 4 Routes{% endblock %}
+
+{% block body %}
+    <section class="py-5">
+        <div class="container">
+
+            <div class="text-center mb-5">
+                <h1 class="text-primary-brand mb-3">
+                    <i class="bi bi-images" style="color: var(--accent-color);"></i>
+                    Photos du site
+                    <i class="bi bi-images" style="color: var(--accent-color);"></i>
+                </h1>
+                <div style="height: 3px; width: 200px; background: linear-gradient(90deg, var(--primary-color), var(--accent-color), var(--primary-color)); margin: 0 auto; border-radius: 2px;"></div>
+                <p class="mt-3" style="color: var(--text-secondary);">
+                    Remplacez les photos affichées sur les différentes pages du site.
+                    Le bandeau de la page d'accueil n'est pas géré ici.
+                </p>
+            </div>
+
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ type == 'danger' ? 'danger' : 'success' }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% for page, photos in groupsByPage %}
+                <div class="card-modern mb-4">
+                    <h4 class="text-primary-brand mb-4">
+                        <i class="bi bi-file-earmark-image me-2" style="color: var(--accent-color);"></i>
+                        {{ page }}
+                    </h4>
+
+                    <div class="row g-4">
+                        {% for photo in photos %}
+                            <div class="col-md-6 col-lg-4">
+                                <div style="border: 2px solid var(--border-color); border-radius: 12px; overflow: hidden;">
+                                    <img src="{{ photo_site(photo.slug) }}"
+                                         alt="{{ photo.label }}"
+                                         style="width: 100%; height: 180px; object-fit: cover;">
+                                    {% set isCustomized = photo.photoSite and (photo.photoSite.filename or photo.photoSite.title or photo.photoSite.description) %}
+                                    <div class="p-3">
+                                        <h6 class="text-primary-brand mb-1">{{ photo.label }}</h6>
+                                        {% if isCustomized %}
+                                            <span class="badge bg-accent-brand mb-2">
+                                                <i class="bi bi-pencil-fill me-1"></i>Personnalisée
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-secondary mb-2">
+                                                <i class="bi bi-check2 me-1"></i>Contenu d'origine
+                                            </span>
+                                        {% endif %}
+
+                                        {{ form_start(forms[photo.slug], {'attr': {'class': 'mt-2'}}) }}
+                                        <div class="form-group-modern mb-2">
+                                            {{ form_label(forms[photo.slug].title, null, {'label_attr': {'class': 'form-label-modern small mb-1'}}) }}
+                                            {{ form_widget(forms[photo.slug].title, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                                            {{ form_errors(forms[photo.slug].title) }}
+                                        </div>
+                                        <div class="form-group-modern mb-2">
+                                            {{ form_label(forms[photo.slug].description, null, {'label_attr': {'class': 'form-label-modern small mb-1'}}) }}
+                                            {{ form_widget(forms[photo.slug].description, {'attr': {'class': 'form-control form-control-sm', 'rows': 2}}) }}
+                                            {{ form_errors(forms[photo.slug].description) }}
+                                        </div>
+                                        <div class="form-group-modern mb-2">
+                                            {{ form_label(forms[photo.slug].photo, null, {'label_attr': {'class': 'form-label-modern small mb-1'}}) }}
+                                            {{ form_widget(forms[photo.slug].photo, {'attr': {'class': 'form-control form-control-sm'}}) }}
+                                            {{ form_errors(forms[photo.slug].photo) }}
+                                        </div>
+                                        <button type="submit" class="btn btn-modern-primary btn-sm w-100">
+                                            <i class="bi bi-check2-circle me-1"></i>Enregistrer
+                                        </button>
+                                        {{ form_end(forms[photo.slug]) }}
+
+                                        {% if isCustomized %}
+                                            <form method="post" action="{{ path('app_photo_site_reset', {'slug': photo.slug}) }}" class="mt-2"
+                                                  onsubmit="return confirm('Restaurer la photo, la légende et le texte d\'origine pour cet emplacement ?');">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('reset_photo_' ~ photo.slug) }}">
+                                                <button type="submit" class="btn btn-outline-modern btn-sm w-100">
+                                                    <i class="bi bi-arrow-counterclockwise me-1"></i>Réinitialiser
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="text-center mt-4">
+                <a href="{{ path('app_admin_index') }}" class="btn btn-outline-modern">
+                    <i class="bi bi-arrow-return-left me-2"></i>Retour à l'administration
+                </a>
+            </div>
+        </div>
+    </section>
+{% endblock %}

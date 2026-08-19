@@ -199,6 +199,17 @@
                             </div>
 
                             <div class="col-md-3">
+                                <a href="{{ path('app_photo_site_index') }}" title="Photos du site" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
+                                   style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
+                                   onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"
+                                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='var(--shadow-sm)'">
+                                    <i class="bi bi-images" style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--accent-color);"></i>
+                                    <strong>Photos du site</strong>
+                                    <small class="text-muted">Gérer les photos des pages</small>
+                                </a>
+                            </div>
+
+                            <div class="col-md-3">
                                 <a href="{{ path('app_cheval_index') }}" class="btn w-100 d-flex flex-column align-items-center p-3 text-decoration-none"
                                    style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--primary-ultra-light) 100%); border: 2px solid var(--border-color); border-radius: 12px; color: var(--primary-color); transition: var(--transition-base);"
                                    onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='var(--shadow-lg)'"

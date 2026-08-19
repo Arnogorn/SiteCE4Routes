@@ -10,7 +10,12 @@ class Uploader
 {
 
 
-    public function save(UploadedFile $file, string $name, string $directory): string
+    /**
+     * @param bool $cover true : recadre en carré $width x $height (avatars/portraits).
+     *                     false : réduit uniquement si besoin en conservant les proportions,
+     *                     sans recadrage (photos de galerie affichées en grand format).
+     */
+    public function save(UploadedFile $file, string $name, string $directory, int $width = 250, int $height = 250, bool $cover = true): string
     {
 
         if (!file_exists($directory)) {
@@ -25,7 +30,11 @@ class Uploader
         try {
             $manager = new ImageManager(new Driver());
             $image = $manager->read($fullPath);
-            $image->cover(250, 250);
+            if ($cover) {
+                $image->cover($width, $height);
+            } else {
+                $image->scaleDown($width, $height);
+            }
             $image->save($fullPath);
         } catch (\Exception $e) {
 

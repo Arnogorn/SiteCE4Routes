@@ -55,10 +55,10 @@
                     {# Photo 1 - Préparation et départ à cheval #}
                     <div class="col-md-6">
                         <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
-                             onclick="openPhotoModal('{{ asset('images/poney_club_3.jpg') }}', 'Préparation et départ à cheval', 'Nos cavaliers se préparent pour un cours équestre')">
-                            <img src="{{ asset('images/poney_club_3.jpg') }}"
+                             onclick="openPhotoModal('{{ photo_site('tarifs_depart') }}', '{{ photo_site_title('tarifs_depart')|e('js') }}', '{{ photo_site_description('tarifs_depart')|e('js') }}')">
+                            <img src="{{ photo_site('tarifs_depart') }}"
                                  class="w-100 h-100 object-fit-cover photo-hover"
-                                 alt="Groupe de cavaliers préparant leurs chevaux dans la cour des écuries avant une sortie équestre">
+                                 alt="{{ photo_site_title('tarifs_depart') }}">
                             <div class="position-absolute top-3 end-3">
                         <span class="badge bg-dark bg-opacity-75">
                             <i class="bi bi-zoom-in"></i>
@@ -67,10 +67,10 @@
                             <div class="position-absolute bottom-0 start-0 end-0 p-3"
                                  style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
                                 <h5 class="text-white mb-1">
-                                    <i class="bi bi-people me-2"></i>Préparation et départ
+                                    <i class="bi bi-people me-2"></i>{{ photo_site_title('tarifs_depart') }}
                                 </h5>
                                 <p class="text-white-50 mb-0 small">
-                                    Nos cavaliers se préparent pour un cours équestre
+                                    {{ photo_site_description('tarifs_depart') }}
                                 </p>
                             </div>
                         </div>
@@ -79,10 +79,10 @@
                     {# Photo 2 - Cours en manège #}
                     <div class="col-md-6">
                         <div class="position-relative overflow-hidden rounded-3 photo-gallery-item photo-desktop-large"
-                             onclick="openPhotoModal('{{ asset('images/poney_club_2.jpg') }}', 'Cours d\'équitation en manège', 'Apprentissage dans un cadre sécurisé')">
-                            <img src="{{ asset('images/poney_club_2.jpg') }}"
+                             onclick="openPhotoModal('{{ photo_site('tarifs_manege') }}', '{{ photo_site_title('tarifs_manege')|e('js') }}', '{{ photo_site_description('tarifs_manege')|e('js') }}')">
+                            <img src="{{ photo_site('tarifs_manege') }}"
                                  class="w-100 h-100 object-fit-cover photo-hover"
-                                 alt="Cours d'équitation en manège">
+                                 alt="{{ photo_site_title('tarifs_manege') }}">
                             <div class="position-absolute top-3 end-3">
                         <span class="badge bg-dark bg-opacity-75">
                             <i class="bi bi-zoom-in"></i>
@@ -91,10 +91,10 @@
                             <div class="position-absolute bottom-0 start-0 end-0 p-3"
                                  style="background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);">
                                 <h5 class="text-white mb-1">
-                                    <i class="bi bi-house me-2"></i>Cours en manège
+                                    <i class="bi bi-house me-2"></i>{{ photo_site_title('tarifs_manege') }}
                                 </h5>
                                 <p class="text-white-50 mb-0 small">
-                                    Apprentissage dans un cadre sécurisé
+                                    {{ photo_site_description('tarifs_manege') }}
                                 </p>
                             </div>
                         </div>
