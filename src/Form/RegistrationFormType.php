@@ -45,10 +45,15 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Numéro de téléphone * :'
             ])
             ->add('droitImage', CheckboxType::class, [
-                'label' => 'Acceptez vous la prise de photo et l\'éventuelle diffusion de votre image? *',
+                'label' => 'J\'accepte la prise de photo et l\'éventuelle diffusion de mon image *',
                 'label_attr' => [
                     'style' => 'color: #333 !important'
-                ]
+                ],
+                'constraints' => [
+                    new IsTrue([
+                        'message' => 'Veuillez accepter la prise de photo et l\'éventuelle diffusion de votre image pour continuer',
+                    ]),
+                ],
             ])
             ->add('niveau', EntityType::class, [
                 'label' => 'Niveau * :',
