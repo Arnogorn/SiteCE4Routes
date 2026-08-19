@@ -6,7 +6,7 @@
     min-width: calc(150px + 7 * 110px);
     border-collapse: collapse;
     background-color: var(--bg-secondary);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
 }
@@ -23,8 +23,8 @@
 
 .planning-header-time {
     width: 150px;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-    color: white;
+    background: var(--primary-color);
+    color: var(--primary-contrast);
     font-weight: 600;
     height: auto;
     padding: 1rem;
@@ -33,8 +33,8 @@
 
 .planning-header-day {
     width: 110px;
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);
-    color: white;
+    background: var(--primary-light);
+    color: var(--primary-contrast);
     font-weight: 600;
     height: auto;
     padding: 1rem;
@@ -42,7 +42,7 @@
 }
 
 .planning-time-label {
-    background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+    background: var(--bg-tertiary);
     color: var(--primary-color);
     font-weight: 600;
     padding: 0.5rem;
@@ -61,14 +61,14 @@
 }
 
 .planning-event {
-    background: linear-gradient(135deg, var(--accent-light) 0%, rgba(180, 197, 228, 0.8) 100%);
+    background: var(--accent-light);
     padding: 0.75rem;
     cursor: pointer;
     height: 100%;
     border-left: 4px solid var(--accent-color);
     text-align: left;
     font-size: 0.85rem;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     box-shadow: var(--shadow-sm);
     transition: var(--transition-base);
     display: flex;
@@ -79,8 +79,8 @@
 }
 
 .planning-event:hover {
-    background: linear-gradient(135deg, var(--accent-color) 0%, var(--primary-light) 100%);
-    color: white;
+    background: var(--accent-color);
+    color: var(--accent-contrast);
     transform: scale(1.02);
     box-shadow: var(--shadow-md);
 }
@@ -91,6 +91,7 @@
 }
 
 .planning-event-time {
+    font-family: var(--font-mono);
     font-size: 0.7rem;
     color: var(--accent-color);
     border-top: 1px dashed var(--border-color);
@@ -100,7 +101,8 @@
 }
 
 .planning-event:hover .planning-event-time {
-    color: rgba(255, 255, 255, 0.9);
+    color: var(--accent-contrast);
+    opacity: 0.9;
 }
 
 .planning-empty-cell {
@@ -109,9 +111,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+    background: var(--bg-secondary);
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     transition: var(--transition-base);
     font-size: 1.1rem;
     color: var(--text-light);
@@ -119,7 +121,7 @@
 }
 
 .planning-empty-cell:hover {
-    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-ultra-light) 100%);
+    background: var(--primary-ultra-light);
     color: var(--primary-color);
     border-color: var(--accent-color);
     transform: scale(1.02);
@@ -137,7 +139,7 @@
     justify-content: center;
     align-items: center;
     background: var(--bg-secondary);
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 1.2rem;
     color: var(--text-light);
 }
@@ -173,22 +175,5 @@
 
     .planning-add-text {
         display: none;
-    }
-}
-
-/* Dark mode support pour calendrier */
-@media (prefers-color-scheme: dark) {
-    .planning-table {
-        background-color: var(--bg-secondary);
-    }
-
-    .planning-event {
-        background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--border-color) 100%);
-        color: var(--text-primary);
-    }
-
-    .planning-event:hover {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
-        color: white;
     }
 }

@@ -69,6 +69,15 @@ nelmio_security:
                 - 'ga.jspm.io'
                 - 'cdn.jsdelivr.net'
                 - 'unsafe-inline'
+                # es-module-shims (polyfill des import maps) exécute les modules
+                # via des URL blob: générées par lui-même, et AssetMapper injecte
+                # les CSS déclarées dans l'import map via un petit module inline
+                # encodé en data:application/javascript. Sans ces deux entrées,
+                # le JS de l'application (dont le bouton téléphone) et les CSS
+                # additionnelles ne se chargent jamais dans les navigateurs sans
+                # support natif des import maps.
+                - 'blob:'
+                - 'data:'
             style-src:
                 - 'self'
                 - 'unsafe-inline'

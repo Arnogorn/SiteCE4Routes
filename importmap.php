@@ -35,11 +35,6 @@ return [
         'type' => 'css',
         'entrypoint' => true,
     ],
-    'styles/darkTheme.css' => [
-        'path' => './assets/styles/darkTheme.css',
-        'type' => 'css',
-        'entrypoint' => true,
-    ],
     'styles/sorties.css' => [
         'path' => './assets/styles/sorties.css',
         'type' => 'css',

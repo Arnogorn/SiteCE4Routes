@@ -88,65 +88,47 @@ function ensureDropdownsWork() {
 
 // ==========================================
 // TÉLÉPHONE FOOTER
+// Délégation d'événement sur document : reste actif même après un
+// remplacement du <body> par Turbo, sans dépendre d'un ré-attachement
+// de listener par page ni de l'ordre de chargement de Bootstrap.
 // ==========================================
-function setupPhoneDisplay() {
+const PHONE_PARTS = ['06', '98', '73', '76', '00'];
+const PHONE_FULL = PHONE_PARTS.join('');
+const PHONE_FORMATTED = PHONE_PARTS.join(' ');
+const PHONE_SHORT = PHONE_PARTS.slice(0, 2).join(' ') + '...';
+
+function revealPhoneNumber() {
     const phoneLink = document.getElementById('phone-link');
     const phoneDisplay = document.getElementById('phone-display');
     const phoneLinkMobile = document.getElementById('phone-link-mobile');
     const phoneDisplayMobile = document.getElementById('phone-display-mobile');
 
-    if (!phoneLink && !phoneLinkMobile) return;
+    if (phoneLink) phoneLink.href = 'tel:' + PHONE_FULL;
+    if (phoneDisplay) phoneDisplay.textContent = PHONE_FORMATTED;
+    if (phoneLinkMobile) phoneLinkMobile.href = 'tel:' + PHONE_FULL;
+    if (phoneDisplayMobile) phoneDisplayMobile.textContent = PHONE_SHORT;
+}
 
-    const parts = ['06', '98', '73', '76', '00'];
-    const fullNumber = parts.join('');
-    const formattedNumber = parts.join(' ');
-    const shortNumber = parts.slice(0, 2).join(' ') + '...';
-    const phoneRevealed = document.cookie.includes('phoneRevealed=true');
-
-    // Setup Desktop
-    if (phoneLink && phoneDisplay && !phoneLink.dataset.phoneSetup) {
-        phoneLink.dataset.phoneSetup = 'true';
-
-        if (phoneRevealed) {
-            phoneLink.href = 'tel:' + fullNumber;
-            phoneDisplay.textContent = formattedNumber;
-        } else {
-            phoneLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                this.href = 'tel:' + fullNumber;
-                phoneDisplay.textContent = formattedNumber;
-
-                if (phoneDisplayMobile) phoneDisplayMobile.textContent = shortNumber;
-                if (phoneLinkMobile) phoneLinkMobile.href = 'tel:' + fullNumber;
-
-                document.cookie = 'phoneRevealed=true; path=/';
-            });
-        }
+function applyPhoneRevealedState() {
+    if (document.cookie.includes('phoneRevealed=true')) {
+        revealPhoneNumber();
     }
+}
 
-    // Setup Mobile
-    if (phoneLinkMobile && phoneDisplayMobile && !phoneLinkMobile.dataset.phoneSetup) {
-        phoneLinkMobile.dataset.phoneSetup = 'true';
+if (!window.__phoneRevealDelegated) {
+    window.__phoneRevealDelegated = true;
+    document.addEventListener('click', function (e) {
+        const link = e.target.closest('#phone-link, #phone-link-mobile');
+        if (!link) return;
 
-        if (phoneRevealed) {
-            phoneLinkMobile.href = 'tel:' + fullNumber;
-            phoneDisplayMobile.textContent = shortNumber;
-        } else {
-            phoneLinkMobile.addEventListener('click', function(e) {
-                e.preventDefault();
-                this.href = 'tel:' + fullNumber;
-                phoneDisplayMobile.textContent = shortNumber;
+        // Déjà révélé (ce chargement ou un précédent, via le cookie) : on
+        // laisse le vrai lien tel: agir normalement pour lancer l'appel.
+        if (document.cookie.includes('phoneRevealed=true')) return;
 
-                if (phoneDisplay) phoneDisplay.textContent = formattedNumber;
-                if (phoneLink) phoneLink.href = 'tel:' + fullNumber;
-
-                document.cookie = 'phoneRevealed=true; path=/';
-
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => this.style.transform = 'scale(1)', 150);
-            });
-        }
-    }
+        e.preventDefault();
+        revealPhoneNumber();
+        document.cookie = 'phoneRevealed=true; path=/';
+    });
 }
 
 // ==========================================
@@ -203,11 +185,14 @@ function initializeApp() {
 
     window.appInitialized = true;
 
+    // Ne dépend pas de Bootstrap : doit fonctionner même si le CDN est
+    // bloqué ou lent (ex. ad-blocker), donc appelé sans attendre.
+    applyPhoneRevealedState();
+
     waitForBootstrap(() => {
 
         optimizeBurgerMenu();
         ensureDropdownsWork();
-        setupPhoneDisplay();
         initFooterAnimations();
 
     });

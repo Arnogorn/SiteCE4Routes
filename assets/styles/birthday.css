@@ -3,9 +3,8 @@
 .hero-birthday {
     background: linear-gradient(135deg,
     var(--birthday-cream) 0%,
-    rgba(168, 197, 240, 0.4) 30%,
-    rgba(255, 182, 193, 0.3) 70%,
-    rgba(139, 163, 217, 0.5) 100%);
+    var(--bg-tertiary) 50%,
+    var(--bg-accent) 100%);
     position: relative;
     overflow: hidden;
 }
@@ -17,7 +16,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="%23FFB6C1" opacity="0.5"/><circle cx="80" cy="40" r="1.5" fill="%23FFB6C1" opacity="0.4"/><circle cx="60" cy="80" r="1" fill="%23A8C5F0" opacity="0.5"/><circle cx="40" cy="60" r="1.2" fill="%238BA3D9" opacity="0.3"/></svg>');
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="%23C9761A" opacity="0.4"/><circle cx="80" cy="40" r="1.5" fill="%23C97985" opacity="0.35"/><circle cx="60" cy="80" r="1" fill="%234F6E5C" opacity="0.4"/><circle cx="40" cy="60" r="1.2" fill="%23C9761A" opacity="0.3"/></svg>');
     background-size: 80px 80px;
     animation: float-confetti 25s linear infinite;
 }
@@ -28,10 +27,10 @@
 }
 
 .birthday-title {
+    font-family: var(--font-display);
     font-size: 3rem;
     font-weight: 700;
     color: var(--birthday-primary);
-    text-shadow: 2px 2px 4px rgba(48, 102, 190, 0.1);
     position: relative;
 }
 
@@ -41,7 +40,7 @@
 }
 
 .highlight-festive {
-    background: linear-gradient(45deg, var(--birthday-primary), var(--birthday-secondary));
+    background: linear-gradient(45deg, var(--birthday-primary), var(--birthday-gold));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -74,16 +73,16 @@
     transform: translateX(-50%);
     width: 2px;
     height: 25px;
-    background: #666;
+    background: var(--text-light);
     z-index: -1;
 }
 
-/* Ballons avec couleurs festives */
-.balloon-purple { background: linear-gradient(135deg, #8BA3D9, #A8C5F0); animation-delay: 0s; left: 0px; }
-.balloon-pink { background: linear-gradient(135deg, #FFB6C1, #FFC0CB); animation-delay: 1s; left: 40px; }
-.balloon-yellow { background: linear-gradient(135deg, #FFB347, #FFD700); animation-delay: 2s; left: 80px; }
-.balloon-red { background: linear-gradient(135deg, #FF7F7F, #FFB6C1); animation-delay: 3s; left: 120px; }
-.balloon-blue { background: linear-gradient(135deg, #4A73C1, #8BA3D9); animation-delay: 4s; left: 160px; }
+/* Ballons avec couleurs festives, distinctes du reste du site à dessein */
+.balloon-purple { background: linear-gradient(135deg, #6E8FA6, #9DB8C9); animation-delay: 0s; left: 0px; }
+.balloon-pink { background: linear-gradient(135deg, #D79AA3, #E8BCC2); animation-delay: 1s; left: 40px; }
+.balloon-yellow { background: linear-gradient(135deg, #D79A4B, #E8C27E); animation-delay: 2s; left: 80px; }
+.balloon-red { background: linear-gradient(135deg, #B5654A, #D79A85); animation-delay: 3s; left: 120px; }
+.balloon-blue { background: linear-gradient(135deg, #4F6E5C, #7DA671); animation-delay: 4s; left: 160px; }
 
 @keyframes float-balloon {
     0%, 100% { transform: translateY(0px) rotate(-2deg); }
@@ -98,7 +97,7 @@
 
 .pony-illustration {
     font-size: 8rem;
-    filter: drop-shadow(0 10px 20px rgba(48, 102, 190, 0.2));
+    filter: drop-shadow(var(--shadow-lg));
     animation: bounce-pony 3s ease-in-out infinite;
 }
 
@@ -136,11 +135,11 @@
 }
 
 .birthday-features {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--bg-primary);
     padding: 2rem;
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     border: 2px solid var(--birthday-accent);
-    box-shadow: 0 8px 25px rgba(46, 89, 168, 0.1);
+    box-shadow: var(--shadow-lg);
 }
 
 /* CLASSES SPÉCIFIQUES ANNIVERSAIRE - DISPOSITION DESKTOP PRÉSERVÉE */
@@ -150,19 +149,19 @@
     justify-content: flex-start; /* DESKTOP : alignement à gauche */
     margin-bottom: 1.5rem;
     padding: 1rem;
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    border-radius: var(--radius-md);
+    transition: var(--transition-base);
     width: 100%;
     text-align: left; /* DESKTOP : texte à gauche */
-    background: rgba(248, 251, 255, 0.7);
-    border: 1px solid rgba(168, 197, 240, 0.3);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     /* flex-direction: row (par défaut) - DESKTOP : horizontale */
 }
 
 .birthday-feature-item:hover {
-    background: linear-gradient(135deg, rgba(255, 182, 193, 0.15), rgba(255, 182, 193, 0.1));
+    background: var(--bg-tertiary);
     transform: translateX(10px); /* DESKTOP : effet horizontal */
-    box-shadow: 0 6px 20px rgba(46, 89, 168, 0.15);
+    box-shadow: var(--shadow-md);
     border-color: var(--birthday-gold);
 }
 
@@ -191,15 +190,16 @@
 
 /* Cartes d'information */
 .birthday-info-card, .birthday-pricing-card {
-    background: linear-gradient(135deg, white 0%, var(--birthday-cream) 100%);
-    border-radius: 20px;
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
     padding: 2rem;
-    box-shadow: 0 10px 30px rgba(48, 102, 190, 0.1);
+    box-shadow: var(--shadow-lg);
     border: 2px solid var(--birthday-accent);
     height: 100%;
 }
 
 .birthday-section-title {
+    font-family: var(--font-display);
     color: var(--birthday-primary);
     font-size: 2rem;
     font-weight: 700;
@@ -214,21 +214,23 @@
     /* flex-direction: row (par défaut) - DESKTOP : horizontale */
     margin-bottom: 2rem;
     padding: 1rem;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(48, 102, 190, 0.05);
-    transition: all 0.3s ease;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-base);
     text-align: left; /* DESKTOP : texte à gauche */
 }
 
 .birthday-activity-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(48, 102, 190, 0.1);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--birthday-gold);
 }
 
 .birthday-activity-icon {
-    background: linear-gradient(135deg, var(--birthday-primary), var(--birthday-gold));
-    color: white;
+    background: var(--birthday-primary);
+    color: var(--primary-contrast);
     width: 65px;
     height: 65px;
     border-radius: 50%;
@@ -239,7 +241,7 @@
     margin-right: 1rem; /* DESKTOP : marge à droite */
     margin-bottom: 0; /* DESKTOP : pas de marge en bas */
     flex-shrink: 0;
-    box-shadow: 0 4px 15px rgba(46, 89, 168, 0.3);
+    box-shadow: var(--shadow-sm);
 }
 
 .birthday-activity-content {
@@ -273,13 +275,14 @@
     text-align: center;
     margin-bottom: 2rem;
     padding: 1.5rem;
-    background: linear-gradient(135deg, var(--birthday-primary), var(--birthday-gold));
-    color: white;
-    border-radius: 15px;
-    box-shadow: 0 6px 20px rgba(46, 89, 168, 0.3);
+    background: var(--birthday-primary);
+    color: var(--primary-contrast);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
 }
 
 .birthday-price-amount {
+    font-family: var(--font-mono);
     font-size: 3rem;
     font-weight: 700;
     display: block;
@@ -304,6 +307,7 @@
     margin-bottom: 0.5rem;
     display: flex;
     align-items: center;
+    color: var(--birthday-text);
 }
 
 .birthday-pricing-includes li i {
@@ -312,23 +316,25 @@
 }
 
 .birthday-pricing-note {
-    background: var(--birthday-cream);
+    background: var(--bg-tertiary);
+    color: var(--birthday-text);
     padding: 1rem;
-    border-radius: 10px;
+    border-radius: var(--radius-sm);
     margin-top: 1.5rem;
     border-left: 4px solid var(--birthday-primary);
 }
 
 /* Call to action */
 .birthday-cta {
-    background: linear-gradient(135deg, var(--birthday-primary) 0%, var(--birthday-primary-light) 100%);
-    color: white;
+    background: var(--birthday-primary);
+    color: var(--primary-contrast);
 }
 
 .birthday-cta-title {
+    font-family: var(--font-display);
     font-size: 2.5rem;
     font-weight: 700;
-    color: white;
+    color: var(--primary-contrast);
 }
 
 .birthday-cta-description {
@@ -338,245 +344,41 @@
 
 /* Boutons festifs */
 .btn-birthday-primary {
-    background: linear-gradient(135deg, var(--birthday-primary), var(--birthday-gold));
+    background: var(--birthday-primary);
     border: none;
-    color: white;
+    color: var(--primary-contrast);
     padding: 0.75rem 2rem;
-    border-radius: 25px;
+    border-radius: var(--radius-pill);
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: var(--transition-base);
     text-decoration: none;
     display: inline-block;
-    box-shadow: 0 4px 15px rgba(46, 89, 168, 0.3);
+    box-shadow: var(--shadow-md);
 }
 
 .btn-birthday-primary:hover {
-    background: linear-gradient(135deg, var(--birthday-gold), var(--birthday-primary));
+    background: var(--birthday-gold);
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(255, 182, 193, 0.4);
-    color: white;
+    box-shadow: var(--shadow-lg);
+    color: var(--primary-contrast);
 }
 
 .btn-outline-birthday {
-    border: 2px solid white;
-    color: white;
+    border: 2px solid var(--primary-contrast);
+    color: var(--primary-contrast);
     background: transparent;
     padding: 0.75rem 2rem;
-    border-radius: 25px;
+    border-radius: var(--radius-pill);
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: var(--transition-base);
     text-decoration: none;
     display: inline-block;
 }
 
 .btn-outline-birthday:hover {
-    background: white;
+    background: var(--primary-contrast);
     color: var(--birthday-primary);
     transform: translateY(-2px);
-}
-
-/* === MODE SOMBRE - COULEURS AMÉLIORÉES MAIS DISPOSITION DESKTOP PRÉSERVÉE === */
-@media (prefers-color-scheme: dark) {
-
-    /* === CARTES PRINCIPALES ANNIVERSAIRES === */
-    .birthday-info-card,
-    .birthday-pricing-card {
-        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%) !important;
-        border: 2px solid var(--primary-light) !important;
-        color: var(--text-primary) !important;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6) !important;
-    }
-
-    /* === SECTION HERO ANNIVERSAIRES === */
-    .hero-birthday {
-        background: linear-gradient(135deg,
-        var(--bg-primary) 0%,
-        var(--bg-secondary) 30%,
-        var(--bg-tertiary) 70%,
-        var(--bg-accent) 100%) !important;
-    }
-
-    /* === FEATURES ANNIVERSAIRES === */
-    .birthday-features {
-        background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%) !important;
-        border: 2px solid var(--primary-light) !important;
-        color: var(--text-primary) !important;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7) !important;
-    }
-
-    .birthday-feature-item {
-        background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-accent) 100%) !important;
-        border: 2px solid var(--border-color-dark) !important;
-        color: var(--text-primary) !important;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4) !important;
-        transition: all 0.4s ease !important;
-        /* DISPOSITION DESKTOP PRÉSERVÉE - pas de changement flex */
-    }
-
-    .birthday-feature-item:hover {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%) !important;
-        border-color: var(--primary-ultra-light) !important;
-        transform: translateX(10px) !important; /* DESKTOP : effet horizontal préservé */
-        box-shadow: 0 15px 35px rgba(48, 102, 190, 0.5) !important;
-    }
-
-    .birthday-feature-item span {
-        color: var(--text-primary) !important;
-        font-weight: 600 !important;
-    }
-
-    /* === ACTIVITÉS ANNIVERSAIRES === */
-    .birthday-activity-item {
-        background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-accent) 100%) !important;
-        color: var(--text-primary) !important;
-        border: 2px solid var(--primary-light) !important;
-        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6) !important;
-        transition: all 0.4s ease !important;
-        /* DISPOSITION DESKTOP PRÉSERVÉE - flex-direction: row */
-    }
-
-    .birthday-activity-item:hover {
-        background: linear-gradient(135deg, var(--bg-accent) 0%, var(--primary-color) 20%, var(--bg-accent) 100%) !important;
-        transform: translateY(-8px) !important;
-        box-shadow: 0 20px 45px rgba(48, 102, 190, 0.4) !important;
-        border-color: var(--primary-ultra-light) !important;
-    }
-
-    .birthday-activity-content h4 {
-        color: var(--text-primary) !important;
-        font-weight: 700 !important;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .birthday-activity-content p {
-        color: var(--text-secondary) !important;
-        font-weight: 500 !important;
-    }
-
-    /* === TARIFS ANNIVERSAIRES === */
-    .birthday-price-main {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%) !important;
-        color: white !important;
-        box-shadow: 0 15px 40px rgba(9, 12, 155, 0.6) !important;
-        border: 2px solid var(--primary-ultra-light) !important;
-    }
-
-    .birthday-pricing-includes {
-        background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-accent) 100%) !important;
-        padding: 1.5rem !important;
-        border-radius: 15px !important;
-        border: 2px solid var(--border-color-dark) !important;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
-        margin: 1rem 0 !important;
-    }
-
-    .birthday-pricing-includes h5 {
-        color: var(--text-primary) !important;
-        font-weight: 700 !important;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
-    }
-
-    .birthday-pricing-includes li {
-        color: var(--text-primary) !important;
-        font-weight: 500 !important;
-        padding: 0.3rem 0 !important;
-    }
-
-    .birthday-pricing-includes li i {
-        color: var(--primary-ultra-light) !important;
-        font-size: 1.1rem !important;
-        margin-right: 0.8rem !important;
-    }
-
-    .birthday-pricing-note {
-        background: linear-gradient(135deg, var(--bg-accent) 0%, var(--bg-tertiary) 100%) !important;
-        color: var(--text-primary) !important;
-        border: 2px solid var(--primary-light) !important;
-        border-left: 6px solid var(--primary-ultra-light) !important;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
-        font-weight: 500 !important;
-        padding: 1.5rem !important;
-    }
-
-    /* === TITRES ET TEXTES === */
-    .birthday-title {
-        color: var(--text-primary) !important;
-        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7) !important;
-    }
-
-    .birthday-section-title {
-        color: var(--text-primary) !important;
-        text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5) !important;
-    }
-
-    .birthday-subtitle .highlight-festive {
-        background: linear-gradient(45deg, var(--primary-light), var(--primary-ultra-light)) !important;
-        -webkit-background-clip: text !important;
-        -webkit-text-fill-color: transparent !important;
-        background-clip: text !important;
-    }
-
-    .birthday-description {
-        color: var(--text-secondary) !important;
-        font-weight: 500 !important;
-    }
-
-    .birthday-description .lead {
-        color: var(--text-primary) !important;
-        font-weight: 600 !important;
-    }
-
-    /* === ICÔNES === */
-    .birthday-feature-icon {
-        color: var(--primary-ultra-light) !important;
-        background: rgba(48, 102, 190, 0.2) !important;
-        padding: 0.5rem !important;
-        border-radius: 50% !important;
-        box-shadow: 0 4px 15px rgba(48, 102, 190, 0.3) !important;
-    }
-
-    .birthday-activity-icon {
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-light)) !important;
-        color: white !important;
-        box-shadow: 0 6px 20px rgba(9, 12, 155, 0.6) !important;
-        border: 3px solid var(--primary-ultra-light) !important;
-    }
-
-    /* === BALLONS === */
-    .balloon-purple {
-        background: linear-gradient(135deg, #7B8FD3, #A8C5F0) !important;
-        box-shadow: 0 5px 15px rgba(123, 143, 211, 0.4) !important;
-    }
-    .balloon-pink {
-        background: linear-gradient(135deg, #FF9FB8, #FFD0E1) !important;
-        box-shadow: 0 5px 15px rgba(255, 159, 184, 0.4) !important;
-    }
-    .balloon-yellow {
-        background: linear-gradient(135deg, #E6B855, #FFE066) !important;
-        box-shadow: 0 5px 15px rgba(230, 184, 85, 0.4) !important;
-    }
-    .balloon-red {
-        background: linear-gradient(135deg, #D97B7B, #FF9A9A) !important;
-        box-shadow: 0 5px 15px rgba(217, 123, 123, 0.4) !important;
-    }
-    .balloon-blue {
-        background: linear-gradient(135deg, #4A6BAC, #7B8FD3) !important;
-        box-shadow: 0 5px 15px rgba(74, 107, 172, 0.4) !important;
-    }
-
-    /* === BOUTONS === */
-    .btn-birthday-primary {
-        background: linear-gradient(135deg, var(--primary-color), var(--primary-light)) !important;
-        box-shadow: 0 6px 20px rgba(9, 12, 155, 0.5) !important;
-        border: 2px solid var(--primary-ultra-light) !important;
-        font-weight: 700 !important;
-    }
-
-    .btn-birthday-primary:hover {
-        background: linear-gradient(135deg, var(--primary-light), var(--primary-ultra-light)) !important;
-        box-shadow: 0 12px 35px rgba(48, 102, 190, 0.6) !important;
-        transform: translateY(-3px) scale(1.05) !important;
-    }
 }
 
 /* Responsive - Mobile garde sa disposition spécifique */
